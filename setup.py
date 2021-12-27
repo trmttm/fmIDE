@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='fmIDE',
     version='',
-    packages=['Entities'],
+    packages=['Entities', 'BoundaryOutput', 'Controller', 'EntityGateway'],
     url='',
     license='',
     author='STTM',
