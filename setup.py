@@ -6,6 +6,8 @@ setup(
     packages=['Main', 'Tests',  'Pickles', 'Entities',
               'Presenter', 'Resources', 'Utilities',
               'ViewModel', 'Controller',
+              'Interactor', 'RequestModel', 'EntityGateway', 'ResponseModel', 'BoundaryOutput',
+
               ],
     url='',
     license='',
