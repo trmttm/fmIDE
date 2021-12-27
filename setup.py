@@ -3,11 +3,7 @@ from setuptools import setup
 setup(
     name='fmIDE',
     version='',
-    packages=['Main', 'Tests', 'Tests', 'Pickles', 'Entities',
-              'Presenter', 'Resources', 'Utilities',
-              'ViewModel', 'Controller',
-              'Interactor', 'RequestModel', 'EntityGateway', 'ResponseModel', 'BoundaryOutput',
-              'ExternalSystems', 'PicklesCommands', 'Templates'],
+    packages=['Entities'],
     url='',
     license='',
     author='STTM',
