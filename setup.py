@@ -7,7 +7,7 @@ setup(
               'Presenter', 'Resources', 'Utilities',
               'ViewModel', 'Controller',
               'Interactor', 'RequestModel', 'EntityGateway', 'ResponseModel', 'BoundaryOutput',
-              'ExternalSystems', 'PicklesCommands', 'Templates'
+              'ExternalSystems', 'PicklesCommands', 
               ],
     url='',
     license='',
