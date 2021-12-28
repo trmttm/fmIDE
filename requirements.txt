@@ -1,0 +1,9 @@
+-e git+https://github.com/trmttm/fmCalculator@2764d011ef470c83e42a03e0e522e77b6abc11fd#egg=fm_calculator
+-e git+https://github.com/trmttm/Interface@32f8c517593acce986010e9ce8e8746dca33f787#egg=interface
+-e git+https://github.com/trmttm/KeyboardShortcut@0ee9fcb5d681e48884add48e976111ae4f595aad#egg=keyboard_shortcut
+-e git+https://github.com/trmttm/osIdentifier@a799a4ff4b4b1e83d4a477569fda936f112b1515#egg=os_identifier
+-e git+https://github.com/trmttm/RPE@5899b478b93828acae3fea822fc6d7d2f367889b#egg=rpe_to_normal
+-e git+https://github.com/trmttm/Spreadsheet@49b54eef0a41f11ee75d9df9b5613a3e3b32ab3f#egg=spreadsheet
+-e git+https://github.com/trmttm/ViewTkinter@4b0b31c4f0a1fac4c9c7b1384c1a8f270113b56a#egg=view_tkinter
+-e git+https://github.com/trmttm/fmIDE@e89647ff6e6d0dddc60fe2d9aa757c994a8fce7f#egg=fmIDE
+XlsxWriter==3.0.2
