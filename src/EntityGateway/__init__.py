@@ -224,7 +224,7 @@ class GateWays(GateWayABC):
     def restore_state(self, entities: Entities, pickle_name: str):
         system_state = SystemState(entities)
         if self._project_folder is None:
-            memento = self._states_io_file_system.get_memento(pickle_name, self._package_pickles)
+            memento = self._states_io_file_system.get_memento_from_package(self._package_pickles, pickle_name)
             if memento is None:
                 relative_path = os.path.join(self._relative_path_to_pickles, pickle_name)
                 file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
@@ -238,7 +238,7 @@ class GateWays(GateWayABC):
         try:
             system_state.restore(memento)
         except AttributeError:
-            memento = self._states_io_file_system.get_memento(pickle_name, self._package_pickles)
+            memento = self._states_io_file_system.get_memento_from_package(self._package_pickles, pickle_name)
             system_state.restore(memento)
 
     def save_all_sates_to_file(self, file_name='all states'):
@@ -296,7 +296,7 @@ class GateWays(GateWayABC):
 
     def attach_to_notification(self, observer):
         if observer not in self._observers:
-            self._observers += (observer, )
+            self._observers += (observer,)
 
     def notify(self, notification: str, type=None):
         for observer in self._observers:

@@ -28,16 +28,12 @@ class StateIOFile(SaveStateABC):
         self._caretaker.restore(memento)
 
     def merge_state_from_package(self, file_name, package):
-        memento = self.get_memento(file_name, package)
+        memento = self.get_memento_from_package(package, file_name)
         self._caretaker.restore_merge(memento)
 
     def merge_state_from_file_system(self, file_path):
         memento = self.get_memento_from_file_system(file_path)
         self._caretaker.restore_merge(memento)
-
-    def get_memento(self, file_name, package):
-        memento = self.get_memento_from_package(package, file_name)
-        return memento
 
     @staticmethod
     def get_memento_from_file_system(file_path):
