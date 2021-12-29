@@ -165,18 +165,18 @@ class GateWays(GateWayABC):
             file_path = get_path(self._test_path_pickles, file_name)
             self._states_io_file_system.merge_state_from_file_system(file_path)
             return
-        if self._project_folder is None:
-            self._states_io_file_system.merge_state(file_name, self._package_pickles)
-            return
+
         try:
-            file_path = get_path(self.path_pickles, file_name)
+            relative_path = os.path.join(self._relative_path_to_pickles, file_name)
+            file_path = get_proper_path_depending_on_development_or_distribution(relative_path)
             self._states_io_file_system.merge_state_from_file_system(file_path)
         except AttributeError:
             self._states_io_file_system.merge_state(file_name, self._package_pickles)
 
     def merge_macro_file(self, file_name: str):
         try:
-            file_path = get_path(self.path_commands_pickles, file_name)
+            relative_path = os.path.join(self._relative_path_to_commands, file_name)
+            file_path = get_proper_path_depending_on_development_or_distribution(relative_path)
             self._command_io_file_system.merge_state_from_file_system(file_path)
         except AttributeError:
             self._command_io_file_system.merge_state(file_name, self._package_pickles_commands)
