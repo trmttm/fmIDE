@@ -41,6 +41,8 @@ class Interactor(BoundaryInABC):
         self._gateways = gateways
         self._presenters = presenters
 
+        gateways.attach_to_notification(self._present_feedback_user)
+
         # temporary states and flags
         self._entry_by = []
         self._copied_accounts = tuple()
