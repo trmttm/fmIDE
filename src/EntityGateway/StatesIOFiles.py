@@ -57,7 +57,7 @@ class StateIOFile(SaveStateABC):
     def get_resource_from_file_system(file_path):
         try:
             with open(file_path, "rb") as f:
-                resource = f.read()
+                resource = io.BytesIO(f.read())
         except FileNotFoundError:
             resource = None
         return resource
