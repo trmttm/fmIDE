@@ -44,6 +44,7 @@ class GateWays(GateWayABC):
 
         self._project_folder = None
         self._test_path_pickles = None
+        self._observers = ()
 
     def embed_resources_to_project_folder(self, directory_to):
         path_pickles = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_pickles)
@@ -292,3 +293,11 @@ class GateWays(GateWayABC):
         new_folder_path = os.path.join(folders[folder_key_word], folder_name)
         if not os.path.exists(new_folder_path):
             os.mkdir(new_folder_path)
+
+    def attach_to_notification(self, observer):
+        if observer not in self._observers:
+            self._observers += observer
+
+    def notify(self, notification: str, type=None):
+        for observer in self._observers:
+            observer(notification)
