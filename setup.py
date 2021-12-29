@@ -1,17 +1,31 @@
 from setuptools import setup
+import py2exe
+import glob
 
 setup(
     name='fmIDE',
     version='',
-    packages=['src.Main', 'src.Tests', 'src.Pickles', 'src.Entities',
-              'src.Presenter', 'src.Resources', 'src.Utilities',
-              'src.ViewModel', 'src.Controller',
-              'src.Interactor', 'src.RequestModel', 'src.EntityGateway', 'src.ResponseModel', 'src.BoundaryOutput',
-              'src.ExternalSystems', 'src.PicklesCommands',
-              ],
+    packages=['src'],
     url='',
     license='',
     author='STTM',
     author_email='',
-    description=''
+    description='',
+    windows=[
+        {
+            'script': 'fmIDE.py',
+            'icon_resources': [(1, 'applet.ico')]
+        },
+    ],
+    data_files=[
+        ('src/Pickles', glob.glob('src/Pickles/*')),
+        ('src/PicklesCommands', glob.glob('src/PicklesCommands/*')),
+    ],
+    options={
+        'py2exe': {
+            'bundle_files': 1,
+            'compressed': True,
+            'packages': ['src.Pickles', 'src.PicklesCommands', 'src.Resources', ],
+        },
+    },
 )
