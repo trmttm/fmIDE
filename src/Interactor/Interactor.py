@@ -1321,13 +1321,13 @@ class Interactor(BoundaryInABC):
         self.upon_updating_worksheets(previous_sheet_state)
 
     def load_memento(self, memento):
-        self._gateways.load_state(memento)
+        self._gateways.load_state_from_memento(memento)
         self._upon_loading_state()
         self._input_values.change_number_of_periods(self.number_of_periods)
         self._present_feedback_user(f'Loaded state', 'success')
 
     def load_file(self, file_name: str):
-        self._gateways.load_file(file_name)
+        self._gateways.load_state_from_file(file_name)
         self._upon_loading_state()
         self._input_values.change_number_of_periods(self.number_of_periods)
         self._present_feedback_user(f'Loaded file: {file_name}', 'success')
@@ -1337,7 +1337,7 @@ class Interactor(BoundaryInABC):
         self.stop_highlighting()
 
         initial_shapes = set(self._shapes.shapes_ids)
-        self._gateways.merge_file(file_name)
+        self._gateways.merge_state_from_file(file_name)
 
         current_sheet = self._worksheets.selected_sheet
         get_sheet = self._worksheets.get_worksheet_of_an_account
