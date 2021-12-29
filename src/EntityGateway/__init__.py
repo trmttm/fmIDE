@@ -113,7 +113,7 @@ class GateWays(GateWayABC):
         else:
             return False
 
-    def load_state(self, memento):
+    def load_state_from_memento(self, memento):
         self._states_io_memory.load_state_from_package(memento)
 
     @property
@@ -134,12 +134,12 @@ class GateWays(GateWayABC):
         feedback = self._command_io_file_system.save_state(file_path)
         return feedback
 
-    def load_file(self, file_name: str):
+    def load_state_from_file(self, file_name: str):
         load_from_file_system = self._states_io_file_system.load_state_from_file_system
         load_from_package = self._states_io_file_system.load_state_from_package
         self._do_the_right_thing_to_handle_template(file_name, load_from_file_system, load_from_package)
 
-    def merge_file(self, file_name: str):
+    def merge_state_from_file(self, file_name: str):
         merge_from_file_system = self._states_io_file_system.merge_state_from_file_system
         merge_from_package = self._states_io_file_system.merge_state_from_package
         self._do_the_right_thing_to_handle_template(file_name, merge_from_file_system, merge_from_package)
