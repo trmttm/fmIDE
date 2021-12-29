@@ -2,16 +2,15 @@ import distutils.errors
 import os
 import pickle
 import subprocess
-import sys
 from distutils.dir_util import copy_tree
 
 import os_identifier
 from interface_gateway_fm import GateWayABC
 from src.Utilities import Memento
 
+from . import Paths
 from .CommandState import CommandState
 from .FilesSystemIO import FileSystemIO
-from .Paths import get_path
 from .StatesIOFiles import StateIOFile
 from .StatesIOMemory import StatesIOMemory
 from .SystemState import SystemState
@@ -47,8 +46,8 @@ class GateWays(GateWayABC):
         self._test_path_pickles = None
 
     def embed_resources_to_project_folder(self, directory_to):
-        path_pickles = get_proper_path_depending_on_development_or_distribution(self._relative_path_to_pickles)
-        path_commands = get_proper_path_depending_on_development_or_distribution(self._relative_path_to_commands)
+        path_pickles = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_pickles)
+        path_commands = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_commands)
         try:
             copy_tree(path_pickles, os.path.join(directory_to, self._templates_directory))
             copy_tree(path_commands, os.path.join(directory_to, self._commands_directory))
@@ -70,12 +69,12 @@ class GateWays(GateWayABC):
 
     @property
     def embedded_templates(self):
-        folder_path = get_proper_path_depending_on_development_or_distribution(self._relative_path_to_pickles)
+        folder_path = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_pickles)
         return self._file_system_io.get_file_names(folder_path, self.negative_list)
 
     @property
     def embedded_macros(self):
-        folder_path = get_proper_path_depending_on_development_or_distribution(self._relative_path_to_commands)
+        folder_path = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_commands)
         return self._file_system_io.get_file_names(folder_path)
 
     def set_project_folder(self, directory):
@@ -132,24 +131,24 @@ class GateWays(GateWayABC):
         return self._states_io_file_system.save_result
 
     def save_file(self, file_name: str):
-        file_path = get_path(self.path_pickles, file_name)
+        file_path = Paths.get_path(self.path_pickles, file_name)
         feedback = self._states_io_file_system.save_state(file_path)
         return feedback
 
     def save_commands_to_file(self, file_name: str):
-        file_path = get_path(self.path_commands_pickles, file_name)
+        file_path = Paths.get_path(self.path_commands_pickles, file_name)
         feedback = self._command_io_file_system.save_state(file_path)
         return feedback
 
     def load_file(self, file_name: str):
         if self._test_path_pickles is not None:
-            file_path = get_path(self._test_path_pickles, file_name)
+            file_path = Paths.get_path(self._test_path_pickles, file_name)
             self._states_io_file_system.load_state_from_file_system(file_path)
             return
 
         try:
             relative_path = os.path.join(self._relative_path_to_pickles, file_name)
-            file_path = get_proper_path_depending_on_development_or_distribution(relative_path)
+            file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
             self._states_io_file_system.load_state_from_file_system(file_path)
         except AttributeError:
             self._states_io_file_system.load_state(file_name, self._package_pickles)
@@ -162,13 +161,13 @@ class GateWays(GateWayABC):
 
     def merge_file(self, file_name: str):
         if self._test_path_pickles is not None:
-            file_path = get_path(self._test_path_pickles, file_name)
+            file_path = Paths.get_path(self._test_path_pickles, file_name)
             self._states_io_file_system.merge_state_from_file_system(file_path)
             return
 
         try:
             relative_path = os.path.join(self._relative_path_to_pickles, file_name)
-            file_path = get_proper_path_depending_on_development_or_distribution(relative_path)
+            file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
             self._states_io_file_system.merge_state_from_file_system(file_path)
         except AttributeError:
             self._states_io_file_system.merge_state(file_name, self._package_pickles)
@@ -176,7 +175,7 @@ class GateWays(GateWayABC):
     def merge_macro_file(self, file_name: str):
         try:
             relative_path = os.path.join(self._relative_path_to_commands, file_name)
-            file_path = get_proper_path_depending_on_development_or_distribution(relative_path)
+            file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
             self._command_io_file_system.merge_state_from_file_system(file_path)
         except AttributeError:
             self._command_io_file_system.merge_state(file_name, self._package_pickles_commands)
@@ -189,7 +188,7 @@ class GateWays(GateWayABC):
 
     def _remove_pickle(self, directory, file_name):
         if self._project_folder is not None:
-            file_path = get_path(directory, file_name)
+            file_path = Paths.get_path(directory, file_name)
             Utilities.remove_file(file_path)
             feedback = 'success'
         else:
@@ -227,13 +226,13 @@ class GateWays(GateWayABC):
             memento = self._states_io_file_system.get_memento(pickle_name, self._package_pickles)
             if memento is None:
                 relative_path = os.path.join(self._relative_path_to_pickles, pickle_name)
-                file_path = get_proper_path_depending_on_development_or_distribution(relative_path)
+                file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
                 memento = self._states_io_file_system.get_memento_from_file_system(file_path)
             if memento is not None:
                 system_state.restore(memento)
             return
 
-        file_path = get_path(self.path_pickles, pickle_name)
+        file_path = Paths.get_path(self.path_pickles, pickle_name)
         memento = self._states_io_file_system.get_memento_from_file_system(file_path)
         try:
             system_state.restore(memento)
@@ -242,7 +241,7 @@ class GateWays(GateWayABC):
             system_state.restore(memento)
 
     def save_all_sates_to_file(self, file_name='all states'):
-        file_path = get_path(self.path_pickles, file_name)
+        file_path = Paths.get_path(self.path_pickles, file_name)
         self._states_io_file_system.save_all_sates(file_path)
 
     def restore_all_states_from_file(self, file_name='all states'):
@@ -293,17 +292,3 @@ class GateWays(GateWayABC):
         new_folder_path = os.path.join(folders[folder_key_word], folder_name)
         if not os.path.exists(new_folder_path):
             os.mkdir(new_folder_path)
-
-
-def get_proper_path_depending_on_development_or_distribution(relative_path):
-    possible_overlap = relative_path.split('/')[0]
-    folder_path = os.path.join(sys.path[0], relative_path)
-    folder_path = remove_overlap(folder_path, possible_overlap)
-    if not (os.path.exists(folder_path)):
-        folder_path = f'{os.getcwd()}/{relative_path}'
-    folder_path = remove_overlap(folder_path, possible_overlap)
-    return folder_path
-
-
-def remove_overlap(folder_path, possible_overlap):
-    return folder_path.replace(f'{possible_overlap}/{possible_overlap}', possible_overlap)
