@@ -41,6 +41,8 @@ class Interactor(BoundaryInABC):
         self._gateways = gateways
         self._presenters = presenters
 
+        gateways.attach_to_notification(self._present_feedback_user)
+
         # temporary states and flags
         self._entry_by = []
         self._copied_accounts = tuple()
@@ -53,7 +55,7 @@ class Interactor(BoundaryInABC):
         self._previous_commands = []
 
         """
-        Below cache are not part of configuration (therefore states) because they;
+        Below cache are NOT part of configuration (therefore states) because they;
             1) are so expensive to save!
             2) have to be independent of pickles
         """
@@ -174,7 +176,7 @@ class Interactor(BoundaryInABC):
 
     def clear_project_history(self):
         self._load_config.clear()
-        self._present_feedback_user('Project history cleard.', 'success')
+        self._present_feedback_user('Project history cleared.', 'success')
 
     @property
     def project_folder(self):
@@ -2589,7 +2591,7 @@ class Interactor(BoundaryInABC):
             'format_data': self._format.data,
             'number_format_data': self._number_format.data,
             'vertical_acs': self._vertical_accounts.data,
-            'vba_file': self._gateways.get_resource('vbaProject.bin', 'src.Resources'),
+            'vba_file': self._gateways.get_resource_from_package('vbaProject.bin', 'src.Resources'),
         }
 
         if self.sensitivity_sheet_added:

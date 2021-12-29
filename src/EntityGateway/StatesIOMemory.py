@@ -10,7 +10,7 @@ class StatesIOMemory(SaveStateABC):
     def save_state(self, name=''):
         self._caretaker.backup(name)
 
-    def load_state(self, memento):
+    def load_state_from_package(self, memento):
         self._caretaker.restore(memento)
 
     @property
