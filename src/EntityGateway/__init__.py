@@ -7,8 +7,8 @@ from distutils.dir_util import copy_tree
 
 import os_identifier
 from interface_gateway_fm import GateWayABC
-
 from src.Utilities import Memento
+
 from .CommandState import CommandState
 from .FilesSystemIO import FileSystemIO
 from .Paths import get_path
