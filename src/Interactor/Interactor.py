@@ -2591,7 +2591,7 @@ class Interactor(BoundaryInABC):
             'format_data': self._format.data,
             'number_format_data': self._number_format.data,
             'vertical_acs': self._vertical_accounts.data,
-            'vba_file': self._gateways.get_resource_from_package('vbaProject.bin', 'src.Resources'),
+            'vba_file': self._gateways.get_vba_binary(),
         }
 
         if self.sensitivity_sheet_added:

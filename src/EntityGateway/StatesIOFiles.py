@@ -54,9 +54,21 @@ class StateIOFile(SaveStateABC):
         return pickle_data
 
     @staticmethod
+    def get_resource_from_file_system(file_path):
+        try:
+            with open(file_path, "rb") as f:
+                resource = f.read()
+        except FileNotFoundError:
+            resource = None
+        return resource
+
+    @staticmethod
     def get_resource_from_package(file_name, package):
-        with importlib.resources.open_binary(package, file_name) as f:
-            resource = io.BytesIO(f.read())
+        try:
+            with importlib.resources.open_binary(package, file_name) as f:
+                resource = io.BytesIO(f.read())
+        except FileNotFoundError:
+            resource = None
         return resource
 
     def save_all_sates(self, file_path=''):
