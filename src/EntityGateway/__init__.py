@@ -140,16 +140,19 @@ class GateWays(GateWayABC):
             self._states_io_file_system.load_state_from_file_system(file_path)
             return
 
+        file_path = self.get_proper_file_system_template_path(file_name)
+        try:
+            self._states_io_file_system.load_state_from_file_system(file_path)
+        except AttributeError:
+            self._states_io_file_system.load_state_from_package(file_name, self._package_pickles)
+
+    def get_proper_file_system_template_path(self, file_name):
         if self._project_folder is not None:
             relative_path = os.path.join(self.path_pickles, file_name)
         else:
             relative_path = os.path.join(self._relative_path_to_pickles, file_name)
         file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
-
-        try:
-            self._states_io_file_system.load_state_from_file_system(file_path)
-        except AttributeError:
-            self._states_io_file_system.load_state_from_package(file_name, self._package_pickles)
+        return file_path
 
     def load_pickle(self, package, file_name):
         return self._states_io_file_system.load_state_from_package(file_name, package)
@@ -163,9 +166,8 @@ class GateWays(GateWayABC):
             self._states_io_file_system.merge_state_from_file_system(file_path)
             return
 
+        file_path = self.get_proper_file_system_template_path(file_name)
         try:
-            relative_path = os.path.join(self._relative_path_to_pickles, file_name)
-            file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
             self._states_io_file_system.merge_state_from_file_system(file_path)
         except AttributeError:
             self._states_io_file_system.merge_state_from_package(file_name, self._package_pickles)
