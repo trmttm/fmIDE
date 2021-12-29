@@ -65,7 +65,7 @@ class GateWays(GateWayABC):
         return self._states_io_file_system.get_memento_from_package(package, file_name)
 
     def get_resource_pickle_load_by_abs_path(self, abs_path):
-        loaded_pickle = self._states_io_file_system.get_resource_pickle_load_by_file_path(abs_path)
+        loaded_pickle = self._states_io_file_system.get_memento_from_file_system(abs_path)
         return loaded_pickle
 
     @property

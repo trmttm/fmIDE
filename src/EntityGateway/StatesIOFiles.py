@@ -45,7 +45,11 @@ class StateIOFile(SaveStateABC):
 
     @staticmethod
     def get_memento_from_file_system(file_path):
-        memento = StateIOFile.get_resource_pickle_load_by_file_path(file_path)
+        try:
+            with open(file_path, 'rb') as f:
+                memento = pickle.load(f)
+        except FileNotFoundError:
+            memento = None
         return memento
 
     def save_all_sates(self, file_path=''):
@@ -66,15 +70,6 @@ class StateIOFile(SaveStateABC):
     def get_memento_from_package(package, file_name):
         try:
             with importlib.resources.open_binary(package, file_name) as f:
-                memento = pickle.load(f)
-        except FileNotFoundError:
-            memento = None
-        return memento
-
-    @staticmethod
-    def get_resource_pickle_load_by_file_path(file_path):
-        try:
-            with open(file_path, 'rb') as f:
                 memento = pickle.load(f)
         except FileNotFoundError:
             memento = None
