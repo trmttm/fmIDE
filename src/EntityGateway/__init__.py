@@ -227,7 +227,12 @@ class GateWays(GateWayABC):
         system_state = SystemState(entities)
         if self._project_folder is None:
             memento = self._states_io_file_system.get_memento(pickle_name, self._package_pickles)
-            system_state.restore(memento)
+            if memento is None:
+                relative_path = os.path.join(self._relative_path_to_pickles, pickle_name)
+                file_path = get_proper_path_depending_on_development_or_distribution(relative_path)
+                memento = self._states_io_file_system.get_memento_from_file_system(file_path)
+            if memento is not None:
+                system_state.restore(memento)
             return
 
         file_path = get_path(self.path_pickles, pickle_name)
