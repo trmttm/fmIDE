@@ -100,10 +100,6 @@ class GateWays(GateWayABC):
         if directory[-1] != '/':
             directory += '/'
 
-    @property
-    def entities(self) -> Entities:
-        return self._entities
-
     def undo(self):
         self._states_io_memory.undo()
 
