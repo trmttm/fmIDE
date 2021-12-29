@@ -36,10 +36,6 @@ class StateIOFile(SaveStateABC):
         self._caretaker.restore_merge(memento)
 
     def get_memento(self, file_name, package):
-        memento = self.get_pickle(file_name, package)
-        return memento
-
-    def get_pickle(self, file_name, package):
         memento = self.get_memento_from_package(package, file_name)
         return memento
 
