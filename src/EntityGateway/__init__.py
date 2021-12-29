@@ -61,20 +61,17 @@ class GateWays(GateWayABC):
     def get_resource_from_package(self, file_name, package):
         return self._states_io_file_system.get_resource_from_package(file_name, package)
 
-    def get_resource_pickle_load_by_package(self, file_name, package):
-        return self._states_io_file_system.get_memento_from_package(package, file_name)
-
-    def get_resource_pickle_load_by_abs_path(self, abs_path):
-        loaded_pickle = self._states_io_file_system.get_memento_from_file_system(abs_path)
+    def get_pickle_from_file_system(self, abs_path):
+        loaded_pickle = self._states_io_file_system.get_pickle_from_file_system(abs_path)
         return loaded_pickle
 
     @property
-    def embedded_templates(self):
+    def embedded_template_names(self):
         folder_path = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_pickles)
         return self._file_system_io.get_file_names(folder_path, self.negative_list)
 
     @property
-    def embedded_macros(self):
+    def embedded_macro_names(self):
         folder_path = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_commands)
         return self._file_system_io.get_file_names(folder_path)
 
@@ -102,10 +99,6 @@ class GateWays(GateWayABC):
     def change_path_command_pickles(self, directory: str):
         if directory[-1] != '/':
             directory += '/'
-
-    @property
-    def entities(self) -> Entities:
-        return self._entities
 
     def undo(self):
         self._states_io_memory.undo()
@@ -202,7 +195,7 @@ class GateWays(GateWayABC):
             user_files = self._file_system_io.get_file_names(self.path_pickles)
             return user_files
         except FileNotFoundError:
-            return self.embedded_templates
+            return self.embedded_template_names
 
     @property
     def pickle_macro_file_names(self) -> list:
@@ -216,7 +209,7 @@ class GateWays(GateWayABC):
             return user_files
 
         try:
-            user_files = self.embedded_macros
+            user_files = self.embedded_macro_names
         except FileNotFoundError:
             user_files = []
         return user_files
@@ -224,21 +217,21 @@ class GateWays(GateWayABC):
     def restore_state(self, entities: Entities, pickle_name: str):
         system_state = SystemState(entities)
         if self._project_folder is None:
-            memento = self._states_io_file_system.get_memento_from_package(self._package_pickles, pickle_name)
+            memento = self._states_io_file_system.get_pickle_from_package(self._package_pickles, pickle_name)
             if memento is None:
                 relative_path = os.path.join(self._relative_path_to_pickles, pickle_name)
                 file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
-                memento = self._states_io_file_system.get_memento_from_file_system(file_path)
+                memento = self._states_io_file_system.get_pickle_from_file_system(file_path)
             if memento is not None:
                 system_state.restore(memento)
             return
 
         file_path = Paths.get_path(self.path_pickles, pickle_name)
-        memento = self._states_io_file_system.get_memento_from_file_system(file_path)
+        memento = self._states_io_file_system.get_pickle_from_file_system(file_path)
         try:
             system_state.restore(memento)
         except AttributeError:
-            memento = self._states_io_file_system.get_memento_from_package(self._package_pickles, pickle_name)
+            memento = self._states_io_file_system.get_pickle_from_package(self._package_pickles, pickle_name)
             system_state.restore(memento)
 
     def save_all_sates_to_file(self, file_name='all states'):

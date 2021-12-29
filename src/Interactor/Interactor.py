@@ -76,14 +76,14 @@ class Interactor(BoundaryInABC):
         self.add_new_worksheet('Sheet1')
         self._present_connection_ids()
 
-        last_load_config_data = self.load_pickle_by_abs_path(self._load_config.config_file_path)
+        last_load_config_data = self.get_pickle_from_file_system(self._load_config.config_file_path)
         if last_load_config_data is None:
             self._gateways.create_load_config_folder(self._load_config.folder_name, 'Documents')
         else:
             self._load_config.restore(last_load_config_data)
             path = self._load_config.last_project_path
             if path is not None:
-                data = self.load_pickle_by_abs_path(self._load_config.config_file_path)
+                data = self.get_pickle_from_file_system(self._load_config.config_file_path)
                 self._load_config.restore(data)
                 self.set_project_folder_path(path)
 
@@ -2768,11 +2768,8 @@ class Interactor(BoundaryInABC):
     def save_any_data_as_pickle(self, file_name_abs_path, data):
         self._gateways.save_object_as_pickle(file_name_abs_path, data)
 
-    def load_pickle_by_package(self, package, file_name):
-        return self._gateways.get_resource_pickle_load_by_package(file_name, package)
-
-    def load_pickle_by_abs_path(self, abs_path):
-        return self._gateways.get_resource_pickle_load_by_abs_path(abs_path)
+    def get_pickle_from_file_system(self, abs_path):
+        return self._gateways.get_pickle_from_file_system(abs_path)
 
     # Save Canvas
     def plug_in_canvas_image_saver(self, image_saver: Callable):
