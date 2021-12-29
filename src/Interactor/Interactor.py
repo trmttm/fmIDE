@@ -176,7 +176,7 @@ class Interactor(BoundaryInABC):
 
     def clear_project_history(self):
         self._load_config.clear()
-        self._present_feedback_user('Project history cleard.', 'success')
+        self._present_feedback_user('Project history cleared.', 'success')
 
     @property
     def project_folder(self):
