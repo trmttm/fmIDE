@@ -71,7 +71,7 @@ class GateWays(GateWayABC):
         return self._file_system_io.get_file_names(folder_path, self.negative_list)
 
     @property
-    def embedded_macros(self):
+    def embedded_macro_names(self):
         folder_path = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_commands)
         return self._file_system_io.get_file_names(folder_path)
 
@@ -213,7 +213,7 @@ class GateWays(GateWayABC):
             return user_files
 
         try:
-            user_files = self.embedded_macros
+            user_files = self.embedded_macro_names
         except FileNotFoundError:
             user_files = []
         return user_files
