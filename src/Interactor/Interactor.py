@@ -2768,9 +2768,6 @@ class Interactor(BoundaryInABC):
     def save_any_data_as_pickle(self, file_name_abs_path, data):
         self._gateways.save_object_as_pickle(file_name_abs_path, data)
 
-    def load_pickle_by_package(self, package, file_name):
-        return self._gateways.get_resource_pickle_load_by_package(file_name, package)
-
     def load_pickle_by_abs_path(self, abs_path):
         return self._gateways.get_resource_pickle_load_by_abs_path(abs_path)
 
