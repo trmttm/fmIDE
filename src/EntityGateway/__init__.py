@@ -22,7 +22,7 @@ class GateWays(GateWayABC):
     negative_list = ('.DS_Store', 'pickle_for_unit_test', '__init__.py', '__pycache__')
     _relative_path_to_pickles = 'src/Pickles'
     _relative_path_to_commands = 'src/PicklesCommands'
-    _relative_path_to_vba_binary = 'src.Resources'
+    _relative_path_to_vba_binary = 'src/Resources'
     _vba_binary_name = 'vbaProject.bin'
     _templates_directory = 'Templates'
     _commands_directory = 'Macros'
