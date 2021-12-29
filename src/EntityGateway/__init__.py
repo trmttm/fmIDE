@@ -147,11 +147,9 @@ class GateWays(GateWayABC):
             self._states_io_file_system.load_state_from_file_system(file_path)
             return
 
-        if self._project_folder is None:
-            self._states_io_file_system.load_state(file_name, self._package_pickles)
-            return
         try:
-            file_path = get_path(self.path_pickles, file_name)
+            relative_path = os.path.join(self._relative_path_to_pickles, file_name)
+            file_path = get_proper_path_depending_on_development_or_distribution(relative_path)
             self._states_io_file_system.load_state_from_file_system(file_path)
         except AttributeError:
             self._states_io_file_system.load_state(file_name, self._package_pickles)
