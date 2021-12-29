@@ -99,7 +99,7 @@ class GateWays(GateWayABC):
 
     @property
     def path_vba_binary(self):
-        return f'{self._relative_path_to_vba_binary}/{self._vba_binary_name}/'
+        return f'{self._relative_path_to_vba_binary}/{self._vba_binary_name}'
 
     def change_path_pickles(self, directory: str):
         self._package_pickles = 'src.Tests.pickles'
