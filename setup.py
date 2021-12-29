@@ -20,6 +20,7 @@ setup(
     data_files=[
         ('src/Pickles', glob.glob('src/Pickles/*')),
         ('src/PicklesCommands', glob.glob('src/PicklesCommands/*')),
+        ('src/Resources', glob.glob('src/Resources/*')),
     ],
     options={
         'py2exe': {
