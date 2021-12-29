@@ -66,7 +66,7 @@ class GateWays(GateWayABC):
         return loaded_pickle
 
     @property
-    def embedded_templates(self):
+    def embedded_template_names(self):
         folder_path = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_pickles)
         return self._file_system_io.get_file_names(folder_path, self.negative_list)
 
@@ -199,7 +199,7 @@ class GateWays(GateWayABC):
             user_files = self._file_system_io.get_file_names(self.path_pickles)
             return user_files
         except FileNotFoundError:
-            return self.embedded_templates
+            return self.embedded_template_names
 
     @property
     def pickle_macro_file_names(self) -> list:
