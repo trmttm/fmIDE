@@ -135,40 +135,33 @@ class GateWays(GateWayABC):
         return feedback
 
     def load_file(self, file_name: str):
+        load_from_file_system = self._states_io_file_system.load_state_from_file_system
+        load_from_package = self._states_io_file_system.load_state_from_package
+        self._do_the_right_thing_to_handle_template(file_name, load_from_file_system, load_from_package)
+
+    def merge_file(self, file_name: str):
+        merge_from_file_system = self._states_io_file_system.merge_state_from_file_system
+        merge_from_package = self._states_io_file_system.merge_state_from_package
+        self._do_the_right_thing_to_handle_template(file_name, merge_from_file_system, merge_from_package)
+
+    def _do_the_right_thing_to_handle_template(self, file_name, method_file_system, method_package):
         if self._test_path_pickles is not None:
             file_path = Paths.get_path(self._test_path_pickles, file_name)
-            self._states_io_file_system.load_state_from_file_system(file_path)
-            return
+            method_file_system(file_path)
+        else:
+            file_path = self.get_proper_file_system_template_path(file_name)
+            try:
+                method_file_system(file_path)
+            except AttributeError:
+                method_package(file_name, self._package_pickles)
 
+    def get_proper_file_system_template_path(self, file_name):
         if self._project_folder is not None:
             relative_path = os.path.join(self.path_pickles, file_name)
         else:
             relative_path = os.path.join(self._relative_path_to_pickles, file_name)
         file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
-
-        try:
-            self._states_io_file_system.load_state_from_file_system(file_path)
-        except AttributeError:
-            self._states_io_file_system.load_state_from_package(file_name, self._package_pickles)
-
-    def load_pickle(self, package, file_name):
-        return self._states_io_file_system.load_state_from_package(file_name, package)
-
-    def load_macro_file(self, file_name: str):
-        self._command_io_file_system.load_state_from_package(file_name, self._package_pickles_commands)
-
-    def merge_file(self, file_name: str):
-        if self._test_path_pickles is not None:
-            file_path = Paths.get_path(self._test_path_pickles, file_name)
-            self._states_io_file_system.merge_state_from_file_system(file_path)
-            return
-
-        try:
-            relative_path = os.path.join(self._relative_path_to_pickles, file_name)
-            file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
-            self._states_io_file_system.merge_state_from_file_system(file_path)
-        except AttributeError:
-            self._states_io_file_system.merge_state_from_package(file_name, self._package_pickles)
+        return file_path
 
     def merge_macro_file(self, file_name: str):
         try:
