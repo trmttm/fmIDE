@@ -22,6 +22,7 @@ class GateWays(GateWayABC):
     negative_list = ('.DS_Store', 'pickle_for_unit_test', '__init__.py', '__pycache__')
     _relative_path_to_pickles = 'src/Pickles'
     _relative_path_to_commands = 'src/PicklesCommands'
+    _package_resource = 'src.Resources'
     _relative_path_to_vba_binary = 'src/Resources'
     _vba_binary_name = 'vbaProject.bin'
     _templates_directory = 'Templates'
@@ -61,7 +62,7 @@ class GateWays(GateWayABC):
             Utilities.remove_file_or_directory(os.path.join(directory_to, self._commands_directory, item))
 
     def get_vba_binary(self):
-        file_name, package = self._vba_binary_name, self._relative_path_to_vba_binary
+        file_name, package = self._vba_binary_name, self._package_resource
         vba_binary = self._states_io_file_system.get_resource_from_package(file_name, package)
         app_is_not_frozen_by_pyoxidizer = vba_binary is None
         if app_is_not_frozen_by_pyoxidizer:
