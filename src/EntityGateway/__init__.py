@@ -58,8 +58,8 @@ class GateWays(GateWayABC):
             Utilities.remove_file_or_directory(os.path.join(directory_to, self._templates_directory, item))
             Utilities.remove_file_or_directory(os.path.join(directory_to, self._commands_directory, item))
 
-    def get_resource(self, file_name, package):
-        return self._states_io_file_system.get_resource(file_name, package)
+    def get_resource_from_package(self, file_name, package):
+        return self._states_io_file_system.get_resource_from_package(file_name, package)
 
     def get_resource_pickle_load_by_package(self, file_name, package):
         return self._states_io_file_system.get_memento_from_package(package, file_name)

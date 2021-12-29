@@ -23,17 +23,26 @@ class StateIOFile(SaveStateABC):
         memento = self.get_memento_from_package(package, file_name)
         self._caretaker.restore(memento)
 
-    def load_state_from_file_system(self, file_path):
-        memento = self.get_memento_from_file_system(file_path)
-        self._caretaker.restore(memento)
-
     def merge_state_from_package(self, file_name, package):
         memento = self.get_memento_from_package(package, file_name)
         self._caretaker.restore_merge(memento)
 
+    def load_state_from_file_system(self, file_path):
+        memento = self.get_memento_from_file_system(file_path)
+        self._caretaker.restore(memento)
+
     def merge_state_from_file_system(self, file_path):
         memento = self.get_memento_from_file_system(file_path)
         self._caretaker.restore_merge(memento)
+
+    @staticmethod
+    def get_memento_from_package(package, file_name):
+        try:
+            with importlib.resources.open_binary(package, file_name) as f:
+                memento = pickle.load(f)
+        except FileNotFoundError:
+            memento = None
+        return memento
 
     @staticmethod
     def get_memento_from_file_system(file_path):
@@ -44,6 +53,12 @@ class StateIOFile(SaveStateABC):
             memento = None
         return memento
 
+    @staticmethod
+    def get_resource_from_package(file_name, package):
+        with importlib.resources.open_binary(package, file_name) as f:
+            resource = io.BytesIO(f.read())
+        return resource
+
     def save_all_sates(self, file_path=''):
         with open(file_path, 'wb') as f:
             pickle.dump(self._caretaker.all_states, f)
@@ -51,21 +66,6 @@ class StateIOFile(SaveStateABC):
     def restore_all_states(self, file_name, package):
         memento = self.get_memento_from_package(package, file_name)
         self._caretaker.restore_all_states(memento)
-
-    @staticmethod
-    def get_resource(file_name, package):
-        with importlib.resources.open_binary(package, file_name) as f:
-            resource = io.BytesIO(f.read())
-        return resource
-
-    @staticmethod
-    def get_memento_from_package(package, file_name):
-        try:
-            with importlib.resources.open_binary(package, file_name) as f:
-                memento = pickle.load(f)
-        except FileNotFoundError:
-            memento = None
-        return memento
 
     @property
     def save_result(self) -> str:
