@@ -163,9 +163,6 @@ class GateWays(GateWayABC):
         file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
         return file_path
 
-    def load_pickle(self, package, file_name):
-        return self._states_io_file_system.load_state_from_package(file_name, package)
-
     def load_macro_file(self, file_name: str):
         self._command_io_file_system.load_state_from_package(file_name, self._package_pickles_commands)
 
