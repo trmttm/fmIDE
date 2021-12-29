@@ -296,7 +296,7 @@ class GateWays(GateWayABC):
 
     def attach_to_notification(self, observer):
         if observer not in self._observers:
-            self._observers += observer
+            self._observers += (observer, )
 
     def notify(self, notification: str, type=None):
         for observer in self._observers:
