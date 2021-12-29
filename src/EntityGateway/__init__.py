@@ -62,7 +62,7 @@ class GateWays(GateWayABC):
         return self._states_io_file_system.get_resource(file_name, package)
 
     def get_resource_pickle_load_by_package(self, file_name, package):
-        return self._states_io_file_system.get_resource_pickle_load_by_package(package, file_name)
+        return self._states_io_file_system.get_memento_from_package(package, file_name)
 
     def get_resource_pickle_load_by_abs_path(self, abs_path):
         loaded_pickle = self._states_io_file_system.get_resource_pickle_load_by_file_path(abs_path)
@@ -121,7 +121,7 @@ class GateWays(GateWayABC):
             return False
 
     def load_state(self, memento):
-        self._states_io_memory.load_state(memento)
+        self._states_io_memory.load_state_from_package(memento)
 
     @property
     def save_result(self) -> str:
@@ -152,13 +152,13 @@ class GateWays(GateWayABC):
             file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
             self._states_io_file_system.load_state_from_file_system(file_path)
         except AttributeError:
-            self._states_io_file_system.load_state(file_name, self._package_pickles)
+            self._states_io_file_system.load_state_from_package(file_name, self._package_pickles)
 
     def load_pickle(self, package, file_name):
-        return self._states_io_file_system.load_state(file_name, package)
+        return self._states_io_file_system.load_state_from_package(file_name, package)
 
     def load_macro_file(self, file_name: str):
-        self._command_io_file_system.load_state(file_name, self._package_pickles_commands)
+        self._command_io_file_system.load_state_from_package(file_name, self._package_pickles_commands)
 
     def merge_file(self, file_name: str):
         if self._test_path_pickles is not None:
@@ -171,7 +171,7 @@ class GateWays(GateWayABC):
             file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
             self._states_io_file_system.merge_state_from_file_system(file_path)
         except AttributeError:
-            self._states_io_file_system.merge_state(file_name, self._package_pickles)
+            self._states_io_file_system.merge_state_from_package(file_name, self._package_pickles)
 
     def merge_macro_file(self, file_name: str):
         try:
@@ -179,7 +179,7 @@ class GateWays(GateWayABC):
             file_path = Paths.get_proper_path_depending_on_development_or_distribution(relative_path)
             self._command_io_file_system.merge_state_from_file_system(file_path)
         except AttributeError:
-            self._command_io_file_system.merge_state(file_name, self._package_pickles_commands)
+            self._command_io_file_system.merge_state_from_package(file_name, self._package_pickles_commands)
 
     def remove_template(self, file_name) -> str:
         return self._remove_pickle(self.path_pickles, file_name)

@@ -8,7 +8,7 @@ class SaveStateABC(ABC):
         pass
 
     @abstractmethod
-    def load_state(self, file_name, package):
+    def load_state_from_package(self, file_name, package):
         pass
 
     @abstractmethod

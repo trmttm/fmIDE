@@ -19,15 +19,15 @@ class StateIOFile(SaveStateABC):
         except Exception as e:
             return e
 
-    def load_state(self, file_name, package):
-        memento = self.get_resource_pickle_load_by_package(package, file_name)
+    def load_state_from_package(self, file_name, package):
+        memento = self.get_memento_from_package(package, file_name)
         self._caretaker.restore(memento)
 
     def load_state_from_file_system(self, file_path):
         memento = self.get_memento_from_file_system(file_path)
         self._caretaker.restore(memento)
 
-    def merge_state(self, file_name, package):
+    def merge_state_from_package(self, file_name, package):
         memento = self.get_memento(file_name, package)
         self._caretaker.restore_merge(memento)
 
@@ -40,7 +40,7 @@ class StateIOFile(SaveStateABC):
         return memento
 
     def get_pickle(self, file_name, package):
-        memento = self.get_resource_pickle_load_by_package(package, file_name)
+        memento = self.get_memento_from_package(package, file_name)
         return memento
 
     @staticmethod
@@ -53,7 +53,7 @@ class StateIOFile(SaveStateABC):
             pickle.dump(self._caretaker.all_states, f)
 
     def restore_all_states(self, file_name, package):
-        memento = self.get_resource_pickle_load_by_package(package, file_name)
+        memento = self.get_memento_from_package(package, file_name)
         self._caretaker.restore_all_states(memento)
 
     @staticmethod
@@ -63,7 +63,7 @@ class StateIOFile(SaveStateABC):
         return resource
 
     @staticmethod
-    def get_resource_pickle_load_by_package(package, file_name):
+    def get_memento_from_package(package, file_name):
         try:
             with importlib.resources.open_binary(package, file_name) as f:
                 memento = pickle.load(f)
