@@ -20,38 +20,38 @@ class StateIOFile(SaveStateABC):
             return e
 
     def load_state_from_package(self, file_name, package):
-        memento = self.get_memento_from_package(package, file_name)
+        memento = self.get_pickle_from_package(package, file_name)
         self._caretaker.restore(memento)
 
     def merge_state_from_package(self, file_name, package):
-        memento = self.get_memento_from_package(package, file_name)
+        memento = self.get_pickle_from_package(package, file_name)
         self._caretaker.restore_merge(memento)
 
     def load_state_from_file_system(self, file_path):
-        memento = self.get_memento_from_file_system(file_path)
+        memento = self.get_pickle_from_file_system(file_path)
         self._caretaker.restore(memento)
 
     def merge_state_from_file_system(self, file_path):
-        memento = self.get_memento_from_file_system(file_path)
+        memento = self.get_pickle_from_file_system(file_path)
         self._caretaker.restore_merge(memento)
 
     @staticmethod
-    def get_memento_from_package(package, file_name):
+    def get_pickle_from_package(package, file_name):
         try:
             with importlib.resources.open_binary(package, file_name) as f:
-                memento = pickle.load(f)
+                pickle_data = pickle.load(f)
         except FileNotFoundError:
-            memento = None
-        return memento
+            pickle_data = None
+        return pickle_data
 
     @staticmethod
-    def get_memento_from_file_system(file_path):
+    def get_pickle_from_file_system(file_path):
         try:
             with open(file_path, 'rb') as f:
-                memento = pickle.load(f)
+                pickle_data = pickle.load(f)
         except FileNotFoundError:
-            memento = None
-        return memento
+            pickle_data = None
+        return pickle_data
 
     @staticmethod
     def get_resource_from_package(file_name, package):
@@ -64,7 +64,7 @@ class StateIOFile(SaveStateABC):
             pickle.dump(self._caretaker.all_states, f)
 
     def restore_all_states(self, file_name, package):
-        memento = self.get_memento_from_package(package, file_name)
+        memento = self.get_pickle_from_package(package, file_name)
         self._caretaker.restore_all_states(memento)
 
     @property
