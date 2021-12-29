@@ -53,7 +53,7 @@ class Interactor(BoundaryInABC):
         self._previous_commands = []
 
         """
-        Below cache are not part of configuration (therefore states) because they;
+        Below cache are NOT part of configuration (therefore states) because they;
             1) are so expensive to save!
             2) have to be independent of pickles
         """
