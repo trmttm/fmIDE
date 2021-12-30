@@ -23,7 +23,7 @@ from . import selection as sel
 from . import slider
 from . import spotlight
 from . import vba_udf
-from .load_config import LoadConfiguration
+from .TempStates import TemporaryStatesAndFlags
 from .. import RequestModel
 from .. import ResponseModel
 from .. import Utilities
@@ -54,16 +54,7 @@ class Interactor(BoundaryInABC):
         self._previous_previous_commands = []
         self._previous_commands = []
 
-        """
-        Below cache are NOT part of configuration (therefore states) because they;
-            1) are so expensive to save!
-            2) have to be independent of pickles
-        """
-        self._cache_data_table = {}
-        self._cache_audit_results = None
-        self._cache_response_model_for_presenter_connection = None
-        self._connections_filtered = None
-        self._load_config = LoadConfiguration()
+        self._tsf = TemporaryStatesAndFlags()
 
         # Plug-ins
         self._spreadsheet: Union[None, SpreadsheetABC] = None
@@ -76,27 +67,27 @@ class Interactor(BoundaryInABC):
         self.add_new_worksheet('Sheet1')
         self._present_connection_ids()
 
-        last_load_config_data = self.get_pickle_from_file_system(self._load_config.config_file_path)
+        last_load_config_data = self.get_pickle_from_file_system(self._tsf.load_config.config_file_path)
         if last_load_config_data is None:
-            self._gateways.create_load_config_folder(self._load_config.folder_name, 'Documents')
+            self._gateways.create_load_config_folder(self._tsf.load_config.folder_name, 'Documents')
         else:
-            self._load_config.restore(last_load_config_data)
-            path = self._load_config.last_project_path
+            self._tsf.load_config.restore(last_load_config_data)
+            path = self._tsf.load_config.last_project_path
             if path is not None:
-                data = self.get_pickle_from_file_system(self._load_config.config_file_path)
-                self._load_config.restore(data)
+                data = self.get_pickle_from_file_system(self._tsf.load_config.config_file_path)
+                self._tsf.load_config.restore(data)
                 self.set_project_folder_path(path)
 
         self.save_state_to_memory()
 
     def tear_down(self):
-        self._load_config.save_last_state(self.current_state)
-        data = self._load_config.load_config_data
-        self.save_any_data_as_pickle(self._load_config.config_file_path, data)
+        self._tsf.load_config.save_last_state(self.current_state)
+        data = self._tsf.load_config.load_config_data
+        self.save_any_data_as_pickle(self._tsf.load_config.config_file_path, data)
 
     @property
     def recent_project_paths(self) -> tuple:
-        return tuple(self._load_config.recent_project_paths)
+        return tuple(self._tsf.load_config.recent_project_paths)
 
     @property
     def entities(self) -> Entities:
@@ -156,11 +147,11 @@ class Interactor(BoundaryInABC):
     # Configuration
     def set_project_folder_path(self, path):
         if Utilities.is_directory(path):
-            self._load_config.set_opening_project(path)
+            self._tsf.load_config.set_opening_project(path)
             self._gateways.set_project_folder(path)
             self.set_save_path(path)
 
-            last_state = self._load_config.last_state
+            last_state = self._tsf.load_config.last_state
             if last_state is not None:
                 memento = Memento(last_state)
                 self.load_memento(memento)
@@ -175,12 +166,12 @@ class Interactor(BoundaryInABC):
             self.set_project_folder_path(path)
 
     def clear_project_history(self):
-        self._load_config.clear()
+        self._tsf.load_config.clear()
         self._present_feedback_user('Project history cleared.', 'success')
 
     @property
     def project_folder(self):
-        return self._load_config.opening_project
+        return self._tsf.load_config.opening_project
 
     @property
     def _clean_state_prior_to_save(self) -> bool:
@@ -263,7 +254,7 @@ class Interactor(BoundaryInABC):
         return self._entities.configurations.save_file_name
 
     def set_save_path(self, folder_path):
-        self._load_config.set_opening_project(folder_path)
+        self._tsf.load_config.set_opening_project(folder_path)
 
     # Configuration - Export Excel Setting
     def turn_on_insert_sheet_names_in_input_sheet(self):
@@ -318,7 +309,7 @@ class Interactor(BoundaryInABC):
 
     @property
     def save_path(self):
-        return self._load_config.opening_project or Utilities.desktop
+        return self._tsf.load_config.opening_project or Utilities.desktop
 
     @property
     def pickle_path(self):
@@ -337,7 +328,7 @@ class Interactor(BoundaryInABC):
         if request is not None:
             entry_by = request['entry_by']
             if entry_by == 'mouse':
-                self._connections_filtered = self.connections_filtered
+                self._tsf.set_connections_filtered(self.connections_filtered)
         self._entry_by.append(entry_by)
 
         """
@@ -359,7 +350,7 @@ class Interactor(BoundaryInABC):
         if not self._previous_commands:
             self._previous_commands = list(self._previous_previous_commands)
         if exit_by == 'mouse':
-            self._connections_filtered = None
+            self._tsf.clear_connections_filtered()
             self._upon_selection(self._selection.data)
 
     def set_previous_command(self, f: Callable, args: tuple, kwargs: dict):
@@ -1181,10 +1172,10 @@ class Interactor(BoundaryInABC):
         self._cache_circular_connections = ()
 
     def _present_connections(self, connections_selected):
-        if self._cache_response_model_for_presenter_connection is None:
+        if not self._tsf.connection_model_is_cached:
             response_model = self._create_response_model_for_presenter_connection(connections_selected)
         else:
-            response_model = self._cache_response_model_for_presenter_connection
+            response_model = self._tsf.cache_response_model_for_presenter_connection
         self._presenters.connect_shapes(response_model)
 
     def _create_response_model_for_presenter_connection(self, connections_selected=None):
@@ -1202,7 +1193,7 @@ class Interactor(BoundaryInABC):
 
     @property
     def connections_filtered(self) -> set:
-        if self._connections_filtered is None:
+        if not self._tsf.connections_filetered_are_cached:
             connections = self._connections.data
             sht_contents = self.sheet_contents
             selected = self._selection.data
@@ -1218,7 +1209,7 @@ class Interactor(BoundaryInABC):
             args = sht_contents, selected, relays, y_axes, bars, na, accounts, live_values
             connections_filtered = set(c for c in connections if imp9.connection_filter(c, *args))
         else:
-            connections_filtered = self._connections_filtered
+            connections_filtered = self._tsf.connections_filtered
         return connections_filtered
 
     # Line
@@ -1875,11 +1866,10 @@ class Interactor(BoundaryInABC):
         self._manually_highlighted = True
 
     def _get_audit_results(self, shape_ids: Iterable) -> list:
-        if self._cache_audit_results is not None:
-            audit_results = self._cache_audit_results
+        if self._tsf.audit_results_are_cached:
+            audit_results = self._tsf.cache_audit_results
         else:
             audit_results = [self._get_audit_result(shape_id) for shape_id in shape_ids]
-            # self._cache_audit_results = audit_results
         return audit_results
 
     def _get_audit_result(self, shape_id) -> dict:
@@ -2798,13 +2788,13 @@ class Interactor(BoundaryInABC):
         self.clear_cache_slider()
 
     def cache_audit_results(self):
-        self._cache_audit_results = self._get_audit_results(self._get_minimum_shape_ids_to_update())
-        self._cache_response_model_for_presenter_connection = self._create_response_model_for_presenter_connection()
+        self._tsf.set_cache_audit_results(self._get_audit_results(self._get_minimum_shape_ids_to_update()))
+        self._tsf.set_connection_model(self._create_response_model_for_presenter_connection())
         self.feedback_user('Cached.', 'success')
 
     def clear_cache_audit_results(self):
-        self._cache_audit_results = None
-        self._cache_response_model_for_presenter_connection = None
+        self._tsf.clear_audit_results()
+        self._tsf.clear_connection_model()
 
     def cache_slider(self):
         selected_shapes = self._selection.data
@@ -2816,7 +2806,7 @@ class Interactor(BoundaryInABC):
 
     def update_data_table_upon_slider_action(self, handle_ids: tuple):
         key = caching.get_data_table_cache_key_from_handle_ids(handle_ids, self._connections, self._shapes)
-        dt = caching.get_data_table_from_cache(key, self._cache_data_table, self.feedback_user)
+        dt = caching.get_data_table_from_cache(key, self._tsf.cache_data_table, self.feedback_user)
         self._update_graph_bars_and_live_values(dt)
 
     def cache_data_table(self, input_ids: tuple, input_values: tuple):
@@ -2830,7 +2820,7 @@ class Interactor(BoundaryInABC):
             cache[key] = data_table
             self._present_feedback_user(f'Caching {n}/{total_steps}', is_incremental_progress=True)
         self._present_feedback_user(f'Caching complete!', 'success')
-        self._cache_data_table = cache
+        self._tsf.set_cache_data_table(cache)
 
     def clear_cache_slider(self):
-        self._cache_data_table = {}
+        self._tsf.clear_cache_data_table()
