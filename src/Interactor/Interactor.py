@@ -46,7 +46,6 @@ class Interactor(BoundaryInABC):
         gateways.attach_to_notification(self._present_feedback_user)
 
         # temporary states and flags
-        self._previous_previous_commands = []
         self._previous_commands = []
         self._sf = StatesAndFlags()
 
@@ -333,7 +332,7 @@ class Interactor(BoundaryInABC):
         as the previous command. For example, changing frames from Design -> Macro -> Design has no impacts on the 
         state and therefore previous command should not be impacted either
         """
-        self._previous_previous_commands = tuple(self._previous_commands)
+        self._sf.set_previous_previous_commands(self._previous_commands)
         self._previous_commands = []
 
     def exit_point(self, exit_by: str = None, request: dict = None):
@@ -344,7 +343,7 @@ class Interactor(BoundaryInABC):
         self._sf.clear_initial_shape_position()
 
         if not self._previous_commands:
-            self._previous_commands = list(self._previous_previous_commands)
+            self._previous_commands = list(self._sf.previous_previous_commands)
         if exit_by == 'mouse':
             self._cache.clear_connections_filtered()
             self._upon_selection(self._selection.data)

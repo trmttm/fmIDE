@@ -7,7 +7,7 @@ class StatesAndFlags:
         self._input_being_modified = None
         self._cache_circular_connections = None
         self._prevent_auto_highlight = False
-        self._previous_previous_commands = []
+        self._previous_previous_commands = ()
         self._previous_commands = []
 
     @property
@@ -106,6 +106,9 @@ class StatesAndFlags:
     @property
     def previous_previous_commands(self):
         return self._previous_previous_commands
+
+    def set_previous_previous_commands(self, previous_commands):
+        self._previous_commands = tuple(previous_commands)
 
     @property
     def previous_commands(self):
