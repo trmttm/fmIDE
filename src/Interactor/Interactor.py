@@ -25,6 +25,7 @@ from . import spotlight
 from . import vba_udf
 from .cache import Cache
 from .load_config import LoadConfiguration
+from .states_and_flags import StatesAndFlags
 from .. import RequestModel
 from .. import ResponseModel
 from .. import Utilities
@@ -44,17 +45,7 @@ class Interactor(BoundaryInABC):
 
         gateways.attach_to_notification(self._present_feedback_user)
 
-        # temporary states and flags
-        self._entry_by = []
-        self._copied_accounts = tuple()
-        self._initial_shape_position = None
-        self._manually_highlighted = False
-        self._input_being_modified = None
-        self._cache_circular_connections = None
-        self._prevent_auto_highlight = False
-        self._previous_previous_commands = []
-        self._previous_commands = []
-
+        self._sf = StatesAndFlags()
         self._load_config = LoadConfiguration()
         self._cache = Cache()
 
@@ -126,7 +117,7 @@ class Interactor(BoundaryInABC):
 
     @property
     def copied_account_names(self) -> tuple:
-        return tuple(self._shapes.get_text(shape_id) for shape_id in self._copied_accounts)
+        return tuple(self._shapes.get_text(shape_id) for shape_id in self._sf.copied_accounts)
 
     @property
     def input_accounts(self) -> tuple:
@@ -331,60 +322,49 @@ class Interactor(BoundaryInABC):
             entry_by = request['entry_by']
             if entry_by == 'mouse':
                 self._cache.set_connections_filtered(self.connections_filtered)
-        self._entry_by.append(entry_by)
-
-        """
-        If the actions following set_entry_point has no impacts on the state, then restore previous_previous commands
-        as the previous command. For example, changing frames from Design -> Macro -> Design has no impacts on the 
-        state and therefore previous command should not be impacted either
-        """
-        self._previous_previous_commands = tuple(self._previous_commands)
-        self._previous_commands = []
+        self._sf.set_entry_by(entry_by)
+        self._sf.set_previous_commands_to_previous_previous_commands()
 
     def exit_point(self, exit_by: str = None, request: dict = None):
         if request is not None:
             exit_by = request['exit_by']
-        if exit_by in self._entry_by:
-            index_ = self._entry_by.index(exit_by)
-            del self._entry_by[index_]
-        self._initial_shape_position = None
+        if exit_by in self._sf.entry_by:
+            self._sf.remove_entry_by(exit_by)
+        self._sf.clear_initial_shape_position()
 
-        if not self._previous_commands:
-            self._previous_commands = list(self._previous_previous_commands)
+        if self._sf.previous_commands_are_not_set:
+            self._sf.set_previous_commands(self._sf.previous_previous_commands)
         if exit_by == 'mouse':
             self._cache.clear_connections_filtered()
             self._upon_selection(self._selection.data)
 
     def set_previous_command(self, f: Callable, args: tuple, kwargs: dict):
-        self._previous_commands.append((f, args, kwargs))
+        self._sf.append_previous_commands((f, args, kwargs))
 
     def execute_previous_command(self):
         feedback = ''
-        for f, args, kwargs in self._previous_commands:
+        for f, args, kwargs in self._sf.previous_commands:
             f(*args, **kwargs)
             feedback += f'{f.__name__}({args},{kwargs}), '
         self.feedback_user(f'Invoked previous actions {feedback}')
 
     def upon_exception(self, *args, **kwargs):
-        entry_by = self._entry_by
-        self._entry_by = []
+        entry_by = self._sf.entry_by
         exception = args[1]
         self._present_feedback_user(exception.__repr__(), 'error')
 
-        if entry_by != [] and entry_by[0] == 'tree_pickle_files':
+        if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
+        self._sf.clear_entry_by()
         raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
-        try:
-            return self._entry_by[0] == 'mouse'
-        except IndexError:
-            return False
+        return self._sf.entry_by_mouse
 
     # Input Entry
     def set_input_y_range(self, y_range: tuple):
-        self._set_input_y_range(self._input_being_modified, y_range)
+        self._set_input_y_range(self._sf.input_being_modified, y_range)
 
     def _set_input_y_range(self, input_account, y_range):
         self._input_ranges.set_range(input_account, y_range)
@@ -400,14 +380,14 @@ class Interactor(BoundaryInABC):
         return self._input_decimals.get_decimals(input_account)
 
     def _set_input_being_modified(self, input_account):
-        self._input_being_modified = input_account
+        self._sf.set_input_being_modified(input_account)
 
     def clear_input_being_modified(self):
-        self._input_being_modified = None
+        self._sf.clear_input_being_modified()
 
     @property
     def input_being_modified(self):
-        return self._input_being_modified
+        return self._sf.input_being_modified
 
     def set_default_input_values_if_values_not_set(self):
         input_accounts = self.input_accounts
@@ -416,7 +396,7 @@ class Interactor(BoundaryInABC):
                 self._input_values.set_default_values(input_account, self.number_of_periods)
 
     def update_input_entry(self):
-        input_account = self._input_being_modified
+        input_account = self._sf.input_being_modified
         if input_account is not None:
             self._update_input_entry(input_account)
         else:
@@ -437,7 +417,8 @@ class Interactor(BoundaryInABC):
         self._change_input_to_modify(-1)
 
     def _change_input_to_modify(self, shift: int):
-        next_input = imp9.get_next_input_to_edit(self._input_being_modified, shift, self._get_sorted_input_accounts())
+        args = self._sf.input_being_modified, shift, self._get_sorted_input_accounts()
+        next_input = imp9.get_next_input_to_edit(*args)
         self._update_input_entry(next_input)
         self._set_input_being_modified(next_input)
 
@@ -447,12 +428,12 @@ class Interactor(BoundaryInABC):
         return input_accounts
 
     def set_values_to_input_being_modified(self, values: tuple):
-        input_account = self._input_being_modified
+        input_account = self._sf.input_being_modified
         if input_account is not None:
             self.set_input_values(input_account, values)
 
     def set_decimals_to_input_being_modified(self, decimals: int):
-        input_account = self._input_being_modified
+        input_account = self._sf.input_being_modified
         if input_account is not None:
             self.set_input_decimals(input_account, decimals)
 
@@ -564,11 +545,11 @@ class Interactor(BoundaryInABC):
 
     # Copy / Paste Accounts
     def copy_accounts(self):
-        self._copied_accounts = self.selected_accounts
+        self._sf.set_copied_accounts(self.selected_accounts)
 
     def paste_accounts(self):
-        self.add_relay_by_shape_ids(self._copied_accounts)
-        self._copied_accounts = tuple()
+        self.add_relay_by_shape_ids(self._sf.copied_accounts)
+        self._sf.clear_copied_accounts()
 
     # Selecting
     @property
@@ -719,7 +700,7 @@ class Interactor(BoundaryInABC):
     def move_selections_one_direction(self, request: dict):
         if len(self._selection.data) == 0:
             return
-        if self._initial_shape_position is None:
+        if self._sf.initial_shape_position_is_not_set:
             self._set_initial_positions(request)
 
         initial_x, initial_y, shape_x, shape_y = self._get_initial_positions()
@@ -732,7 +713,7 @@ class Interactor(BoundaryInABC):
     def move_selections_one_direction_and_evenly_distribute(self, request: dict):
         if len(self._selection.data) == 0:
             return
-        if self._initial_shape_position is None:
+        if self._sf.initial_shape_position_is_not_set:
             self._set_initial_positions(request)
 
         initial_x, initial_y, shape_x, shape_y = self._get_initial_positions()
@@ -751,16 +732,16 @@ class Interactor(BoundaryInABC):
     def _set_initial_positions(self, request):
         shape_id = imp9.get_shape_id_at_mouse_point(self._shapes, request, self.sheet_contents)
         if shape_id is None:
-            self._initial_shape_position = None
+            self._sf.clear_initial_shape_position()
             return
 
         shape_x, shape_y = self._shapes.get_x(shape_id), self._shapes.get_y(shape_id)
-        self._initial_shape_position = shape_id, shape_x, shape_y
+        self._sf.set_initial_shape_position(shape_id, shape_x, shape_y)
 
     def _get_initial_positions(self) -> tuple:
-        if self._initial_shape_position is None:
+        if self._sf.initial_shape_position_is_not_set:
             return None, None, None, None
-        shape_id, initial_x, initial_y = self._initial_shape_position
+        shape_id, initial_x, initial_y = self._sf.initial_shape_position
         shape_x, shape_y = self._shapes.get_x(shape_id), self._shapes.get_y(shape_id)
         return initial_x, initial_y, shape_x, shape_y
 
@@ -1100,7 +1081,7 @@ class Interactor(BoundaryInABC):
         if request is not None:
             id_from = self._shapes.get_shape_id_at_the_coordinate(request['x'], request['y'], self.sheet_contents)
         if id_from is not None:
-            if not self._manually_highlighted:
+            if not self._sf.manually_highlighted:
                 args = id_from, self._shapes, self.sheet_contents, self._connections, self._present_highlight_manual
                 imp9.show_connectable_shapes(*args)
 
@@ -1151,27 +1132,29 @@ class Interactor(BoundaryInABC):
         return imp9.is_cyclic(shape_id, self._connections, self._shapes)
 
     def analyze_circular_reference(self):
-        self._cache_circular_connections = self.get_circular_connections()
-        if self._cache_circular_connections == ():
+        circular_connections = self.get_circular_connections()
+        if circular_connections == ():
             self._present_feedback_user('No circular reference.', 'success')
             return
+        else:
+            self._sf.set_cache_circular_connections(circular_connections)
 
         cycle_breakers = imp9.get_cycle_breakers(self._connections, self._shapes)
         self._present_feedback_user(f'Cycle breakers = {cycle_breakers}')
         self._present_connect_shapes_and_show_circular_reference()
 
     def _present_connect_shapes(self, connections_selected: Iterable = None):
-        if self._cache_circular_connections is None:
-            self._cache_circular_connections = ()
+        if self._sf.circular_connections_is_not_cached:
+            self._sf.set_cache_circular_connections(())
         self._present_connections(connections_selected)
 
     def _present_connect_shapes_and_show_circular_reference(self, connections_selected: Iterable = None):
-        if self._cache_circular_connections is None:
-            self._cache_circular_connections = self.get_circular_connections()
+        if self._sf.circular_connections_is_not_cached:
+            self._sf.set_cache_circular_connections(self.get_circular_connections())
         self._present_connections(connections_selected)
 
     def _clear_circular_reference_cache(self):
-        self._cache_circular_connections = ()
+        self._sf.clear_cache_circular_connections()
 
     def _present_connections(self, connections_selected):
         if not self._cache.connection_model_is_cached:
@@ -1189,7 +1172,7 @@ class Interactor(BoundaryInABC):
 
         rm = ResponseModel.response_model_to_presenter_connect
         f = self._shapes.get_coords_from_shape_id
-        circular = self._cache_circular_connections
+        circular = self._sf.cache_circular_connections
         response_model = rm(self.connections_filtered, f, connections_selected, circular, no_arrows)
         return response_model
 
@@ -1407,7 +1390,7 @@ class Interactor(BoundaryInABC):
         self._present_update_account_order()
 
     def save_state_to_memory(self, save_name: str = ''):
-        if len(self._entry_by) > 0:
+        if self._sf.is_more_than_second_entry:
             return
 
         saved = self._gateways.save_state(save_name)
@@ -1848,24 +1831,24 @@ class Interactor(BoundaryInABC):
         audit_results = self._get_audit_results(shapes_to_highlight)
         response_model = ResponseModel.response_model_to_presenter_highlight_auto
         self._presenters.highlight_shape(response_model(audit_results))
-        self._manually_highlighted = False
+        self._sf.set_manually_highlighted(False)
 
     def stop_highlighting(self):
-        self._prevent_auto_highlight = True
+        self._sf.set_prevent_auto_highlight(True)
 
     def start_highlighting(self):
-        self._prevent_auto_highlight = False
+        self._sf.set_prevent_auto_highlight(False)
 
     @property
     def _auto_highlight_is_disabled(self) -> bool:
-        return self._prevent_auto_highlight
+        return self._sf.prevent_auto_highlight
 
     def _present_highlight_manual(self):
         args = self._shapes.data, self._shapes.get_canvas_tag_from_shape_id, self._shapes.shapes_ids
 
         response_model = ResponseModel.response_model_to_presenter_highlight_manual
         self._presenters.highlight_shape(response_model(*args))
-        self._manually_highlighted = True
+        self._sf.set_manually_highlighted(True)
 
     def _get_audit_results(self, shape_ids: Iterable) -> list:
         if self._cache.audit_results_are_cached:
