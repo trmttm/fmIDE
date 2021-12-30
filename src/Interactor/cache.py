@@ -1,4 +1,4 @@
-class TemporaryStatesAndFlags:
+class Cache:
     def __init__(self):
         """
         Below cache are NOT part of configuration (therefore states) because they;

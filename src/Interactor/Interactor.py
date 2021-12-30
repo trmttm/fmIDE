@@ -23,7 +23,7 @@ from . import selection as sel
 from . import slider
 from . import spotlight
 from . import vba_udf
-from .TempStates import TemporaryStatesAndFlags
+from .cache import Cache
 from .load_config import LoadConfiguration
 from .. import RequestModel
 from .. import ResponseModel
@@ -56,7 +56,7 @@ class Interactor(BoundaryInABC):
         self._previous_commands = []
 
         self._load_config = LoadConfiguration()
-        self._tsf = TemporaryStatesAndFlags()
+        self._cache = Cache()
 
         # Plug-ins
         self._spreadsheet: Union[None, SpreadsheetABC] = None
@@ -330,7 +330,7 @@ class Interactor(BoundaryInABC):
         if request is not None:
             entry_by = request['entry_by']
             if entry_by == 'mouse':
-                self._tsf.set_connections_filtered(self.connections_filtered)
+                self._cache.set_connections_filtered(self.connections_filtered)
         self._entry_by.append(entry_by)
 
         """
@@ -352,7 +352,7 @@ class Interactor(BoundaryInABC):
         if not self._previous_commands:
             self._previous_commands = list(self._previous_previous_commands)
         if exit_by == 'mouse':
-            self._tsf.clear_connections_filtered()
+            self._cache.clear_connections_filtered()
             self._upon_selection(self._selection.data)
 
     def set_previous_command(self, f: Callable, args: tuple, kwargs: dict):
@@ -1174,10 +1174,10 @@ class Interactor(BoundaryInABC):
         self._cache_circular_connections = ()
 
     def _present_connections(self, connections_selected):
-        if not self._tsf.connection_model_is_cached:
+        if not self._cache.connection_model_is_cached:
             response_model = self._create_response_model_for_presenter_connection(connections_selected)
         else:
-            response_model = self._tsf.cache_response_model_for_presenter_connection
+            response_model = self._cache.cache_response_model_for_presenter_connection
         self._presenters.connect_shapes(response_model)
 
     def _create_response_model_for_presenter_connection(self, connections_selected=None):
@@ -1195,7 +1195,7 @@ class Interactor(BoundaryInABC):
 
     @property
     def connections_filtered(self) -> set:
-        if not self._tsf.connections_filetered_are_cached:
+        if not self._cache.connections_filetered_are_cached:
             connections = self._connections.data
             sht_contents = self.sheet_contents
             selected = self._selection.data
@@ -1211,7 +1211,7 @@ class Interactor(BoundaryInABC):
             args = sht_contents, selected, relays, y_axes, bars, na, accounts, live_values
             connections_filtered = set(c for c in connections if imp9.connection_filter(c, *args))
         else:
-            connections_filtered = self._tsf.connections_filtered
+            connections_filtered = self._cache.connections_filtered
         return connections_filtered
 
     # Line
@@ -1868,8 +1868,8 @@ class Interactor(BoundaryInABC):
         self._manually_highlighted = True
 
     def _get_audit_results(self, shape_ids: Iterable) -> list:
-        if self._tsf.audit_results_are_cached:
-            audit_results = self._tsf.cache_audit_results
+        if self._cache.audit_results_are_cached:
+            audit_results = self._cache.cache_audit_results
         else:
             audit_results = [self._get_audit_result(shape_id) for shape_id in shape_ids]
         return audit_results
@@ -2790,13 +2790,13 @@ class Interactor(BoundaryInABC):
         self.clear_cache_slider()
 
     def cache_audit_results(self):
-        self._tsf.set_cache_audit_results(self._get_audit_results(self._get_minimum_shape_ids_to_update()))
-        self._tsf.set_connection_model(self._create_response_model_for_presenter_connection())
+        self._cache.set_cache_audit_results(self._get_audit_results(self._get_minimum_shape_ids_to_update()))
+        self._cache.set_connection_model(self._create_response_model_for_presenter_connection())
         self.feedback_user('Cached.', 'success')
 
     def clear_cache_audit_results(self):
-        self._tsf.clear_audit_results()
-        self._tsf.clear_connection_model()
+        self._cache.clear_audit_results()
+        self._cache.clear_connection_model()
 
     def cache_slider(self):
         selected_shapes = self._selection.data
@@ -2808,7 +2808,7 @@ class Interactor(BoundaryInABC):
 
     def update_data_table_upon_slider_action(self, handle_ids: tuple):
         key = caching.get_data_table_cache_key_from_handle_ids(handle_ids, self._connections, self._shapes)
-        dt = caching.get_data_table_from_cache(key, self._tsf.cache_data_table, self.feedback_user)
+        dt = caching.get_data_table_from_cache(key, self._cache.cache_data_table, self.feedback_user)
         self._update_graph_bars_and_live_values(dt)
 
     def cache_data_table(self, input_ids: tuple, input_values: tuple):
@@ -2822,7 +2822,7 @@ class Interactor(BoundaryInABC):
             cache[key] = data_table
             self._present_feedback_user(f'Caching {n}/{total_steps}', is_incremental_progress=True)
         self._present_feedback_user(f'Caching complete!', 'success')
-        self._tsf.set_cache_data_table(cache)
+        self._cache.set_cache_data_table(cache)
 
     def clear_cache_slider(self):
-        self._tsf.clear_cache_data_table()
+        self._cache.clear_cache_data_table()
