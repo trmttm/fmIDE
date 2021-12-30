@@ -100,6 +100,9 @@ class StatesAndFlags:
     def prevent_auto_highlight(self):
         return self._prevent_auto_highlight
 
+    def set_prevent_auto_highlight(self, value):
+        self._prevent_auto_highlight = value
+
     @property
     def previous_previous_commands(self):
         return self._previous_previous_commands

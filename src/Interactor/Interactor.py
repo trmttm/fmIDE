@@ -46,7 +46,6 @@ class Interactor(BoundaryInABC):
         gateways.attach_to_notification(self._present_feedback_user)
 
         # temporary states and flags
-        self._prevent_auto_highlight = False
         self._previous_previous_commands = []
         self._previous_commands = []
         self._sf = StatesAndFlags()
@@ -1846,14 +1845,14 @@ class Interactor(BoundaryInABC):
         self._sf.set_manually_highlighted(False)
 
     def stop_highlighting(self):
-        self._prevent_auto_highlight = True
+        self._sf.set_prevent_auto_highlight(True)
 
     def start_highlighting(self):
-        self._prevent_auto_highlight = False
+        self._sf.set_prevent_auto_highlight(False)
 
     @property
     def _auto_highlight_is_disabled(self) -> bool:
-        return self._prevent_auto_highlight
+        return self._sf.prevent_auto_highlight
 
     def _present_highlight_manual(self):
         args = self._shapes.data, self._shapes.get_canvas_tag_from_shape_id, self._shapes.shapes_ids
