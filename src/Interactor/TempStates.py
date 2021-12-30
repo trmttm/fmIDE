@@ -1,6 +1,3 @@
-from .load_config import LoadConfiguration
-
-
 class TemporaryStatesAndFlags:
     def __init__(self):
         """
@@ -12,7 +9,6 @@ class TemporaryStatesAndFlags:
         self._cache_audit_results = None
         self._cache_response_model_for_presenter_connection = None
         self._connections_filtered = None
-        self._load_config = LoadConfiguration()
 
     @property
     def cache_data_table(self):
@@ -65,7 +61,3 @@ class TemporaryStatesAndFlags:
     @property
     def connections_filetered_are_cached(self) -> bool:
         return self._connections_filtered is not None
-
-    @property
-    def load_config(self):
-        return self._load_config

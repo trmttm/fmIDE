@@ -24,6 +24,7 @@ from . import slider
 from . import spotlight
 from . import vba_udf
 from .TempStates import TemporaryStatesAndFlags
+from .load_config import LoadConfiguration
 from .. import RequestModel
 from .. import ResponseModel
 from .. import Utilities
@@ -54,6 +55,7 @@ class Interactor(BoundaryInABC):
         self._previous_previous_commands = []
         self._previous_commands = []
 
+        self._load_config = LoadConfiguration()
         self._tsf = TemporaryStatesAndFlags()
 
         # Plug-ins
@@ -67,27 +69,27 @@ class Interactor(BoundaryInABC):
         self.add_new_worksheet('Sheet1')
         self._present_connection_ids()
 
-        last_load_config_data = self.get_pickle_from_file_system(self._tsf.load_config.config_file_path)
+        last_load_config_data = self.get_pickle_from_file_system(self._load_config.config_file_path)
         if last_load_config_data is None:
-            self._gateways.create_load_config_folder(self._tsf.load_config.folder_name, 'Documents')
+            self._gateways.create_load_config_folder(self._load_config.folder_name, 'Documents')
         else:
-            self._tsf.load_config.restore(last_load_config_data)
-            path = self._tsf.load_config.last_project_path
+            self._load_config.restore(last_load_config_data)
+            path = self._load_config.last_project_path
             if path is not None:
-                data = self.get_pickle_from_file_system(self._tsf.load_config.config_file_path)
-                self._tsf.load_config.restore(data)
+                data = self.get_pickle_from_file_system(self._load_config.config_file_path)
+                self._load_config.restore(data)
                 self.set_project_folder_path(path)
 
         self.save_state_to_memory()
 
     def tear_down(self):
-        self._tsf.load_config.save_last_state(self.current_state)
-        data = self._tsf.load_config.load_config_data
-        self.save_any_data_as_pickle(self._tsf.load_config.config_file_path, data)
+        self._load_config.save_last_state(self.current_state)
+        data = self._load_config.load_config_data
+        self.save_any_data_as_pickle(self._load_config.config_file_path, data)
 
     @property
     def recent_project_paths(self) -> tuple:
-        return tuple(self._tsf.load_config.recent_project_paths)
+        return tuple(self._load_config.recent_project_paths)
 
     @property
     def entities(self) -> Entities:
@@ -147,11 +149,11 @@ class Interactor(BoundaryInABC):
     # Configuration
     def set_project_folder_path(self, path):
         if Utilities.is_directory(path):
-            self._tsf.load_config.set_opening_project(path)
+            self._load_config.set_opening_project(path)
             self._gateways.set_project_folder(path)
             self.set_save_path(path)
 
-            last_state = self._tsf.load_config.last_state
+            last_state = self._load_config.last_state
             if last_state is not None:
                 memento = Memento(last_state)
                 self.load_memento(memento)
@@ -166,12 +168,12 @@ class Interactor(BoundaryInABC):
             self.set_project_folder_path(path)
 
     def clear_project_history(self):
-        self._tsf.load_config.clear()
+        self._load_config.clear()
         self._present_feedback_user('Project history cleared.', 'success')
 
     @property
     def project_folder(self):
-        return self._tsf.load_config.opening_project
+        return self._load_config.opening_project
 
     @property
     def _clean_state_prior_to_save(self) -> bool:
@@ -254,7 +256,7 @@ class Interactor(BoundaryInABC):
         return self._entities.configurations.save_file_name
 
     def set_save_path(self, folder_path):
-        self._tsf.load_config.set_opening_project(folder_path)
+        self._load_config.set_opening_project(folder_path)
 
     # Configuration - Export Excel Setting
     def turn_on_insert_sheet_names_in_input_sheet(self):
@@ -309,7 +311,7 @@ class Interactor(BoundaryInABC):
 
     @property
     def save_path(self):
-        return self._tsf.load_config.opening_project or Utilities.desktop
+        return self._load_config.opening_project or Utilities.desktop
 
     @property
     def pickle_path(self):
