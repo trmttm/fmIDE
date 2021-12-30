@@ -45,10 +45,7 @@ class Interactor(BoundaryInABC):
 
         gateways.attach_to_notification(self._present_feedback_user)
 
-        # temporary states and flags
-        self._previous_commands = []
         self._sf = StatesAndFlags()
-
         self._load_config = LoadConfiguration()
         self._cache = Cache()
 
@@ -326,14 +323,7 @@ class Interactor(BoundaryInABC):
             if entry_by == 'mouse':
                 self._cache.set_connections_filtered(self.connections_filtered)
         self._sf.set_entry_by(entry_by)
-
-        """
-        If the actions following set_entry_point has no impacts on the state, then restore previous_previous commands
-        as the previous command. For example, changing frames from Design -> Macro -> Design has no impacts on the 
-        state and therefore previous command should not be impacted either
-        """
-        self._sf.set_previous_previous_commands(self._previous_commands)
-        self._previous_commands = []
+        self._sf.set_previous_commands_to_previous_previous_commands()
 
     def exit_point(self, exit_by: str = None, request: dict = None):
         if request is not None:
@@ -342,18 +332,18 @@ class Interactor(BoundaryInABC):
             self._sf.remove_entry_by(exit_by)
         self._sf.clear_initial_shape_position()
 
-        if not self._previous_commands:
-            self._previous_commands = list(self._sf.previous_previous_commands)
+        if self._sf.previous_commands_are_not_set:
+            self._sf.set_previous_commands(self._sf.previous_previous_commands)
         if exit_by == 'mouse':
             self._cache.clear_connections_filtered()
             self._upon_selection(self._selection.data)
 
     def set_previous_command(self, f: Callable, args: tuple, kwargs: dict):
-        self._previous_commands.append((f, args, kwargs))
+        self._sf.append_previous_commands((f, args, kwargs))
 
     def execute_previous_command(self):
         feedback = ''
-        for f, args, kwargs in self._previous_commands:
+        for f, args, kwargs in self._sf.previous_commands:
             f(*args, **kwargs)
             feedback += f'{f.__name__}({args},{kwargs}), '
         self.feedback_user(f'Invoked previous actions {feedback}')

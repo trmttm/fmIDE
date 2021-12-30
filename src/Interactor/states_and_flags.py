@@ -7,7 +7,7 @@ class StatesAndFlags:
         self._input_being_modified = None
         self._cache_circular_connections = None
         self._prevent_auto_highlight = False
-        self._previous_previous_commands = ()
+        self._previous_previous_commands = []
         self._previous_commands = []
 
     @property
@@ -113,3 +113,25 @@ class StatesAndFlags:
     @property
     def previous_commands(self):
         return self._previous_commands
+
+    def clear_previous_commands(self):
+        self._previous_commands = []
+
+    def set_previous_commands(self, previous_commands):
+        self._previous_commands = list(previous_commands)
+
+    @property
+    def previous_commands_are_not_set(self) -> bool:
+        return not self._previous_commands
+
+    def append_previous_commands(self, new_command):
+        self._previous_commands.append(new_command)
+
+    def set_previous_commands_to_previous_previous_commands(self):
+        """
+        If the actions following set_entry_point has no impacts on the state, then restore previous_previous commands
+        as the previous command. For example, changing frames from Design -> Macro -> Design has no impacts on the
+        state and therefore previous command should not be impacted either
+        """
+        self.set_previous_previous_commands(self.previous_commands)
+        self.clear_previous_commands()
