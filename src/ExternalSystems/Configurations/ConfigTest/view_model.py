@@ -402,7 +402,7 @@ def start_view_model_factory() -> list:
     fmd += fmd_canvas
     fmd += switchable2
     fmd += tree_sheets + sheet_entry + tree_ws_btns
-    fmd += tree_connection + connection
+    fmd += tree_connection + connection_entry + tree_radio_buttons + tree_connection_btns
     fmd += tree_accounts + tree_btns
     fmd += property_setter + align_btns + align_btns2 + size_btns
     fmd += switcher2_buttons
