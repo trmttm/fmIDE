@@ -268,13 +268,13 @@ def start_view_model_factory() -> list:
     ]
 
     undo_redo_buttons = [
-        f(fr_unredo, btn_undo, 'button', 0, 0, 0, 0, 'nsew', **{'text': '↩️', 'width': button_width}),
-        f(fr_unredo, btn_redo, 'button', 0, 0, 1, 1, 'nsew', **{'text': '↪️', 'width': button_width}),
+        f(fr_unredo, btn_undo, 'button', 0, 0, 0, 0, 'nsew', **{'text': '↩', 'width': button_width}),
+        f(fr_unredo, btn_redo, 'button', 0, 0, 1, 1, 'nsew', **{'text': '↪', 'width': button_width}),
         f(fr_unredo, btn_reset, 'button', 0, 0, 2, 2, 'nsew', **{'text': 'New', 'width': button_width}),
         f(fr_unredo, button_9, 'button', 0, 0, 3, 3, 'nsew', **{'text': 'Rel', 'width': button_width}),
     ]
     tbn = [
-        f(fr_tobenamed, btn_erase_shape, 'button', 0, 0, 0, 0, 'nsew', **{'text': '❌', 'width': button_width}),
+        f(fr_tobenamed, btn_erase_shape, 'button', 0, 0, 0, 0, 'nsew', **{'text': 'Del', 'width': button_width}),
         f(fr_tobenamed, btn_excel, 'button', 0, 0, 1, 1, 'nsew', **{'text': 'XL', 'width': button_width}),
         f(fr_tobenamed, btn_ie, 'button', 0, 0, 2, 2, 'nsew', **{'text': 'IE', 'width': button_width}),
         f(fr_tobenamed, btn_save_module, 'button', 0, 0, 3, 3, 'nsew', **{'text': 'Mod', 'width': button_width}),
@@ -402,7 +402,7 @@ def start_view_model_factory() -> list:
     fmd += fmd_canvas
     fmd += switchable2
     fmd += tree_sheets + sheet_entry + tree_ws_btns
-    fmd += tree_connection + connection_entry + tree_radio_buttons + tree_connection_btns
+    fmd += tree_connection + connection
     fmd += tree_accounts + tree_btns
     fmd += property_setter + align_btns + align_btns2 + size_btns
     fmd += switcher2_buttons
