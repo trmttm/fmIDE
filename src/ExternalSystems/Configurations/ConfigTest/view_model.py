@@ -298,10 +298,10 @@ def start_view_model_factory() -> list:
     )
     sheet_entry = Vm.entry_and_button(fr_sh_name, entry_sheet_name, ew, btn_sheet_name, 'OK', button_width)
     tree_ws_btns = [
-        f(fr_tree_btn2, btn_del_sheet, 'button', 0, 0, 0, 0, 'nsew', **{'text': '❌', 'width': button_width}),
-        f(fr_tree_btn2, btn_add_sheet, 'button', 0, 0, 1, 1, 'nsew', **{'text': '➕', 'width': button_width}),
+        f(fr_tree_btn2, btn_del_sheet, 'button', 0, 0, 0, 0, 'nsew', **{'text': 'Del', 'width': button_width}),
+        f(fr_tree_btn2, btn_add_sheet, 'button', 0, 0, 1, 1, 'nsew', **{'text': '+', 'width': button_width}),
         f(fr_tree_btn2, btn_export_accounts, 'button', 0, 0, 2, 2, 'nsew', **{'text': 'paste', 'width': button_width}),
-        f(fr_tree_btn2, btn_import_accounts, 'button', 0, 0, 3, 3, 'nsew', **{'text': 'copy️', 'width': button_width}),
+        f(fr_tree_btn2, btn_import_accounts, 'button', 0, 0, 3, 3, 'nsew', **{'text': 'copy', 'width': button_width}),
     ]
 
     # ConnectionIDs
@@ -321,9 +321,9 @@ def start_view_model_factory() -> list:
         f(fr_connection, fr_conn_btn, 'frame', 4, 4, 0, 0, 'nsew', **intf.frame_options(*f_0123)),
     )
 
-    connection_entry = Vm.entry_and_button(fr_connection_name, entry_conn_id, ew, btn_add_conn, '➕', button_width)
+    connection_entry = Vm.entry_and_button(fr_connection_name, entry_conn_id, ew, btn_add_conn, '+', button_width)
     tree_connection_btns = [
-        f(fr_conn_btn, btn_del_conn, 'button', 0, 0, 0, 0, 'nsew', **{'text': '❌', 'width': button_width}),
+        f(fr_conn_btn, btn_del_conn, 'button', 0, 0, 0, 0, 'nsew', **{'text': 'Del', 'width': button_width}),
     ]
 
     # Accounts
@@ -332,8 +332,8 @@ def start_view_model_factory() -> list:
         f(fr_account_order, fr_tree_btn, 'frame', 1, 1, 0, 0, 'nsew', **intf.frame_options(*f_012))
     )
     tree_btns = [
-        f(fr_tree_btn, btn_tree_ac_up, 'button', 0, 0, 0, 0, 'nsew', **{'text': '⬆️', 'width': button_width}),
-        f(fr_tree_btn, btn_tree_ac_down, 'button', 0, 0, 1, 1, 'nsew', **{'text': '⬇️', 'width': button_width}),
+        f(fr_tree_btn, btn_tree_ac_up, 'button', 0, 0, 0, 0, 'nsew', **{'text': '↑', 'width': button_width}),
+        f(fr_tree_btn, btn_tree_ac_down, 'button', 0, 0, 1, 1, 'nsew', **{'text': '↓', 'width': button_width}),
         f(fr_tree_btn, button_8, 'button', 0, 0, 2, 2, 'nsew', **{'text': '[_]', 'width': button_width}),
     ]
 
