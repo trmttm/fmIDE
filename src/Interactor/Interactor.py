@@ -1362,7 +1362,11 @@ class Interactor(BoundaryInABC):
 
     def get_pickle_file_names(self, negative_list):
         file_names = self._gateways.pickle_file_names
-        for negative in (negative_list or ()):
+        if negative_list is None:
+            negative_list = self._gateways.negative_list
+        else:
+            negative_list += self._gateways.negative_list
+        for negative in negative_list:
             try:
                 file_names.remove(negative)
             except ValueError:
