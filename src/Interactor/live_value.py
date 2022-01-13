@@ -1,6 +1,5 @@
 from typing import Callable
 
-from .. import Utilities
 from ..Entities import Connections
 from ..Entities import InputDecimals
 from ..Entities import Shapes
