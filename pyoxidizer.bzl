@@ -88,7 +88,7 @@ def make_exe():
     exe.add_python_resources(resources)
 
     resources = exe.read_package_root(
-        path=path_venv + 'src/controller-mouse',
+        path=path_venv + 'src/mouse',
         packages=['mouse',],
         )
     for r in resources:
