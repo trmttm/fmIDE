@@ -6,7 +6,6 @@ from typing import List
 
 from interface_mouse import MouseControllerABC
 
-from src import Utilities
 from . import conditions as mouse_condition
 from . import constants as cns
 from . import implementations as impl
@@ -70,7 +69,7 @@ class MouseController(MouseControllerABC):
         self._previous_coordinate = request['x'], request['y']
 
     def _save_clicked_position(self, request: dict):
-        save_clicked_position = Utilities.get_dict_value(request, cns.save_click_coordinate)
+        save_clicked_position = request.get(cns.save_click_coordinate, None)
         if save_clicked_position:
             self._clicked_coordinate = request['x'], request['y']
 
