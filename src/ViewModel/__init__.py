@@ -115,7 +115,7 @@ def create_view_model_connection_ids(response_model):
 
 def create_view_model_user_feedback(response_model: dict) -> dict:
     text = response_model['text']
-    feedback_type = Utilities.get_dict_value(response_model, 'feedback_type') or 'normal'
+    feedback_type = response_model.get('feedback_type', 'normal')
 
     if 'incremental_progress' in response_model:
         update = response_model['incremental_progress']

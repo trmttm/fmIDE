@@ -44,14 +44,6 @@ def remove_file_or_directory(path):
         shutil.rmtree(path, ignore_errors=True)
 
 
-def get_dict_value(dictionary, key):
-    try:
-        value = dictionary[key]
-    except (KeyError, TypeError):
-        value = None
-    return value
-
-
 def is_number(s):
     """ Returns True is string is a number. """
     try:
