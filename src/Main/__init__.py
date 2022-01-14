@@ -5,7 +5,7 @@ from interface_view import ViewABC
 from . import implementation as impl
 from . import plug_in_views
 from .configuration_ABC import ConfigurationABC
-from ..Controller import MouseController
+from mouse import MouseController
 from ..Entities import Entities
 from ..Entities import Observable
 from ..EntityGateway import GateWayABC
