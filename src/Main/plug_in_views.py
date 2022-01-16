@@ -5,7 +5,7 @@ from ..BoundaryOutput import PresentersABC
 
 def plug_views_to_presenters(presenters: PresentersABC, view: ViewABC):
     presenters.attach_to_add_shape(lambda view_model_: view.add_text_box(view_model_))
-    presenters.attach_to_remove_shape(lambda view_model_: view.remove_text_box(view_model_))
+    presenters.attach_to_remove_shape(lambda view_model_: view.remove_shape(view_model_))
     presenters.attach_to_move_shapes(lambda view_model_: view.move_shapes(view_model_))
     presenters.attach_to_connect_shapes(lambda view_model_: view.connect_shapes(view_model_))
     presenters.attach_to_highlight_shape(lambda view_model_: view.highlight_shapes(view_model_))
