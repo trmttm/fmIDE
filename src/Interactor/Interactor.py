@@ -349,14 +349,13 @@ class Interactor(BoundaryInABC):
         self.feedback_user(f'Invoked previous actions {feedback}')
 
     def upon_exception(self, *args, **kwargs):
-        entry_by = self._sf.entry_by
         exception = args[1]
         self._present_feedback_user(exception.__repr__(), 'error')
 
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
