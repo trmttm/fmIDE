@@ -49,8 +49,9 @@ def add_new_shapes_per_request_models(request_models, shapes: Et.Shapes):
     shapes.add_new_shapes(request_models)
 
 
-def interactor_is_responsible_for_setting_default_sizes_and_positions(new_shape_ids, shapes: Et.Shapes):
-    for shape_id in new_shape_ids:
+def interactor_is_responsible_for_setting_default_sizes_and_positions(new_shape_ids, shapes: Et.Shapes,
+                                                                      whs: tuple = None):
+    for shape_id, (w, h) in zip(new_shape_ids, whs):
         x_current = shapes.get_x(shape_id)
         y_current = shapes.get_y(shape_id)
         width_current = shapes.get_width(shape_id)
@@ -58,8 +59,8 @@ def interactor_is_responsible_for_setting_default_sizes_and_positions(new_shape_
 
         x = 10 if x_current is None else x_current
         y = 0 if y_current is None else y_current
-        width = 50 if width_current is None else width_current
-        height = 20 if height_current is None else height_current
+        width = w if width_current is None else width_current
+        height = h if height_current is None else height_current
 
         shapes.set_x(shape_id, x)
         shapes.set_y(shape_id, y)

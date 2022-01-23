@@ -18,6 +18,14 @@ class Configurations(Observable):
     _default_command_file_name = 'Commands.xlsm'
     _clean_state_prior_to_save = 'clean_up_state_before_pickling_though_expensive'
     _live_calculation = 'live_calculation'
+    _account_width = 'account width'
+    _account_height = 'account height'
+    _operator_width = 'operator width'
+    _operator_height = 'operator height'
+    _bb_width = 'bb width'
+    _bb_height = 'bb height'
+    _constant_width = 'constant width'
+    _constant_height = 'constant height'
 
     def __init__(self):
         Observable.__init__(self)
@@ -31,8 +39,16 @@ class Configurations(Observable):
                       self._sensitivity_deltas: {},
                       self._insert_sheet_name_in_input_sheet: False,
                       self._prevent_refresh_canvas: False,
-                      self._clean_state_prior_to_save: False,
+                      self._clean_state_prior_to_save: True,
                       self._live_calculation: True,
+                      self._account_width: 50,
+                      self._account_height: 20,
+                      self._operator_width: 50,
+                      self._operator_height: 20,
+                      self._bb_width: 50,
+                      self._bb_height: 20,
+                      self._constant_width: 50,
+                      self._constant_height: 20,
 
                       }
 
@@ -210,3 +226,59 @@ class Configurations(Observable):
 
     def deactivate_live_calculation(self):
         self._data[self._live_calculation] = False
+
+    @property
+    def account_width(self):
+        return self._data[self._account_width]
+
+    def set_account_width(self, value):
+        self._data[self._account_width] = value
+
+    @property
+    def account_height(self):
+        return self._data[self._account_height]
+
+    def set_account_height(self, value):
+        self._data[self._account_height] = value
+
+    @property
+    def operator_width(self):
+        return self._data[self._operator_width]
+
+    def set_operator_width(self, value):
+        self._data[self._operator_width] = value
+
+    @property
+    def operator_height(self):
+        return self._data[self._operator_height]
+
+    def set_operator_height(self, value):
+        self._data[self._operator_height] = value
+
+    @property
+    def bb_width(self):
+        return self._data[self._bb_width]
+
+    def set_bb_width(self, value):
+        self._data[self._bb_width] = value
+
+    @property
+    def bb_height(self):
+        return self._data[self._bb_height]
+
+    def set_bb_height(self, value):
+        self._data[self._bb_height] = value
+
+    @property
+    def constant_width(self):
+        return self._data[self._constant_width]
+
+    def set_constant_width(self, value):
+        self._data[self._constant_width] = value
+
+    @property
+    def constant_height(self):
+        return self._data[self._constant_height]
+
+    def set_constant_height(self, value):
+        self._data[self._constant_height] = value

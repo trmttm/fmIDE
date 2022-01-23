@@ -87,6 +87,7 @@ def upon_menu_button5(view: ViewABC, interactor: BoundaryInABC, presenters: Pres
     view.switch_frame(vm.fr_setting)
     view.set_value(vm.entry_nop, interactor.number_of_periods)
     view.set_value(vm.entry_project, interactor.project_folder if interactor.project_folder is not None else '')
+    view.set_value(vm.check_btn_cleaner, interactor.clean_state_prior_to_save)
     interactor.change_active_keymap(cns.keymap_setting)
     hide_canvas_commands_from_menubar(interactor, mouse, presenters, view)
 

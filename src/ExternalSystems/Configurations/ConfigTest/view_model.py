@@ -598,7 +598,6 @@ canvas_save_feedback = 'canvas_save_feedback'
 def canvas_save_setting(title: str) -> list:
     f = intf.widget_model
     options = intf.top_level_options(title)
-    rc = ((0,), (1,)), ((0,), (1,))
     vm = [
         f(root, toplevel_canvas_save_setting, 'toplevel', 0, 0, 0, 0, 'nsew', pad_xy, **options),
     ]

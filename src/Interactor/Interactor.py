@@ -167,7 +167,7 @@ class Interactor(BoundaryInABC):
         return self._load_config.opening_project
 
     @property
-    def _clean_state_prior_to_save(self) -> bool:
+    def clean_state_prior_to_save(self) -> bool:
         return self._configurations.state_cleaner_is_activated
 
     def activate_state_cleaner(self):
@@ -940,7 +940,17 @@ class Interactor(BoundaryInABC):
         new_shape_ids = all_shape_ids_after - all_shape_ids_before
 
         self._worksheets.add_contents_to_selected_sheet(new_shape_ids)
-        imp9.interactor_is_responsible_for_setting_default_sizes_and_positions(new_shape_ids, self._shapes)
+
+        tags = [rm['tags'][0] for rm in request_models]
+        tag_to_wh = {
+            'account': (self._configurations.account_width, self._configurations.account_height),
+            'relay': (self._configurations.account_width, self._configurations.account_height),  # relay wh= account wh
+            'bb': (self._configurations.bb_width, self._configurations.bb_height),
+            'constant': (self._configurations.constant_width, self._configurations.constant_height),
+            'operator': (self._configurations.operator_width, self._configurations.operator_height),
+        }
+        whs = tuple(tag_to_wh[tag] for tag in tags)
+        imp9.interactor_is_responsible_for_setting_default_sizes_and_positions(new_shape_ids, self._shapes, whs)
         imp9.prevent_shape_overlaps(self._increment_x_y, new_shape_ids, self._shapes, self.sheet_contents)
         self._add_account_order_by_shape_ids(new_shape_ids)
 
@@ -1682,7 +1692,7 @@ class Interactor(BoundaryInABC):
         self._clean_data_and_save_as_template_file(file_name)
 
     def _clean_data_and_save_as_template_file(self, file_name):
-        if self._clean_state_prior_to_save:
+        if self.clean_state_prior_to_save:
             all_shape_ids = self._shapes.shapes_ids
             self._present_feedback_user('Cleaning up state...')
             new_shape_id = 0
