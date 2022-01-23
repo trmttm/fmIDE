@@ -79,6 +79,42 @@ class Interactor(BoundaryInABC):
         self.save_any_data_as_pickle(self._load_config.config_file_path, data)
 
     @property
+    def account_width(self):
+        return self._configurations.account_width
+
+    @property
+    def account_height(self):
+        return self._configurations.account_height
+
+    @property
+    def account_font_size(self):
+        return self._configurations.account_font_size
+
+    @property
+    def operator_width(self):
+        return self._configurations.operator_width
+
+    @property
+    def operator_height(self):
+        return self._configurations.operator_height
+
+    @property
+    def operator_font_size(self):
+        return self._configurations.operator_font_size
+
+    @property
+    def constant_width(self):
+        return self._configurations.constant_width
+
+    @property
+    def constant_height(self):
+        return self._configurations.constant_height
+
+    @property
+    def constant_font_size(self):
+        return self._configurations.constant_font_size
+
+    @property
     def recent_project_paths(self) -> tuple:
         return tuple(self._load_config.recent_project_paths)
 

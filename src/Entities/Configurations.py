@@ -20,12 +20,16 @@ class Configurations(Observable):
     _live_calculation = 'live_calculation'
     _account_width = 'account width'
     _account_height = 'account height'
+    _account_font_size = 'account font size'
     _operator_width = 'operator width'
     _operator_height = 'operator height'
+    _operator_font_size = 'operator font size'
     _bb_width = 'bb width'
     _bb_height = 'bb height'
+    _bb_font_size = 'bb font size'
     _constant_width = 'constant width'
     _constant_height = 'constant height'
+    _constant_font_size = 'constant font size'
 
     def __init__(self):
         Observable.__init__(self)
@@ -43,12 +47,16 @@ class Configurations(Observable):
                       self._live_calculation: True,
                       self._account_width: 50,
                       self._account_height: 20,
+                      self._account_font_size: 13,
                       self._operator_width: 50,
                       self._operator_height: 20,
+                      self._operator_font_size: 13,
                       self._bb_width: 50,
                       self._bb_height: 20,
+                      self._bb_font_size: 13,
                       self._constant_width: 50,
                       self._constant_height: 20,
+                      self._constant_font_size: 13,
 
                       }
 
@@ -242,6 +250,13 @@ class Configurations(Observable):
         self._data[self._account_height] = value
 
     @property
+    def account_font_size(self):
+        return self._data[self._account_font_size]
+
+    def set_account_font_size(self, value):
+        self._data[self._account_font_size] = value
+
+    @property
     def operator_width(self):
         return self._data[self._operator_width]
 
@@ -254,6 +269,13 @@ class Configurations(Observable):
 
     def set_operator_height(self, value):
         self._data[self._operator_height] = value
+
+    @property
+    def operator_font_size(self):
+        return self._data[self._operator_font_size]
+
+    def set_operator_font_size(self, value):
+        self._data[self._operator_font_size] = value
 
     @property
     def bb_width(self):
@@ -270,6 +292,13 @@ class Configurations(Observable):
         self._data[self._bb_height] = value
 
     @property
+    def bb_font_size(self):
+        return self._data[self._bb_font_size]
+
+    def set_bb_font_size(self, value):
+        self._data[self._bb_font_size] = value
+
+    @property
     def constant_width(self):
         return self._data[self._constant_width]
 
@@ -282,3 +311,10 @@ class Configurations(Observable):
 
     def set_constant_height(self, value):
         self._data[self._constant_height] = value
+
+    @property
+    def constant_font_size(self):
+        return self._data[self._constant_font_size]
+
+    def set_constant_font_size(self, value):
+        self._data[self._constant_font_size] = value

@@ -31,6 +31,18 @@ entry_vertical_reference = 'entry_vertical_reference'
 entry_macro_name = 'entry_macro_name'
 entry_project = 'entry_project'
 entry_nop = 'entry_nop'
+entry_account_w = 'entry_account_w'
+entry_account_h = 'entry_account_h'
+entry_account_font_size = 'entry_account_font_size'
+entry_operator_w = 'entry_operator_w'
+entry_operator_h = 'entry_operator_h'
+entry_operator_font_size = 'entry_operator_font_size'
+entry_constant_w = 'entry_constant_w'
+entry_constant_h = 'entry_constant_h'
+entry_constant_font_size = 'entry_constant_font_size'
+entry_bb_w = 'entry_bb_w'
+entry_bb_h = 'entry_bb_h'
+entry_bb_font_size = 'entry_bb_font_size'
 
 status_bar_id = 'status_bar'
 
@@ -145,6 +157,18 @@ kw_setting = {
     'entry_nop': entry_nop,
     'check_btn_cleaner': check_btn_cleaner,
     'check_btn_live_calculation': check_btn_live_calculation,
+    'account_w': entry_account_w,
+    'account_h': entry_account_h,
+    'account_font_size': entry_account_font_size,
+    'operator_w': entry_operator_w,
+    'operator_h': entry_operator_h,
+    'operator_font_size': entry_operator_font_size,
+    'constant_w': entry_constant_w,
+    'constant_h': entry_constant_h,
+    'constant_font_size': entry_constant_font_size,
+    'bb_w': entry_bb_w,
+    'bb_h': entry_bb_h,
+    'bb_font_size': entry_bb_font_size,
 }
 
 paned_window_btn = 'paned_window_design_button'

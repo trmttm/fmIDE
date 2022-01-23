@@ -5,12 +5,12 @@ from typing import Type
 from interface_fm import BoundaryInABC
 from interface_mouse import MouseControllerABC
 from interface_view import ViewABC
-
 from src import Utilities
 from src import ViewModel as VM
 from src.BoundaryOutput import PresentersABC
 from src.Controller import InputEntryController
 from src.Utilities import auto_complete
+
 from . import constants as cns
 from . import keyboard_shortcuts
 from . import menu_bar
@@ -88,6 +88,20 @@ def upon_menu_button5(view: ViewABC, interactor: BoundaryInABC, presenters: Pres
     view.set_value(vm.entry_nop, interactor.number_of_periods)
     view.set_value(vm.entry_project, interactor.project_folder if interactor.project_folder is not None else '')
     view.set_value(vm.check_btn_cleaner, interactor.clean_state_prior_to_save)
+
+    view.set_value(vm.entry_account_w, interactor.account_width)
+    view.set_value(vm.entry_account_h, interactor.account_height)
+    view.set_value(vm.entry_account_font_size, interactor.account_font_size)
+    view.set_value(vm.entry_operator_w, interactor.operator_width)
+    view.set_value(vm.entry_operator_h, interactor.operator_height)
+    view.set_value(vm.entry_operator_font_size, interactor.operator_font_size)
+    view.set_value(vm.entry_constant_w, interactor.constant_width)
+    view.set_value(vm.entry_constant_h, interactor.constant_height)
+    view.set_value(vm.entry_constant_font_size, interactor.constant_font_size)
+    view.set_value(vm.entry_bb_w, interactor.entities.configurations.bb_width)
+    view.set_value(vm.entry_bb_h, interactor.entities.configurations.bb_height)
+    view.set_value(vm.entry_bb_font_size, interactor.entities.configurations.bb_font_size)
+
     interactor.change_active_keymap(cns.keymap_setting)
     hide_canvas_commands_from_menubar(interactor, mouse, presenters, view)
 
