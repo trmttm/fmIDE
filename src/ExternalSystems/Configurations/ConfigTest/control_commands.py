@@ -98,12 +98,22 @@ def upon_menu_button5(view: ViewABC, interactor: BoundaryInABC, presenters: Pres
     view.set_value(vm.entry_constant_w, interactor.constant_width)
     view.set_value(vm.entry_constant_h, interactor.constant_height)
     view.set_value(vm.entry_constant_font_size, interactor.constant_font_size)
-    view.set_value(vm.entry_bb_w, interactor.entities.configurations.bb_width)
-    view.set_value(vm.entry_bb_h, interactor.entities.configurations.bb_height)
-    view.set_value(vm.entry_bb_font_size, interactor.entities.configurations.bb_font_size)
+    view.set_value(vm.entry_bb_w, interactor.bb_width)
+    view.set_value(vm.entry_bb_h, interactor.bb_height)
+    view.set_value(vm.entry_bb_font_size, interactor.bb_font_size)
 
     interactor.change_active_keymap(cns.keymap_setting)
     hide_canvas_commands_from_menubar(interactor, mouse, presenters, view)
+
+
+def set_configuration_value(view: ViewABC, method, entry_id):
+    try:
+        value = int(view.get_value(entry_id))
+    except ValueError:
+        value = None
+
+    if value is not None:
+        method(value)
 
 
 def upon_fmd_switcher_accounts(view: ViewABC):

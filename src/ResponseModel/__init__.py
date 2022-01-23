@@ -62,12 +62,18 @@ def response_model_to_presenter_update_status_bar(text, feedback_type: str = 'no
     return response_model
 
 
-def response_model_to_presenter_add_shape(shapes_data: dict, new_shape_ids: Iterable) -> dict:
+def response_model_to_presenter_add_shape(shapes_data: dict, new_shape_ids: Iterable,
+                                          shape_id_to_font_size: dict = None) -> dict:
     list_of_shape_datas = []
+    if shape_id_to_font_size is None:
+        shape_id_to_font_size = {}
     for shape_id in new_shape_ids:
         each_shape_data = shapes_data[shape_id]
         if 'live_value' in each_shape_data['tags']:
             each_shape_data.update({'text_align': 'right'})
+        font_size = shape_id_to_font_size.get(shape_id, None)
+        if font_size is not None:
+            shapes_data[shape_id]['font_size'] = font_size
         list_of_shape_datas.append(each_shape_data)
     return dict(zip(new_shape_ids, list_of_shape_datas))
 

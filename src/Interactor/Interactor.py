@@ -1096,7 +1096,17 @@ class Interactor(BoundaryInABC):
 
     def _present_add_shape(self, shape_ids: Iterable):
         response_model = ResponseModel.response_model_to_presenter_add_shape
-        self._presenters.add_shape(response_model(self._shapes.data, shape_ids))
+        tag_type_to_font_size = {
+            'account': self.account_font_size,
+            'relay': self.account_font_size,
+            'constant': self.constant_font_size,
+            'bb': self.bb_font_size,
+            'operator': self.operator_font_size,
+        }
+        shape_id_to_font_size = dict(zip(
+            shape_ids,
+            tuple(tag_type_to_font_size.get(self._shapes.get_tag_type(i), 13) for i in shape_ids)))
+        self._presenters.add_shape(response_model(self._shapes.data, shape_ids, shape_id_to_font_size))
 
     def _present_remove_shape(self, shape_ids_to_delete: Iterable):
         canvas_tags = tuple(self._shapes.get_canvas_tag_from_shape_id(i) for i in shape_ids_to_delete)

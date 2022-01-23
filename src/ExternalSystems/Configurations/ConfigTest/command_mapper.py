@@ -1,8 +1,8 @@
 from interface_fm import BoundaryInABC
 from interface_mouse import MouseControllerABC
 from interface_view import ViewABC
-
 from src.BoundaryOutput import PresentersABC
+
 from . import constants as cns
 from . import control_commands as c
 from . import view_model as w
@@ -19,10 +19,11 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
     undo_redo_needs_no_auto_save = [w.btn_undo, w.btn_redo]
     negative_key_list = virtual_events_key + undo_redo_needs_no_auto_save
 
+    sc = c.set_configuration_value
     command_dictionary = {
         # w.root: lambda *args: interactor.feedback_user(f'Mouse wheel {args}'),
         w.canvas_id: mouse.handle,
-        w.button_1: lambda: c.main_specific_add_shape(interactor, view,),
+        w.button_1: lambda: c.main_specific_add_shape(interactor, view, ),
         w.btn_erase_shape: interactor.erase_selected_shapes,
         w.btn_tree_ac_up: interactor.move_selection_up,
         w.btn_tree_ac_down: interactor.move_selection_down,
@@ -128,6 +129,18 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
         w.check_btn_live_calculation: lambda: c.upon_live_calculation_check_button(view, interactor),
         w.btn_project: lambda: c.create_project_folder(view, interactor, presenters, mouse),
         w.entry_project: lambda *_: c.set_project_folder(view, interactor, presenters, mouse),
+        w.entry_account_w: lambda *_: sc(view, interactor.set_account_width, w.entry_account_w),
+        w.entry_account_h: lambda *_: sc(view, interactor.set_account_height, w.entry_account_h),
+        w.entry_account_font_size: lambda *_: sc(view, interactor.set_account_font_size, w.entry_account_font_size),
+        w.entry_operator_w: lambda *_: sc(view, interactor.set_operator_width, w.entry_operator_w),
+        w.entry_operator_h: lambda *_: sc(view, interactor.set_operator_height, w.entry_operator_h),
+        w.entry_operator_font_size: lambda *_: sc(view, interactor.set_operator_font_size, w.entry_operator_font_size),
+        w.entry_constant_w: lambda *_: sc(view, interactor.set_constant_width, w.entry_constant_w),
+        w.entry_constant_h: lambda *_: sc(view, interactor.set_constant_height, w.entry_constant_h),
+        w.entry_constant_font_size: lambda *_: sc(view, interactor.set_constant_font_size, w.entry_constant_font_size),
+        w.entry_bb_w: lambda *_: sc(view, interactor.set_bb_width, w.entry_bb_w),
+        w.entry_bb_h: lambda *_: sc(view, interactor.set_bb_height, w.entry_bb_h),
+        w.entry_bb_font_size: lambda *_: sc(view, interactor.set_bb_font_size, w.entry_bb_font_size),
 
         # Excel Export
         w.btn_excel: lambda: c.popup_excel_export_entry(view, interactor, presenters, mouse),
