@@ -82,37 +82,85 @@ class Interactor(BoundaryInABC):
     def account_width(self):
         return self._configurations.account_width
 
+    def set_account_width(self, value: int):
+        self._configurations.set_account_width(value)
+
     @property
     def account_height(self):
         return self._configurations.account_height
+
+    def set_account_height(self, value: int):
+        self._configurations.set_account_height(value)
 
     @property
     def account_font_size(self):
         return self._configurations.account_font_size
 
+    def set_account_font_size(self, value: int):
+        self._configurations.set_account_font_size(value)
+
     @property
     def operator_width(self):
         return self._configurations.operator_width
+
+    def set_operator_width(self, value: int):
+        self._configurations.set_operator_width(value)
 
     @property
     def operator_height(self):
         return self._configurations.operator_height
 
+    def set_operator_height(self, value: int):
+        self._configurations.set_operator_height(value)
+
     @property
     def operator_font_size(self):
         return self._configurations.operator_font_size
+
+    def set_operator_font_size(self, value: int):
+        self._configurations.set_operator_font_size(value)
 
     @property
     def constant_width(self):
         return self._configurations.constant_width
 
+    def set_constant_width(self, value: int):
+        self._configurations.set_constant_width(value)
+
     @property
     def constant_height(self):
         return self._configurations.constant_height
 
+    def set_constant_height(self, value: int):
+        self._configurations.set_constant_height(value)
+
     @property
     def constant_font_size(self):
         return self._configurations.constant_font_size
+
+    def set_constant_font_size(self, value: int):
+        self._configurations.set_constant_font_size(value)
+
+    @property
+    def bb_width(self):
+        return self._configurations.bb_width
+
+    def set_bb_width(self, value: int):
+        self._configurations.set_bb_width(value)
+
+    @property
+    def bb_height(self):
+        return self._configurations.bb_height
+
+    def set_bb_height(self, value: int):
+        self._configurations.set_bb_height(value)
+
+    @property
+    def bb_font_size(self):
+        return self._configurations.bb_font_size
+
+    def set_bb_font_size(self, value: int):
+        self._configurations.set_bb_font_size(value)
 
     @property
     def recent_project_paths(self) -> tuple:
@@ -979,11 +1027,11 @@ class Interactor(BoundaryInABC):
 
         tags = [rm['tags'][0] for rm in request_models]
         tag_to_wh = {
-            'account': (self._configurations.account_width, self._configurations.account_height),
-            'relay': (self._configurations.account_width, self._configurations.account_height),  # relay wh= account wh
-            'bb': (self._configurations.bb_width, self._configurations.bb_height),
-            'constant': (self._configurations.constant_width, self._configurations.constant_height),
-            'operator': (self._configurations.operator_width, self._configurations.operator_height),
+            'account': (self.account_width, self.account_height),
+            'relay': (self.account_width, self.account_height),  # relay wh= account wh
+            'bb': (self.bb_width, self.bb_height),
+            'constant': (self.constant_width, self.constant_height),
+            'operator': (self.operator_width, self.operator_height),
         }
         whs = tuple(tag_to_wh[tag] for tag in tags)
         imp9.interactor_is_responsible_for_setting_default_sizes_and_positions(new_shape_ids, self._shapes, whs)
