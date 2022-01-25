@@ -78,6 +78,12 @@ class Interactor(BoundaryInABC):
         data = self._load_config.load_config_data
         self.save_any_data_as_pickle(self._load_config.config_file_path, data)
 
+    def tear_down_setup(self):
+        # Remove chain of undo / redo states to make the system run fast.
+        self.tear_down()
+        self.reset()
+        self.setup()
+
     @property
     def account_width(self):
         return self._configurations.account_width

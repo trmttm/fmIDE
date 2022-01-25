@@ -128,6 +128,7 @@ def create_design_key_combos(interactor: BoundaryInABC, view: ViewABC, presenter
         (sub_modifier, k.p): (lambda: c.main_specific_add_shape(i, v, '^'), '^ Added'),
         (shift_sub, k.a): (lambda: c.main_specific_add_shape(i, v, 'abs'), 'abs Added'),
         (sub_modifier, k.r): (lambda: i.add_relay(), 'Relays added.'),
+        (main_modifier, k.r): (lambda: i.tear_down_setup(), 'Removed caretaker states'),
 
         (sub_modifier, k.s): (lambda: i.add_slider_of_selected_input_accounts(), 'Slider added.'),
         (main_sub, k.g): (lambda: i.add_a_y_axis_of_selected_accounts(mouse_position(), (0, 100)), 'Graph added.'),
