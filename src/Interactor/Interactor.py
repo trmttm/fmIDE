@@ -1845,7 +1845,6 @@ class Interactor(BoundaryInABC):
             self.feedback_user(f'{new_shape_id} already exists!', 'error')
         self.refresh_properties()
 
-
     # Presenters
     def present_insert_worksheet_in_input_sheet_mode(self):
         response_model = self._configurations.insert_sheet_name_in_input_sheet
