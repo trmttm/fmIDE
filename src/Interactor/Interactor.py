@@ -445,7 +445,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:

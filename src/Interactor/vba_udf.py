@@ -5,7 +5,7 @@ from . import implementation_9 as impl
 from .. import Utilities
 from ..Entities import Connections
 from ..Entities import Shapes
-from ..Utilities import rpe_to_normal
+import rpe_to_normal
 
 
 def get_arguments_to_vba_udf(account_used_in_udf, argument_converter, connections, shapes):
