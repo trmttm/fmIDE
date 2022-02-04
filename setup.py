@@ -1,5 +1,5 @@
 from setuptools import setup
-# import py2exe
+import py2exe
 import glob
 
 setup(
@@ -21,6 +21,7 @@ setup(
         ('src/Pickles', glob.glob('src/Pickles/*')),
         ('src/PicklesCommands', glob.glob('src/PicklesCommands/*')),
         ('src/Resources', glob.glob('src/Resources/*')),
+        ('', glob.glob('applet.ico')),
     ],
     options={
         'py2exe': {
