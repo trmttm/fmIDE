@@ -1039,7 +1039,15 @@ class Interactor(BoundaryInABC):
             'constant': (self.constant_width, self.constant_height),
             'operator': (self.operator_width, self.operator_height),
         }
-        whs = tuple(tag_to_wh[tag] for tag in tags)
+        try:
+            whs = tuple(tag_to_wh[tag] for tag in tags)
+        except KeyError:
+            """
+            All other tags will use operator's width height value.
+                Expects tags like slider, graph, and their supporting tags.
+                These tags' width height will be set later in the process.
+            """
+            whs = tuple(tag_to_wh['operator'] for _ in request_models)
         imp9.interactor_is_responsible_for_setting_default_sizes_and_positions(new_shape_ids, self._shapes, whs)
         imp9.prevent_shape_overlaps(self._increment_x_y, new_shape_ids, self._shapes, self.sheet_contents)
         self._add_account_order_by_shape_ids(new_shape_ids)
