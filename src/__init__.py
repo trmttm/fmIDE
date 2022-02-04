@@ -1,12 +1,11 @@
 from fm_calculator import Calculator
 from keyboard_shortcut import KeyMaps
 from spreadsheet import Spreadsheet
-from view_tkinter import View
-
 from src.EntityGateway import GateWays
 from src.ExternalSystems.Configurations import ConfigurationTest
 from src.ExternalSystems.UserDefinedFunction import UDFBuilder
 from src.Main import Main
+from view_tkinter import View
 
 """
 1) At Spreadsheet export time, be able to rearrange / combine / sort worksheets.
@@ -122,10 +121,17 @@ if __name__ == '__main__':
                     app.interactor.exit_point(request=request)
 
 
+        def clean_state_and_save_template():
+            from src.Entities import Observable
+            Observable.is_debug_mode = False
+            app = instantiate_app()
+            app.interactor.save_state_to_file('zz_Profiling')
+
+
         # cProfile.run('start_macro()')
         # cProfile.run('slider()')
         # cProfile.run('select_shape()')
-        cProfile.run('mouse_selection()')
+        cProfile.run('clean_state_and_save_template()')
     else:
         app = instantiate_app()
         app.run()
