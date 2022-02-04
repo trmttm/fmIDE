@@ -125,7 +125,7 @@ if __name__ == '__main__':
             from src.Entities import Observable
             Observable.is_debug_mode = False
             app = instantiate_app()
-            app.interactor.save_state_to_file('src/Pickles/zz_Profiling')
+            app.interactor.save_state_to_file('zz_Profiling')
 
 
         # cProfile.run('start_macro()')
