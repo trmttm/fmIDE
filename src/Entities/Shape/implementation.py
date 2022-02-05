@@ -90,8 +90,8 @@ def get_shape_ids_in_a_range(coordinates, shapes_data, search_from: tuple = None
         search_from = reversed(list(shapes_data.keys()))
 
     for shape_id in search_from:
-        shape_coorinates = get_coordinates_from_shape_id(shapes_data, shape_id)
-        if coordinates_overlap(range_coordinates, shape_coorinates):
+        shape_coordinates = get_coordinates_from_shape_id(shapes_data, shape_id)
+        if coordinates_overlap(range_coordinates, shape_coordinates):
             shape_ids.append(shape_id)
     return shape_ids
 
