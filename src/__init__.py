@@ -92,7 +92,7 @@ if __name__ == '__main__':
             from src.Entities import Observable
             Observable.is_debug_mode = False
             app = instantiate_app()
-            for i in range(100):
+            for i in range(10000):
                 request = {
                     'entry_by': 'mouse',
                     'exit_by': 'mouse',
@@ -131,7 +131,8 @@ if __name__ == '__main__':
         # cProfile.run('start_macro()')
         # cProfile.run('slider()')
         # cProfile.run('select_shape()')
-        cProfile.run('clean_state_and_save_template()')
+        cProfile.run('mouse_selection()')
+        # cProfile.run('clean_state_and_save_template()')
     else:
         app = instantiate_app()
         app.run()
