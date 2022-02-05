@@ -2,6 +2,7 @@ from typing import Iterable
 from typing import Tuple
 
 from src import Utilities
+
 from ..Shape import constants as cns
 
 
@@ -85,7 +86,9 @@ def get_shape_id_at_the_coordinate(x, y, shapes_data, search_from: tuple = None)
 def get_shape_ids_in_a_range(coordinates, shapes_data, search_from: tuple = None) -> list:
     shape_ids = []
     range_coordinates = coordinates
-    search_from = reversed(list(shapes_data.keys())) if search_from is None else search_from
+    if search_from is None:
+        search_from = reversed(list(shapes_data.keys()))
+
     for shape_id in search_from:
         shape_coorinates = get_coordinates_from_shape_id(shapes_data, shape_id)
         if coordinates_overlap(range_coordinates, shape_coorinates):
