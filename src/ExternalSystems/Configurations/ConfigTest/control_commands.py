@@ -545,6 +545,7 @@ def popup_input_entry(view: ViewABC, interactor: BoundaryInABC, mouse_cls: Type[
     view.bind_command_to_widget(vm.ie_entry_min, lambda *_: apply_input_entry(view, interactor))
     view.bind_command_to_widget(vm.ie_entry_max, lambda *_: apply_input_entry(view, interactor))
     view.bind_command_to_widget(vm.ie_entry_digits, lambda *_: apply_input_entry(view, interactor))
+    view.bind_command_to_widget(vm.ie_combo_box, lambda value: upon_ie_combobox_selection(value))
     view.bind_change_canvas_size(lambda event: upon_canvas_size_change(interactor, view, vci), vm.ie_canvas_graph)
 
     mouse = mouse_cls()
@@ -640,6 +641,10 @@ def upon_canvas_size_change(interactor: BoundaryInABC, view: ViewABC, vci: Vci):
 
     vci.set_canvas_max_y(canvas_height - margin)
     vci.set_canvas_min_y(margin)
+
+
+def upon_ie_combobox_selection(id_name_sheet):
+    print(id_name_sheet)
 
 
 def apply_input_entry(view: ViewABC, interactor: BoundaryInABC):
