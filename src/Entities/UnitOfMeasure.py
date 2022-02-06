@@ -1,5 +1,6 @@
 from typing import Any
 from typing import Dict
+from typing import Iterable
 
 from .Observable import Observable
 from .Observable import notify
@@ -28,3 +29,8 @@ class UnitOfMeasure(Observable):
             converted_shape_id = shape_id_converter.get(shape_id, shape_id)
             new_data[converted_shape_id] = unit_of_measure
         self._data.update(new_data)
+
+    def remove_uoms(self, shape_ids: Iterable):
+        for shape_id in shape_ids:
+            if shape_id in self._data:
+                del self._data[shape_id]

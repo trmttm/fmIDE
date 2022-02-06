@@ -1112,6 +1112,7 @@ class Interactor(BoundaryInABC):
         self.remove_format(all_shapes_ids_to_be_deleted)
         self.remove_number_format(all_shapes_ids_to_be_deleted)
         self.remove_fills(all_shapes_ids_to_be_deleted)
+        self._unit_of_measure.remove_uoms(all_shapes_ids_to_be_deleted)
 
         self._present_update_account_order()
         self._present_remove_shape(all_shapes_ids_to_be_deleted)
