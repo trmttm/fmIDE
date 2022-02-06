@@ -95,7 +95,8 @@ def create_design_key_combos(interactor: BoundaryInABC, view: ViewABC, presenter
     def prevent_widget_interference(f):
         def wrapper(*args, **kwargs):
             focused_widget_id = v.focused_widget
-            if 'entry' not in focused_widget_id and 'tree' not in focused_widget_id:
+            tree_that_interfere_with_keyboard = [vm.tree_account_order, vm.tree_connections, vm.tree_worksheets]
+            if 'entry' not in focused_widget_id and focused_widget_id not in tree_that_interfere_with_keyboard:
                 f(*args, **kwargs)
 
         return wrapper
