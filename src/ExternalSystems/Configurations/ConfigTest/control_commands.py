@@ -573,6 +573,7 @@ def popup_input_entry(view: ViewABC, interactor: BoundaryInABC, mouse_cls: Type[
 def upon_popup_close(view: ViewABC, interactor: BoundaryInABC):
     view.switch_canvas(vm.canvas_id)
     interactor.clear_input_being_modified()
+    interactor.refresh_properties()
 
 
 def upon_input_entry_controller_command(view: ViewABC, interactor: BoundaryInABC, vci: Vci, values: tuple,
