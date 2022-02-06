@@ -83,9 +83,12 @@ def update_sheet_name_entry(view: ViewABC, view_model):
 def update_input_entry(view: ViewABC, view_model: dict):
     text = view_model['text']
     values_str = view_model['values_str']
+    input_id = view_model['input_id']
+    input_name = view_model['input_name']
 
     view.set_value(vm.ie_label, text)
     view.set_value(vm.ie_entry, values_str)
+    view.set_value(vm.ie_combo_box, (input_id, input_name))
 
 
 def draw_input_entry(view: ViewABC, view_model: dict):

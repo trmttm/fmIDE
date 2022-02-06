@@ -556,7 +556,7 @@ class Interactor(BoundaryInABC):
         decimals = self.get_input_decimals(input_account)
 
         response_model = ResponseModel.response_model_to_presenter_show_input_entry
-        args = input_text, input_values, self.number_of_periods, y_range, decimals
+        args = input_text, input_values, self.number_of_periods, y_range, decimals, input_account
         self._presenters.show_input_entry(response_model(*args))
         self._set_input_being_modified(input_account)
 
