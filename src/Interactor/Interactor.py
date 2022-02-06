@@ -512,11 +512,17 @@ class Interactor(BoundaryInABC):
     def show_previous_input(self):
         self._change_input_to_modify(-1)
 
+    def show_specified_input(self, input_id):
+        self._change_input_to_modify_by_input_id(input_id)
+
     def _change_input_to_modify(self, shift: int):
         args = self._sf.input_being_modified, shift, self._get_sorted_input_accounts()
         next_input = imp9.get_next_input_to_edit(*args)
-        self._update_input_entry(next_input)
-        self._set_input_being_modified(next_input)
+        self._change_input_to_modify_by_input_id(next_input)
+
+    def _change_input_to_modify_by_input_id(self, input_id):
+        self._update_input_entry(input_id)
+        self._set_input_being_modified(input_id)
 
     def _get_sorted_input_accounts(self):
         input_accounts_unsorted = self.input_accounts

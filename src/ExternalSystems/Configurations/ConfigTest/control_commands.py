@@ -530,7 +530,8 @@ def popup_input_entry(view: ViewABC, interactor: BoundaryInABC, mouse_cls: Type[
 
     interactor.set_default_input_values_if_values_not_set()
 
-    view.add_widgets(vm.input_entry(interactor.input_names))
+    combobox_values = tuple(zip(interactor.input_accounts, interactor.input_names))
+    view.add_widgets(vm.input_entry(combobox_values))
     view.switch_canvas(vm.ie_canvas_graph)
 
     vci = Vci(view)
@@ -545,7 +546,7 @@ def popup_input_entry(view: ViewABC, interactor: BoundaryInABC, mouse_cls: Type[
     view.bind_command_to_widget(vm.ie_entry_min, lambda *_: apply_input_entry(view, interactor))
     view.bind_command_to_widget(vm.ie_entry_max, lambda *_: apply_input_entry(view, interactor))
     view.bind_command_to_widget(vm.ie_entry_digits, lambda *_: apply_input_entry(view, interactor))
-    view.bind_command_to_widget(vm.ie_combo_box, lambda value: upon_ie_combobox_selection(value))
+    view.bind_command_to_widget(vm.ie_combo_box, lambda value: upon_ie_combobox_selection(value, interactor))
     view.bind_change_canvas_size(lambda event: upon_canvas_size_change(interactor, view, vci), vm.ie_canvas_graph)
 
     mouse = mouse_cls()
@@ -643,8 +644,9 @@ def upon_canvas_size_change(interactor: BoundaryInABC, view: ViewABC, vci: Vci):
     vci.set_canvas_min_y(margin)
 
 
-def upon_ie_combobox_selection(id_name_sheet):
-    print(id_name_sheet)
+def upon_ie_combobox_selection(id_name_sheet:str, interactor:BoundaryInABC):
+    input_id = int(id_name_sheet.split(' ')[0])
+    interactor.show_specified_input(input_id)
 
 
 def apply_input_entry(view: ViewABC, interactor: BoundaryInABC):
