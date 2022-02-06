@@ -545,6 +545,7 @@ def popup_input_entry(view: ViewABC, interactor: BoundaryInABC, mouse_cls: Type[
     view.bind_command_to_widget(vm.ie_check_btn, lambda: toggle_canvases(view))
     view.bind_command_to_widget(vm.ie_entry_min, lambda *_: apply_input_entry(view, interactor))
     view.bind_command_to_widget(vm.ie_entry_max, lambda *_: apply_input_entry(view, interactor))
+    view.bind_command_to_widget(vm.ie_entry_uom, lambda *_: apply_input_entry(view, interactor))
     view.bind_command_to_widget(vm.ie_entry_digits, lambda *_: apply_input_entry(view, interactor))
     view.bind_command_to_widget(vm.ie_combo_box, lambda value: upon_ie_combobox_selection(value, interactor))
     view.bind_change_canvas_size(lambda event: upon_canvas_size_change(interactor, view, vci), vm.ie_canvas_graph)
@@ -650,16 +651,23 @@ def upon_ie_combobox_selection(id_name_sheet:str, interactor:BoundaryInABC):
 
 
 def apply_input_entry(view: ViewABC, interactor: BoundaryInABC):
+    # Set Input Y Range
     min_str = view.get_value(vm.ie_entry_min)
     max_str = view.get_value(vm.ie_entry_max)
-    digits_str = view.get_value(vm.ie_entry_digits)
-    digits = Utilities.str_to_int(digits_str, 2)
     min_ = Utilities.str_to_float(min_str, 0.0)
     max_ = Utilities.str_to_float(max_str, 0.0)
     y_range = float(min_), float(max_)
     interactor.set_input_y_range(y_range)
 
+    # Add UOM
+    unit_of_measure = view.get_value(vm.ie_entry_uom)
+    input_id = int(view.get_value(vm.ie_combo_box).split(' ')[0])
+    interactor.add_unit_of_measure(input_id, unit_of_measure)
+
+    # Set Values and Decimals
     values_str = view.get_value(vm.ie_entry)
+    digits_str = view.get_value(vm.ie_entry_digits)
+    digits = Utilities.str_to_int(digits_str, 2)
     try:
         values = tuple(round(float(v), digits) for v in values_str.split(','))
     except ValueError:

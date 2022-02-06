@@ -554,9 +554,10 @@ class Interactor(BoundaryInABC):
         input_values = self._input_values.get_values(input_account)
         y_range = self.get_input_y_range(input_account)
         decimals = self.get_input_decimals(input_account)
+        uom = self._unit_of_measure.get_unit_of_measure(input_account)
 
         response_model = ResponseModel.response_model_to_presenter_show_input_entry
-        args = input_text, input_values, self.number_of_periods, y_range, decimals, input_account
+        args = input_text, input_values, self.number_of_periods, y_range, decimals, input_account, uom
         self._presenters.show_input_entry(response_model(*args))
         self._set_input_being_modified(input_account)
 
@@ -1725,6 +1726,10 @@ class Interactor(BoundaryInABC):
 
     def remove_vertical_reference_from_all_vertical_accounts(self, vertical_reference_id):
         self._vertical_accounts.remove_vertical_reference_from_all_vertical_accounts(vertical_reference_id)
+
+    # UOM
+    def add_unit_of_measure(self, shape_id, unit_of_measure: str):
+        self._unit_of_measure.add_unit_of_measure(shape_id, unit_of_measure)
 
     # Properties
     @property

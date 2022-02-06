@@ -164,11 +164,12 @@ def create_view_model_input_entry(response_model: dict):
     text = response_model['text']
     values = response_model['values']
     nop = response_model['nop']
-    input_id = response_model['input_id']
     values_str = Utilities.values_tuple_to_values_str(values)
     y_range = response_model['y_range']
+    input_id = response_model['input_id']
+    uom = response_model['uom']
     view_model = {'text': f'Input Account: {text}', 'values': values, 'values_str': values_str, 'nop': nop,
-                  'y_range': y_range, 'input_id': input_id, 'input_name': text}
+                  'y_range': y_range, 'input_id': input_id, 'input_name': text, 'uom': uom}
     if 'decimals' in response_model:
         view_model.update({'decimals': response_model['decimals']})
     return view_model

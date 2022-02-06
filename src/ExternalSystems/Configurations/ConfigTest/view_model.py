@@ -454,6 +454,7 @@ ie_btn_apply = 'ie_btn_apply'
 ie_btn_ok = 'ie_btn_ok'
 ie_entry_min = 'ie_entry_min'
 ie_entry_max = 'ie_entry_max'
+ie_entry_uom = 'ie_entry_uom'
 ie_entry_digits = 'ie_entry_digits'
 ie_combo_box = 'ie_combo_box'
 ie_btn_next = 'ie_btn_next'
@@ -464,8 +465,8 @@ def input_entry(combobox_values: tuple) -> list:
     options = intf.top_level_options('Input Setting')
     view_model = [intf.widget_model(root, ie_toplevel, 'toplevel', 0, 0, 0, 0, 'nsew', pad_xy, **options)]
     view_model += Vm.input_entry(ie_toplevel, ie_label, ie_check_btn, ie_canvas_slider, ie_canvas_graph, ie_entry,
-                                 ie_btn_apply, ie_btn_ok, ie_entry_min, ie_entry_max, ie_entry_digits, ie_combo_box,
-                                 ie_btn_next, ie_btn_previous, pad_xy, combobox_values)
+                                 ie_btn_apply, ie_btn_ok, ie_entry_min, ie_entry_max,ie_entry_uom, ie_entry_digits,
+                                 ie_combo_box, ie_btn_next, ie_btn_previous, pad_xy, combobox_values)
     return view_model
 
 
