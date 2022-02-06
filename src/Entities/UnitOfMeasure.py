@@ -38,3 +38,10 @@ class UnitOfMeasure(Observable):
     @notify
     def copy(self, from_id, to_id):
         self.add_unit_of_measure(to_id, self.get_unit_of_measure(from_id))
+
+    @notify
+    def change_shape_id(self, old_shape_id, new_shape_id):
+        for shape_id, unit_of_measure in self._data.items():
+            if shape_id == new_shape_id:
+                self.add_unit_of_measure(new_shape_id, unit_of_measure)
+                self.remove_uoms(old_shape_id)
