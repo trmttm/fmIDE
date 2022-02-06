@@ -962,6 +962,7 @@ class Interactor(BoundaryInABC):
             self._format.copy(shape_id, copy_id)
             self._number_format.copy(shape_id, copy_id)
             self._vertical_accounts.copy(shape_id, copy_id)
+            self._unit_of_measure.copy(shape_id, copy_id)
 
         self._connections.copy(original_to_copies)
 

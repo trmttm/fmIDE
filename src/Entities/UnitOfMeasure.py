@@ -34,3 +34,7 @@ class UnitOfMeasure(Observable):
         for shape_id in shape_ids:
             if shape_id in self._data:
                 del self._data[shape_id]
+
+    @notify
+    def copy(self, from_id, to_id):
+        self.add_unit_of_measure(to_id, self.get_unit_of_measure(from_id))
