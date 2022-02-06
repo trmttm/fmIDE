@@ -452,7 +452,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -2718,6 +2718,7 @@ class Interactor(BoundaryInABC):
             'number_format_data': self._number_format.data,
             'vertical_acs': self._vertical_accounts.data,
             'vba_file': self._gateways.get_vba_binary(),
+            'shape_id_to_uom': self._unit_of_measure.data,
         }
 
         if self.sensitivity_sheet_added:
