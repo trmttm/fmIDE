@@ -2433,6 +2433,7 @@ class Interactor(BoundaryInABC):
         self._commands = entities.commands
         self._copied_commands = entities.copied_commands
         self._shape_format = entities.shape_format
+        self._unit_of_measure = entities.unit_of_measure
 
     # Graph & Slider
     def _extract_account_or_relays_from_selection(self) -> tuple:

@@ -32,6 +32,7 @@ class SystemState(Mm.OriginatorABC):
                                entities.copied_commands.data,  # 17
                                entities.input_decimals.data,  # 18
                                entities.shape_format.data,  # 19
+                               entities.unit_of_measure.data,  # 20
                                ])
         return state
 
@@ -62,6 +63,7 @@ class SystemState(Mm.OriginatorABC):
         # No need to load commands / macro, because loading pickle is part of macro sequence.
         restore_if_state_exists_otherwise_initialize(entities.input_decimals, 18, state)
         restore_if_state_exists_otherwise_initialize(entities.shape_format, 19, state)
+        restore_if_state_exists_otherwise_initialize(entities.unit_of_measure, 20, state)
 
     def restore_merge(self, memento: Mm.MementoABC, *args, **kwargs):
         entities = self._entities
@@ -82,6 +84,7 @@ class SystemState(Mm.OriginatorABC):
         merge_state_if_available(entities.vertical_accounts, 15, shape_id_converter, state)
         merge_state_if_available(entities.input_decimals, 18, shape_id_converter, state)
         merge_state_if_available(entities.shape_format, 19, shape_id_converter, state)
+        merge_state_if_available(entities.unit_of_measure, 20, shape_id_converter, state)
 
         loaded_shapes: set = set(shape_id_converter.values())
         entities.selection.set_data(loaded_shapes)

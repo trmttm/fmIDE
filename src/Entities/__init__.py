@@ -18,6 +18,7 @@ from .Selection import Selection
 from .Selections import Selections
 from .Shape import Shapes
 from .ShapeFormat import ShapeFormat
+from .UnitOfMeasure import UnitOfMeasure
 from .VerticalAccounts import VerticalAccounts
 from .Worksheets import Worksheets
 from .commands import Commands
@@ -47,6 +48,7 @@ class Entities:
         self._copied_commands = CopiedCommands()
         self._shape_format = ShapeFormat()
 
+        self._unit_of_measure = UnitOfMeasure()
         self._blank = Blank()
 
     @property
@@ -128,6 +130,10 @@ class Entities:
     @property
     def shape_format(self) -> ShapeFormat:
         return self._shape_format
+
+    @property
+    def unit_of_measure(self) -> UnitOfMeasure:
+        return self._unit_of_measure
 
     @property
     def blank(self) -> Blank:
