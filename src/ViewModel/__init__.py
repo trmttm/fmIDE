@@ -156,6 +156,7 @@ def create_view_model_update_properties(response_model: dict) -> dict:
         'formats': response_model["formats"],
         'number_formats': response_model["number_formats"],
         'vertical_references': response_model["vertical_references"],
+        'uoms': response_model["uoms"],
     }
     return view_model
 

@@ -1729,7 +1729,15 @@ class Interactor(BoundaryInABC):
 
     # UOM
     def add_unit_of_measure(self, shape_id, unit_of_measure: str):
-        self._unit_of_measure.add_unit_of_measure(shape_id, unit_of_measure)
+        tag = self._shapes.get_tag_type(shape_id)
+        if tag == 'account':
+            self._unit_of_measure.add_unit_of_measure(shape_id, unit_of_measure)
+        else:
+            self.feedback_user(f'Unit of measure can only be set to Accounts, not {tag}','error')
+
+    def add_unit_of_measure_to_selection(self, unit_of_measure: str):
+        for shape_id in self.selected_accounts:
+            self.add_unit_of_measure(shape_id, unit_of_measure)
 
     # Properties
     @property
@@ -1744,7 +1752,14 @@ class Interactor(BoundaryInABC):
         self._present_shape_properties()
 
     def _present_shape_properties(self):
-        args1 = self._selection.data, self._shapes, self._worksheets, self._format, self._number_format, self._vertical_accounts
+        args1 = (self._selection.data,
+                 self._shapes,
+                 self._worksheets,
+                 self._format,
+                 self._number_format,
+                 self._vertical_accounts,
+                 self._unit_of_measure,
+                 )
 
         response_model = ResponseModel.response_model_to_presenter_shape_properties
         self._presenters.update_shape_properties(response_model(*imp9.get_common_properties(*args1)))

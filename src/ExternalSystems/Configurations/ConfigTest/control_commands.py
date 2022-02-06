@@ -303,6 +303,8 @@ def upon_leaving_entry(view: ViewABC, interactor: BoundaryInABC, widget_id_passe
         _upon_leaving_shape_id_entry(int(entry_value), interactor, key)
     elif key == 'socket':
         interactor.add_the_same_connection_ids_to_selection(entry_value)
+    elif key == 'uom':
+        interactor.add_unit_of_measure_to_selection(entry_value)
     else:
         interactor.set_property_to_selection(key, entry_value)
 

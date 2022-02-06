@@ -25,6 +25,7 @@ entry_sheet = 'entry property worksheet sheet'
 entry_delta_x = 'entry_delta_x'
 entry_delta_y = 'entry_delta_y'
 entry_shape_id = 'entry_shape_id'
+entry_uom = 'entry_uom'
 entry_sheet_name = 'entry_sheet_name'
 entry_conn_id = 'entry_conn_id'
 entry_vertical_reference = 'entry_vertical_reference'
@@ -375,6 +376,7 @@ def start_view_model_factory() -> list:
         f(fr_property, 'label format', 'label', 12, 12, 0, 0, 'nse', **{'text': 'Format'}),
         f(fr_property, 'label num_format', 'label', 13, 13, 0, 0, 'nse', **{'text': '#'}),
         f(fr_property, 'label vertical', 'label', 14, 14, 0, 0, 'nse', **{'text': 'Vertical:'}),
+        f(fr_property, 'label vertical', 'label', 15, 15, 0, 0, 'nse', **{'text': 'UOM:'}),
 
         f(fr_property, entry_text, 'entry', 3, 3, 1, 1, 'nswe'),
         f(fr_property, entry_x, 'entry', 4, 4, 1, 1, 'nswe'),
@@ -395,6 +397,8 @@ def start_view_model_factory() -> list:
         f(fr_vertical_ref, entry_vertical_reference, 'entry', 0, 0, 1, 1, 'nswe', **{'width': 5}),
         f(fr_vertical_ref, btn_add_vref, 'button', 0, 0, 2, 2, 'nswe', **{'text': 'Add', 'width': button_width}),
         f(fr_vertical_ref, btn_remove_v_ref, 'button', 0, 0, 3, 3, 'nswe', **{'text': 'Rem', 'width': button_width}),
+
+        f(fr_property, entry_uom, 'entry', 15, 15, 1, 1, 'nswe'),
 
     ]
     align_btns = Vm.create_d_pad_model(fr_align, (button_13, button_14, button_15, button_16), button_width)

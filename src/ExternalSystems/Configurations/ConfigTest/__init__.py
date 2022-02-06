@@ -27,7 +27,7 @@ class ConfigurationTest(ConfigurationABC):
     @staticmethod
     def set_up(view: ViewABC, interactor: BoundaryInABC, presenters: PresentersABC, mouse: MouseControllerABC):
         i, v, p = interactor, view, presenters
-        w = vm.entry_text, vm.entry_x, vm.entry_y, vm.entry_width, vm.entry_height, vm.entry_sheet, vm.entry_shape_id, vm.cb_format, vm.cb_num_format, vm.check_btn
+        w = vm.entry_text, vm.entry_x, vm.entry_y, vm.entry_width, vm.entry_height, vm.entry_sheet, vm.entry_shape_id, vm.cb_format, vm.cb_num_format, vm.check_btn, vm.entry_uom
         p.attach_to_update_shape_properties(lambda view_model: v.set_values(w, tuple(view_model.values())))
         p.attach_to_present_states(lambda view_model: v.set_value(vm.textbox_rpe, view_model))
         p.attach_to_update_account_order(lambda view_model_: vc.update_tree_account(v, view_model_, i))

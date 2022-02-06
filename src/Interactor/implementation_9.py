@@ -280,7 +280,8 @@ def get_shape_id_at_mouse_point(shapes: Et.Shapes, request: dict, search_from: t
 
 
 def get_common_properties(shape_ids: tuple, shapes: Et.Shapes, worksheets: Et.Worksheets, format_: Et.Format,
-                          number_format: Et.NumberFormat, vertical_accounts: Et.VerticalAccounts) -> tuple:
+                          number_format: Et.NumberFormat, vertical_accounts: Et.VerticalAccounts,
+                          uom: Et.UnitOfMeasure) -> tuple:
     texts = set()
     xs = set()
     ys = set()
@@ -290,6 +291,7 @@ def get_common_properties(shape_ids: tuple, shapes: Et.Shapes, worksheets: Et.Wo
     formats = set()
     number_formats = set()
     vertical_acs = set()
+    uoms_set = set()
 
     for shape_id in shape_ids:
         if shape_id_is_not_blank(shape_id, shapes):
@@ -306,6 +308,7 @@ def get_common_properties(shape_ids: tuple, shapes: Et.Shapes, worksheets: Et.Wo
             if f is not None:
                 number_formats.add(f)
             vertical_acs.add(vertical_accounts.is_a_vertical_account(shape_id))
+            uoms_set.add(uom.get_unit_of_measure(shape_id))
 
     text = texts.pop() if len(texts) == 1 else ''
     x = xs.pop() if len(xs) == 1 else ''
@@ -317,8 +320,9 @@ def get_common_properties(shape_ids: tuple, shapes: Et.Shapes, worksheets: Et.Wo
     cell_format = formats.pop() if len(formats) == 1 else 'None'
     cell_number_format = number_formats.pop() if len(number_formats) == 1 else ''
     vertical_references = vertical_acs.pop() if len(vertical_acs) == 1 else False
+    uoms = uoms_set.pop() if len(uoms_set) == 1 else ''
 
-    return text, x, y, width, height, worksheet, shape_id, cell_format, cell_number_format, vertical_references
+    return text, x, y, width, height, worksheet, shape_id, cell_format, cell_number_format, vertical_references, uoms
 
 
 def shape_id_is_not_blank(shape_id, shapes):

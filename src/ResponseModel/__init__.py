@@ -138,9 +138,10 @@ def audit_shape(shape_id, is_selected: bool, tag_type, canvas_tag, connections_i
 
 
 def response_model_to_presenter_shape_properties(text, x, y, width, height, worksheet, shape_id, formats,
-                                                 number_formats, vertical_references) -> dict:
+                                                 number_formats, vertical_references, uoms) -> dict:
     return {'text': text, 'x': x, 'y': y, 'width': width, 'height': height, 'worksheet': worksheet, 'id': shape_id,
-            'formats': formats, 'number_formats': number_formats, 'vertical_references': vertical_references}
+            'formats': formats, 'number_formats': number_formats, 'vertical_references': vertical_references,
+            'uoms': uoms}
 
 
 def response_model_to_presenter_states(shape_ids, shapes_positions, texts, connections, operators, rpes,
@@ -173,7 +174,7 @@ def response_model_to_presenter_worksheets(sheet_names: tuple, selected=None) ->
 def response_model_to_presenter_show_input_entry(input_text: str, input_values: tuple, number_of_periods: int,
                                                  y_range: tuple, decimals: int = None, input_id='', uom='') -> dict:
     response_model = {'text': input_text, 'values': input_values, 'nop': number_of_periods, 'y_range': y_range,
-                      'input_id': input_id, 'uom':uom}
+                      'input_id': input_id, 'uom': uom}
     if decimals is not None:
         response_model.update({'decimals': decimals})
     return response_model
