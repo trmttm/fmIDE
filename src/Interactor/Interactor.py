@@ -198,7 +198,7 @@ class Interactor(BoundaryInABC):
 
     @property
     def selected_account_names(self) -> tuple:
-        return tuple(self._shapes.get_text(shape_id) for shape_id in self.selected_accounts)
+        return self._get_texts_of_shapes(self.selected_accounts)
 
     @property
     def first_selected_text(self) -> str:
@@ -207,11 +207,18 @@ class Interactor(BoundaryInABC):
 
     @property
     def copied_account_names(self) -> tuple:
-        return tuple(self._shapes.get_text(shape_id) for shape_id in self._sf.copied_accounts)
+        return self._get_texts_of_shapes(self._sf.copied_accounts)
 
     @property
     def input_accounts(self) -> tuple:
         return imp9.get_input_accounts(self._connections, self._shapes)
+
+    def _get_texts_of_shapes(self, shape_ids: Iterable) -> tuple:
+        return tuple(self._shapes.get_text(shape_id) for shape_id in shape_ids)
+
+    @property
+    def input_names(self) -> tuple:
+        return self._get_texts_of_shapes(self.input_accounts)
 
     def display_pickle(self, pickle_name: str):
         original_entities = self._entities
@@ -1626,7 +1633,7 @@ class Interactor(BoundaryInABC):
         connections = self._connections
         operators = shapes.get_shapes('operator')
         rpe_readable = self.output_rpe_readable
-        input_accounts = imp9.get_input_accounts(connections, shapes)
+        input_accounts = self.input_accounts
         input_texts = tuple(shapes.get_text(shape_id) for shape_id in input_accounts)
         sheet = self.output_worksheet_information
         connection_ids = self._connection_ids.data
@@ -1763,7 +1770,7 @@ class Interactor(BoundaryInABC):
 
         self.present_refresh_canvas()
 
-        texts = tuple(self._shapes.get_text(shape_id) for shape_id in shape_ids)
+        texts = self._get_texts_of_shapes(shape_ids)
         self.feedback_user(f'Items moved to {sheet_to}: {texts}', 'success')
 
     def get_y_shift_to_prevent_overlap(self, shape_ids: tuple, sheet_to) -> float:
@@ -1889,19 +1896,19 @@ class Interactor(BoundaryInABC):
     def _create_response_model_for_presenter_account(self, accounts: tuple):
         worksheets = tuple(self._worksheets.get_worksheet_of_an_account(account_id) for account_id in accounts)
         sh_sorted, ac_sorted = Utilities.sort_lists(worksheets, accounts)
-        texts = tuple(self._shapes.get_text(account_id) for account_id in ac_sorted)
+        texts = self._get_texts_of_shapes(ac_sorted)
         response_model = ResponseModel.response_model_to_presenter_accounts(tuple(ac_sorted), texts, tuple(sh_sorted))
         return response_model
 
     def _create_response_model_for_presenter_selected_account(self, accounts: tuple):
         worksheets = tuple(self._worksheets.get_worksheet_of_an_account(account_id) for account_id in accounts)
-        texts = tuple(self._shapes.get_text(account_id) for account_id in accounts)
+        texts = self._get_texts_of_shapes(accounts)
         response_model = ResponseModel.response_model_to_presenter_accounts(tuple(accounts), texts, tuple(worksheets))
         return response_model
 
     def _create_response_model_for_presenter_selected_account_with_deltas(self, accounts: tuple):
         worksheets = tuple(self._worksheets.get_worksheet_of_an_account(account_id) for account_id in accounts)
-        texts = tuple(self._shapes.get_text(account_id) for account_id in accounts)
+        texts = self._get_texts_of_shapes(accounts)
         deltas = self._configurations.get_sensitivity_deltas(accounts)
         args = tuple(accounts), texts, tuple(worksheets), deltas
         response_model = ResponseModel.response_model_to_presenter_accounts_with_deltas(*args)
@@ -2654,7 +2661,7 @@ class Interactor(BoundaryInABC):
         shape_ids = self._shapes.shapes_ids
         path = self.save_path if path is None else path
         workbook_name = f'{path}/{file_name if file_name is not None else "Excel.xlsx"}'.replace('//', '/')
-        shape_id_to_text = dict(zip(shape_ids, tuple(self._shapes.get_text(i) for i in shape_ids)))
+        shape_id_to_text = dict(zip(shape_ids, self._get_texts_of_shapes(shape_ids)))
 
         input_accounts = self.input_accounts
         number_of_periods = nop = self.number_of_periods

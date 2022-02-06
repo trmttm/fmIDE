@@ -530,7 +530,7 @@ def popup_input_entry(view: ViewABC, interactor: BoundaryInABC, mouse_cls: Type[
 
     interactor.set_default_input_values_if_values_not_set()
 
-    view.add_widgets(vm.input_entry())
+    view.add_widgets(vm.input_entry(interactor.input_names))
     view.switch_canvas(vm.ie_canvas_graph)
 
     vci = Vci(view)
