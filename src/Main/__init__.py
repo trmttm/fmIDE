@@ -45,7 +45,7 @@ class Main:
         On the other hand, if interactor is passed to mouse_configurations, then it is much faster.
         But mouse actions are not recorded as macro.
         """
-        impl.configure_mouse(mouse, config.mouse_configurations(wrapped_interactor, view, mouse))
+        # impl.configure_mouse(mouse, config.mouse_configurations(wrapped_interactor, view, mouse))
         impl.configure_mouse(mouse, config.mouse_configurations(interactor, view, mouse))
 
         plug_in_views.plug_views_to_presenters(presenters, view)
