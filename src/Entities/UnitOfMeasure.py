@@ -44,4 +44,4 @@ class UnitOfMeasure(Observable):
         for shape_id, unit_of_measure in self._data.items():
             if shape_id == new_shape_id:
                 self.add_unit_of_measure(new_shape_id, unit_of_measure)
-                self.remove_uoms(old_shape_id)
+                self.remove_uoms((old_shape_id,))
