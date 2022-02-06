@@ -36,7 +36,17 @@ class Main:
         view.attach_to_event_upon_closing(self.quit)
 
         wrapped_interactor = WrappedInteractor(interactor)  # wrapped_interactor captures user actions.
+
+        """
+        wrapped_interactor allows mouse actions (such as dragging) to be recorded as macro.
+        However, the wrapper is expensive because every actions compares the system state.
+        Obtaining system states requires deepcopy, which is expensive.
+        
+        On the other hand, if interactor is passed to mouse_configurations, then it is much faster.
+        But mouse actions are not recorded as macro.
+        """
         impl.configure_mouse(mouse, config.mouse_configurations(wrapped_interactor, view, mouse))
+        impl.configure_mouse(mouse, config.mouse_configurations(interactor, view, mouse))
 
         plug_in_views.plug_views_to_presenters(presenters, view)
         config.set_up(view, interactor, presenters, mouse)
