@@ -541,8 +541,8 @@ def popup_input_entry(view: ViewABC, interactor: BoundaryInABC, mouse_cls: Type[
 
     view.bind_command_to_widget(vm.ie_btn_apply, lambda: apply_input_entry(view, interactor))
     view.bind_command_to_widget(vm.ie_btn_ok, lambda: ok_input_entry(view, interactor, vci))
-    view.bind_command_to_widget(vm.ie_btn_next, interactor.show_next_input)
-    view.bind_command_to_widget(vm.ie_btn_previous, interactor.show_previous_input)
+    view.bind_command_to_widget(vm.ie_btn_next, lambda: next_input(view, interactor))
+    view.bind_command_to_widget(vm.ie_btn_previous, lambda: previous_input(view, interactor))
     view.bind_command_to_widget(vm.ie_toplevel, lambda: vci.close(vm.ie_toplevel))
     view.bind_command_to_widget(vm.ie_check_btn, lambda: toggle_canvases(view))
     view.bind_command_to_widget(vm.ie_entry_min, lambda *_: apply_input_entry(view, interactor))
@@ -648,7 +648,7 @@ def upon_canvas_size_change(interactor: BoundaryInABC, view: ViewABC, vci: Vci):
     vci.set_canvas_min_y(margin)
 
 
-def upon_ie_combobox_selection(id_name_sheet:str, interactor:BoundaryInABC):
+def upon_ie_combobox_selection(id_name_sheet: str, interactor: BoundaryInABC):
     input_id = int(id_name_sheet.split(' ')[0])
     interactor.show_specified_input(input_id)
 
@@ -687,6 +687,16 @@ def ok_input_entry(view: ViewABC, interactor: BoundaryInABC, vci: Vci):
     apply_input_entry(view, interactor)
     vci.close(vm.ie_toplevel)
     view.switch_canvas(vm.canvas_id)
+
+
+def next_input(view: ViewABC, interactor: BoundaryInABC):
+    apply_input_entry(view, interactor)
+    interactor.show_next_input()
+
+
+def previous_input(view: ViewABC, interactor: BoundaryInABC):
+    apply_input_entry(view, interactor)
+    interactor.show_previous_input()
 
 
 def upon_format_selection(view: ViewABC, interactor: BoundaryInABC):
