@@ -1856,6 +1856,8 @@ class Interactor(BoundaryInABC):
             # Remove redundant connection_ids
             self._connection_ids.clean_data()
             self._shape_format.clean_data(all_shape_ids)
+            all_accounts = self._shapes.get_shapes('account')
+            self._unit_of_measure.clean_data(all_accounts)
         feedback = self._gateways.save_file(file_name)
         return feedback
 
