@@ -19,6 +19,7 @@ class Configurations(Observable):
     _default_command_file_name = 'Commands.xlsm'
     _clean_state_prior_to_save = 'clean_up_state_before_pickling_though_expensive'
     _live_calculation = 'live_calculation'
+    _default_font_size = 13 if os_identifier.is_mac else 10
     _account_width = 'account width'
     _account_height = 'account height'
     _account_font_size = 'account font size'
@@ -48,16 +49,16 @@ class Configurations(Observable):
                       self._live_calculation: True,
                       self._account_width: 50,
                       self._account_height: 20,
-                      self._account_font_size: 13 if os_identifier.is_mac else 10,
+                      self._account_font_size: self._default_font_size,
                       self._operator_width: 50,
                       self._operator_height: 20,
-                      self._operator_font_size: 13,
+                      self._operator_font_size: self._default_font_size,
                       self._bb_width: 50,
                       self._bb_height: 20,
-                      self._bb_font_size: 13,
+                      self._bb_font_size: self._default_font_size,
                       self._constant_width: 50,
                       self._constant_height: 20,
-                      self._constant_font_size: 13,
+                      self._constant_font_size: self._default_font_size,
 
                       }
 
