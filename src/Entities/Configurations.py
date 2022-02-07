@@ -1,7 +1,7 @@
 from .Observable import Observable
 from .Observable import notify
 from .. import Utilities
-
+import os_identifier
 
 class Configurations(Observable):
     _number_of_periods = 'nop'
@@ -47,7 +47,7 @@ class Configurations(Observable):
                       self._live_calculation: True,
                       self._account_width: 50,
                       self._account_height: 20,
-                      self._account_font_size: 13,
+                      self._account_font_size: 13 if os_identifier.is_mac else 10,
                       self._operator_width: 50,
                       self._operator_height: 20,
                       self._operator_font_size: 13,
