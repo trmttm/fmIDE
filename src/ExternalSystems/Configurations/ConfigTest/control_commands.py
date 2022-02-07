@@ -592,8 +592,8 @@ def upon_input_entry_controller_command(view: ViewABC, interactor: BoundaryInABC
 
         view.switch_canvas(vm.canvas_id)
         apply_to_input_account_being_modified(digits, interactor, rounded_values)
-        interactor.calculate()
         view.switch_canvas(original_canvas)
+        interactor.calculate()
 
     if by_slider:
         input_id = interactor.input_being_modified
