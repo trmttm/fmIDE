@@ -42,6 +42,6 @@ class UnitOfMeasure(Observable):
     @notify
     def change_shape_id(self, old_shape_id, new_shape_id):
         for shape_id, unit_of_measure in self._data.items():
-            if shape_id == new_shape_id:
+            if shape_id == old_shape_id:
                 self.add_unit_of_measure(new_shape_id, unit_of_measure)
                 self.remove_uoms((old_shape_id,))
