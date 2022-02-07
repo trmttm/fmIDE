@@ -3,6 +3,7 @@ from .Observable import notify
 from .. import Utilities
 import os_identifier
 
+
 class Configurations(Observable):
     _number_of_periods = 'nop'
     _bb_shift = 'bb_shift'
