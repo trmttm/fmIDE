@@ -27,6 +27,7 @@ class Main:
         presenters = Presenters()
         gateways = cls_gateways(entities)
         interactor = Interactor(entities, presenters, gateways)
+        interactor.stop_canvas_refreshing()
         mouse = MouseController()  # Mouse connected to Interactor (*not* Views like InputEntry)
 
         # setups (order matters)
@@ -53,6 +54,8 @@ class Main:
         config.set_up_again_with_wrapped_interactor(view, wrapped_interactor, presenters, mouse)
         command_dictionary = config.widget_command_map_factory(view, wrapped_interactor, mouse, presenters)
         impl.bind_commands_to_widgets(command_dictionary, view)
+
+        interactor.start_canvas_refreshing()
 
         self.default_keyboard_shortcuts = config.default_keyboard_shortcuts(wrapped_interactor, view, presenters, mouse)
         self._view = view

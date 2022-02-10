@@ -1431,6 +1431,9 @@ class Interactor(BoundaryInABC):
         self._present_feedback_user(f'Loaded file: {file_name}', 'success')
 
     def merge_file(self, file_name: str):
+        canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
+        self.stop_canvas_refreshing()
+        self.stop_highlighting()
         initial_shapes = set(self._shapes.shapes_ids)
         self._gateways.merge_state_from_file(file_name)
 
@@ -1448,7 +1451,10 @@ class Interactor(BoundaryInABC):
         self.add_inter_sheets_relays(self._connections.new_merged_connections)
         self._present_feedback_user(f'Merged file: {file_name}', 'success')
         self._selection.add_selections_by_shape_ids(shapes_added)
-        self.present_refresh_canvas()
+        if not canvas_refresh_was_prevented_at_the_beginning:
+            self.start_canvas_refreshing()
+            self.start_highlighting()
+            self.present_refresh_canvas()
 
     def remove_templates(self, pickle_names: tuple):
         for pickle_name in pickle_names:
@@ -1931,14 +1937,17 @@ class Interactor(BoundaryInABC):
 
     def present_refresh_canvas(self):
         if not self.prevent_refresh_canvas:
-            self._clear_circular_reference_cache()
-            self._present_clear_canvas()
-            self._present_add_shape(self.sheet_contents)
-            self._present_connect_shapes()
-            self.present_update_worksheets()
-            self._present_shape_properties()
-            self._present_connection_ids()
-            self._present_highlight_automatic()
+            self._present_refresh_canvas()
+
+    def _present_refresh_canvas(self):
+        self._clear_circular_reference_cache()
+        self._present_clear_canvas()
+        self._present_add_shape(self.sheet_contents)
+        self._present_connect_shapes()
+        self.present_update_worksheets()
+        self._present_shape_properties()
+        self._present_connection_ids()
+        self._present_highlight_automatic()
 
     def present_refresh_canvas_minimum(self):
         minimum_shapes_to_update = self._get_minimum_shape_ids_to_update()
@@ -2467,6 +2476,7 @@ class Interactor(BoundaryInABC):
 
     # Slider
     def add_slider_of_selected_input_accounts(self):
+        self.stop_canvas_refreshing()
         selected_inputs = tuple(sorted(self._get_selected_inputs_or_their_relays()))
         self.clear_selection()
         if selected_inputs == ():
