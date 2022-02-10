@@ -43,7 +43,7 @@ if __name__ == '__main__':
             app = instantiate_app()
             # Profiling
             app.view.switch_frame('frame_macro')
-            app.interactor.merge_macro('99_test')
+            app.interactor.merge_macro('00_Base_Model_Plug_Vertical')
             app.interactor.run_macro()
             app.quit()
             # Profiling end
@@ -128,10 +128,10 @@ if __name__ == '__main__':
             app.interactor.save_state_to_file('zz_Profiling')
 
 
-        # cProfile.run('start_macro()')
+        cProfile.run('start_macro()')
         # cProfile.run('slider()')
         # cProfile.run('select_shape()')
-        cProfile.run('mouse_selection()')
+        # cProfile.run('mouse_selection()')
         # cProfile.run('clean_state_and_save_template()')
     else:
         app = instantiate_app()

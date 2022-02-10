@@ -293,14 +293,14 @@ class Interactor(BoundaryInABC):
         return Observable.is_debug_mode
 
     def stop_canvas_refreshing(self):
-        self._configurations.stop_canvas_refreshing()
+        self._sf.set_prevent_refresh_canvas(True)
 
     def start_canvas_refreshing(self):
-        self._configurations.start_canvas_refreshing()
+        self._sf.set_prevent_refresh_canvas(False)
 
     @property
     def prevent_refresh_canvas(self) -> bool:
-        return self._configurations.prevent_refresh_canvas
+        return self._sf.prevent_refresh_canvas
 
     @property
     def _increment_x_y(self) -> tuple:
@@ -1442,9 +1442,6 @@ class Interactor(BoundaryInABC):
         self._present_feedback_user(f'Loaded file: {file_name}', 'success')
 
     def merge_file(self, file_name: str):
-        self.stop_canvas_refreshing()
-        self.stop_highlighting()
-
         initial_shapes = set(self._shapes.shapes_ids)
         self._gateways.merge_state_from_file(file_name)
 
@@ -1462,8 +1459,6 @@ class Interactor(BoundaryInABC):
         self.add_inter_sheets_relays(self._connections.new_merged_connections)
         self._present_feedback_user(f'Merged file: {file_name}', 'success')
         self._selection.add_selections_by_shape_ids(shapes_added)
-        self.start_canvas_refreshing()
-        self.start_highlighting()
         self.present_refresh_canvas()
 
     def remove_templates(self, pickle_names: tuple):
@@ -2364,12 +2359,18 @@ class Interactor(BoundaryInABC):
             self.present_macros(next_position)
 
     def run_macro(self, observer_passed: Callable = None) -> tuple:
+        self.stop_canvas_refreshing()
+        self.stop_highlighting()
+
         def observer(no: int, total_n: int, command_name: str):
             self._present_feedback_user(f'{no}/{total_n} running {command_name}...', is_incremental_progress=True)
 
         observers = (observer, observer_passed) if observer_passed is not None else (observer,)
         succeeded, return_values_or_error = self._commands.run_macro(self, observers)
 
+        self.start_canvas_refreshing()
+        self.start_highlighting()
+        self.present_refresh_canvas()
         if succeeded:
             return_values = return_values_or_error
             self._present_feedback_user('Macro completed!', 'success')

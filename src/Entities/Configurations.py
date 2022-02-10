@@ -1,7 +1,8 @@
+import os_identifier
+
 from .Observable import Observable
 from .Observable import notify
 from .. import Utilities
-import os_identifier
 
 
 class Configurations(Observable):
@@ -206,16 +207,6 @@ class Configurations(Observable):
 
     def get_account_ids_to_deltas(self, account_ids) -> dict:
         return dict(zip(account_ids, self.get_sensitivity_deltas(account_ids)))
-
-    def stop_canvas_refreshing(self):
-        self._data[self._prevent_refresh_canvas] = True
-
-    def start_canvas_refreshing(self):
-        self._data[self._prevent_refresh_canvas] = False
-
-    @property
-    def prevent_refresh_canvas(self) -> bool:
-        return self._data[self._prevent_refresh_canvas]
 
     @property
     def state_cleaner_is_activated(self) -> bool:

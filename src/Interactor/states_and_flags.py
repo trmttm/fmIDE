@@ -7,6 +7,7 @@ class StatesAndFlags:
         self._input_being_modified = None
         self._cache_circular_connections = None
         self._prevent_auto_highlight = False
+        self._prevent_refresh_canvas = False
         self._previous_previous_commands = []
         self._previous_commands = []
 
@@ -102,6 +103,13 @@ class StatesAndFlags:
 
     def set_prevent_auto_highlight(self, value):
         self._prevent_auto_highlight = value
+
+    @property
+    def prevent_refresh_canvas(self):
+        return self._prevent_refresh_canvas
+
+    def set_prevent_refresh_canvas(self, value):
+        self._prevent_refresh_canvas = value
 
     @property
     def previous_previous_commands(self):
