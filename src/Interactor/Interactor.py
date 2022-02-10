@@ -589,12 +589,12 @@ class Interactor(BoundaryInABC):
 
     # Worksheets
     def add_new_worksheet(self, sheet_name: str = None):
-        previous_sheet_state = copy.deepcopy((self._worksheets.sheet_names, self._worksheets.selected_sheet))
+        previous_sheet_state = copy.copy((self._worksheets.sheet_names, self._worksheets.selected_sheet))
         self._entities.add_new_worksheet(sheet_name)
         self.upon_updating_worksheets(previous_sheet_state)
 
     def select_worksheet(self, sheet_name: str):
-        previous_sheet_state = copy.deepcopy((self._worksheets.sheet_names, self._worksheets.selected_sheet))
+        previous_sheet_state = copy.copy((self._worksheets.sheet_names, self._worksheets.selected_sheet))
         self._worksheets.select_sheet(sheet_name)
         self.upon_updating_worksheets(previous_sheet_state)
 
@@ -603,7 +603,7 @@ class Interactor(BoundaryInABC):
             self._present_feedback_user('There has to be at lease one worksheet.', 'error')
             return
 
-        previous_sheet_state = copy.deepcopy((self._worksheets.sheet_names, self._worksheets.selected_sheet))
+        previous_sheet_state = copy.copy((self._worksheets.sheet_names, self._worksheets.selected_sheet))
         self.erase_shapes_by_shape_ids(self.sheet_contents)
         self._entities.delete_selected_sheet()
         self.upon_updating_worksheets(previous_sheet_state)
@@ -1411,7 +1411,7 @@ class Interactor(BoundaryInABC):
 
     def _erase_all_shapes_except_current_sheet(self):
         current_sheet = self._worksheets.selected_sheet
-        previous_sheet_state = copy.deepcopy((self._worksheets.sheet_names, self._worksheets.selected_sheet))
+        previous_sheet_state = copy.copy((self._worksheets.sheet_names, self._worksheets.selected_sheet))
         for sheet_name in self._worksheets.sheet_names:
             if sheet_name != current_sheet:
                 self.erase_shapes_by_shape_ids(self._worksheets.get_sheet_contents(sheet_name))
