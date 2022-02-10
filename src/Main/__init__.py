@@ -56,6 +56,7 @@ class Main:
         impl.bind_commands_to_widgets(command_dictionary, view)
 
         interactor.start_canvas_refreshing()
+        interactor.present_refresh_canvas()
 
         self.default_keyboard_shortcuts = config.default_keyboard_shortcuts(wrapped_interactor, view, presenters, mouse)
         self._view = view
