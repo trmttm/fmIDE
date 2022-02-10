@@ -131,12 +131,6 @@ if __name__ == '__main__':
             from src.Entities import Observable
             Observable.is_debug_mode = False
             app = instantiate_app()
-            app.interactor.reset()
-            app.interactor.load_file('Scrap JV 08')
-            app.interactor.select_worksheet('Material Bal')
-            for i in range(10):
-                app.interactor._select_shape_by_shape_id(245)
-                app.interactor.add_slider_of_selected_input_accounts()
             app.quit()
 
 

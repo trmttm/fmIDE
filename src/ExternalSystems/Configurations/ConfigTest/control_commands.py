@@ -50,11 +50,6 @@ def upon_menu_button1(view: ViewABC, interactor: BoundaryInABC, presenters: Pres
     view.focus(vm.entry_id)
     interactor.change_active_keymap(cns.keymap_design)
     update_menu_bar(view, interactor, presenters, mouse)
-    try:
-        interactor.present_refresh_canvas()
-    except KeyError:
-        # Prior to one time interactor.setup during instantiation, canvas cannot be refreshed
-        pass
 
 
 def upon_menu_button2(view: ViewABC, interactor: BoundaryInABC, presenters: PresentersABC, mouse: MouseControllerABC,
