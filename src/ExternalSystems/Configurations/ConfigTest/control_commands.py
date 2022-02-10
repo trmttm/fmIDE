@@ -279,7 +279,6 @@ def upon_merge_pickle(view: ViewABC, interactor: BoundaryInABC, presenters: Pres
     pickle_name = view.tree_focused_values(vm.tree_pickle_files_id)[1]
     upon_menu_button1(view, interactor, presenters, mouse)
     interactor.merge_file(pickle_name)
-    interactor.present_refresh_canvas()
 
     tree_item_position = _get_currently_selected_tree_position(view, vm.tree_pickle_files_id)
     load_templates(interactor, negative_list, view, tree_item_position)
@@ -997,7 +996,6 @@ def execute_searched_command(view: ViewABC, interactor: BoundaryInABC):
 
 def close_search_window_properly(interactor: BoundaryInABC, view: ViewABC):
     view.close(vm.toplevel_search)
-    interactor.present_refresh_canvas()
     interactor.change_active_keymap(cns.keymap_design)  # closing toplevel is responsible for changing keymap
 
 
