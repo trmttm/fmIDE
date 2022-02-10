@@ -127,8 +127,20 @@ if __name__ == '__main__':
             app = instantiate_app()
             app.interactor.save_state_to_file('zz_Profiling')
 
+        def sand_box():
+            from src.Entities import Observable
+            Observable.is_debug_mode = False
+            app = instantiate_app()
+            app.interactor.reset()
+            app.interactor.load_file('Scrap JV 08')
+            app.interactor.select_worksheet('Material Bal')
+            for i in range(1):
+                app.interactor._select_shape_by_shape_id(245)
+                app.interactor.add_slider_of_selected_input_accounts()
+            app.quit()
 
-        cProfile.run('start_macro()')
+
+        cProfile.run('sand_box()')
         # cProfile.run('slider()')
         # cProfile.run('select_shape()')
         # cProfile.run('mouse_selection()')
