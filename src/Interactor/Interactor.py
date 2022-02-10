@@ -1723,7 +1723,7 @@ class Interactor(BoundaryInABC):
         if tag == 'account':
             self._unit_of_measure.add_unit_of_measure(shape_id, unit_of_measure)
         else:
-            self.feedback_user(f'Unit of measure can only be set to Accounts, not {tag}','error')
+            self.feedback_user(f'Unit of measure can only be set to Accounts, not {tag}', 'error')
 
     def add_unit_of_measure_to_selection(self, unit_of_measure: str):
         for shape_id in self.selected_accounts:
@@ -2476,14 +2476,19 @@ class Interactor(BoundaryInABC):
 
     # Slider
     def add_slider_of_selected_input_accounts(self):
+        canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self.stop_canvas_refreshing()
+
         selected_inputs = tuple(sorted(self._get_selected_inputs_or_their_relays()))
         self.clear_selection()
         if selected_inputs == ():
             self._add_empty_slider()
         else:
             self._add_slider_of_selected_input_accounts(selected_inputs)
-        self.present_refresh_canvas()
+
+        if not canvas_refresh_was_prevented_at_the_beginning:
+            self.start_canvas_refreshing()
+            self.present_refresh_canvas()
 
     def _get_selected_inputs_or_their_relays(self) -> tuple:
         input_accounts = self.input_accounts
