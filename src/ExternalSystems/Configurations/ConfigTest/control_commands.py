@@ -446,12 +446,16 @@ def add_sensitivity_target(view: ViewABC, interactor: BoundaryInABC):
     tree = vm.tree_sensitivity_account_list
     add_method = interactor.add_sensitivity_target_accounts
     _add_target_accounts(view, tree, add_method)
+    interactor.present_sensitivity_target_accounts()
+    interactor.present_sensitivity_accounts()
 
 
 def add_sens_variable(view: ViewABC, interactor: BoundaryInABC):
     tree = vm.tree_sensitivity_input_list
     add_method = interactor.add_sensitivity_variable_accounts
     _add_target_accounts(view, tree, add_method)
+    interactor.present_sensitivity_variable_accounts()
+    interactor.present_sensitivity_input_accounts()
 
 
 def _add_target_accounts(view: ViewABC, tree_id: str, add_method: Callable):
@@ -468,12 +472,16 @@ def remove_sensitivity_target(view: ViewABC, interactor: BoundaryInABC):
     tree = vm.tree_sensitivity_target_list
     remove_method = interactor.remove_sensitivity_target_accounts
     _remove_target_accounts(view, tree, remove_method)
+    interactor.present_sensitivity_target_accounts()
+    interactor.present_sensitivity_accounts()
 
 
 def remove_sens_variable(view: ViewABC, interactor: BoundaryInABC):
     tree = vm.tree_sensitivity_variable_list
     remove_method = interactor.remove_sensitivity_variable_accounts
     _remove_target_accounts(view, tree, remove_method)
+    interactor.present_sensitivity_variable_accounts()
+    interactor.present_sensitivity_input_accounts()
 
 
 def set_sensitivity_delta(view: ViewABC, interactor: BoundaryInABC):
@@ -484,6 +492,7 @@ def set_sensitivity_delta(view: ViewABC, interactor: BoundaryInABC):
         interactor.set_sensitivity_deltas(account_ids, float(delta))
     else:
         interactor.feedback_user(f'Delta must be number.', 'error')
+    interactor.present_sensitivity_variable_accounts()
 
 
 def upon_check_btn_input_sheet(view: ViewABC, interactor: BoundaryInABC):
@@ -517,6 +526,8 @@ def _move_sensitivity_targets(interactor: BoundaryInABC, shift: int, view: ViewA
     tree = vm.tree_sensitivity_target_list
     shift_method = interactor.shift_multiple_sensitivity_target_account
     _shift_tree_items(view, tree, shift, shift_method)
+    interactor.present_sensitivity_target_accounts()
+    interactor.present_sensitivity_accounts()
 
 
 def _shift_tree_items(view: ViewABC, tree_id: str, shift: int, shift_method: Callable):

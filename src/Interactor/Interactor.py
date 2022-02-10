@@ -361,18 +361,12 @@ class Interactor(BoundaryInABC):
 
     def add_sensitivity_target_accounts(self, account_ids: tuple):
         self._configurations.add_sensitivity_target_accounts(account_ids)
-        self.present_sensitivity_target_accounts()
-        self.present_sensitivity_accounts()
 
     def remove_sensitivity_target_accounts(self, account_ids: tuple):
         self._configurations.remove_sensitivity_target_accounts(account_ids)
-        self.present_sensitivity_target_accounts()
-        self.present_sensitivity_accounts()
 
     def shift_multiple_sensitivity_target_account(self, indexes, shift: int) -> tuple:
         destinations = self._configurations.shift_multiple_sensitivity_target_accounts(indexes, shift)
-        self.present_sensitivity_target_accounts()
-        self.present_sensitivity_accounts()
         return destinations
 
     def add_sensitivity_variable_account(self, account_id):
@@ -381,13 +375,9 @@ class Interactor(BoundaryInABC):
 
     def add_sensitivity_variable_accounts(self, account_ids: tuple):
         self._configurations.add_sensitivity_variable_accounts(account_ids)
-        self.present_sensitivity_variable_accounts()
-        self.present_sensitivity_input_accounts()
 
     def remove_sensitivity_variable_accounts(self, account_ids: tuple):
         self._configurations.remove_sensitivity_variable_accounts(account_ids)
-        self.present_sensitivity_variable_accounts()
-        self.present_sensitivity_input_accounts()
 
     def set_sensitivity_delta(self, account_id, delta: float):
         # For macro (easier to set account_id as argument than tuple account_ids)
@@ -395,7 +385,6 @@ class Interactor(BoundaryInABC):
 
     def set_sensitivity_deltas(self, account_ids: tuple, delta: float):
         self._configurations.set_sensitivity_deltas(account_ids, delta)
-        self.present_sensitivity_variable_accounts()
 
     @property
     def save_path(self):
