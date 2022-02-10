@@ -2520,6 +2520,9 @@ class Interactor(BoundaryInABC):
 
     # Graph
     def add_a_y_axis_of_selected_accounts(self, coordinate: tuple = (), min_max: tuple = None):
+        canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
+        self.stop_canvas_refreshing()
+
         account_ids = self._extract_account_or_relays_from_selection()
         self.clear_selection()
         graph_id = graph.add_y_axis(coordinate, min_max, self.add_new_shape, self._connections, self._shapes)
@@ -2529,7 +2532,10 @@ class Interactor(BoundaryInABC):
         else:
             self._add_an_empty_bar(graph_id)
         self._update_graph_bars_and_live_values()
-        self.present_refresh_canvas()
+
+        if not canvas_refresh_was_prevented_at_the_beginning:
+            self.start_canvas_refreshing()
+            self.present_refresh_canvas()
 
     def _add_an_empty_bar(self, graph_id) -> Any:
         bar_id = graph.add_bar(graph_id, self.add_new_shape, self._shapes, self._connections)
@@ -2537,8 +2543,15 @@ class Interactor(BoundaryInABC):
         return bar_id
 
     def add_bar_of_selected_accounts(self):
+        canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
+        self.stop_canvas_refreshing()
+
         account_ids = self._extract_account_or_relays_from_selection()
         self.add_bars_of_selected_accounts(account_ids)
+
+        if not canvas_refresh_was_prevented_at_the_beginning:
+            self.start_canvas_refreshing()
+            self.present_refresh_canvas()
 
     def add_bars_of_selected_accounts(self, account_or_relays: tuple):
         bar_ids_dict = {}
@@ -2572,6 +2585,8 @@ class Interactor(BoundaryInABC):
 
     # Live Value
     def add_live_values_of_selected_accounts(self, period=0):
+        canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
+
         accounts = self._extract_account_or_relays_from_selection()
         self.clear_selection()
         for account_id in accounts:
@@ -2581,13 +2596,22 @@ class Interactor(BoundaryInABC):
         if len(accounts) == 0:
             self.feedback_user('Select at least one Account or its Relay', 'error')
 
+        if not canvas_refresh_was_prevented_at_the_beginning:
+            self.start_canvas_refreshing()
+
     def add_new_live_value(self, shape_id, period: int = 0):
+        canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
+        self.stop_canvas_refreshing()
+
         lv_id = live_value.add_new_live_value(shape_id, period, self.add_new_shape, self._connections, self._shapes)
         data_table = self.create_data_table()
         shape_id = self._shapes.get_shape_it_represents_or_self(shape_id)
         string_value = live_value.get_value_str_for_live_value(shape_id, data_table, period, self._input_decimals)
         self._shapes.set_text(lv_id, string_value)
-        self.present_refresh_canvas()
+
+        if not canvas_refresh_was_prevented_at_the_beginning:
+            self.start_canvas_refreshing()
+            self.present_refresh_canvas()
 
     def update_live_values(self, data_table: dict = None):
         if data_table is None:
