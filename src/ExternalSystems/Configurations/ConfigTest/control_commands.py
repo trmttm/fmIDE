@@ -226,7 +226,7 @@ def load_templates(interactor: BoundaryInABC, negative_list, view: ViewABC, n: i
     focus_on_tree(view, vm.tree_pickle_files_id, n)
 
 
-def _load_templates(interactor, negative_list, view):
+def _load_templates(interactor: BoundaryInABC, negative_list, view: ViewABC):
     view.switch_frame(vm.fr_template)
     view.switch_canvas(vm.canvas_template)
     view.switch_tree(vm.tree_pickle_files_id)
