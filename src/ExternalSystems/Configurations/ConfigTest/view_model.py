@@ -112,6 +112,8 @@ btn_del_sheet = 'btn_34'
 btn_add_sheet = 'btn_35'
 btn_import_accounts = 'btn_36'
 btn_sheet_name = 'btn_37'
+btn_sheet_up = 'sheet up'
+btn_sheet_down = 'sheet down'
 btn_ie = 'btn_38'
 btn_save_module = 'btn_39'
 btn_switch_conn = 'btn_40'
@@ -322,6 +324,10 @@ def start_view_model_factory() -> list:
         f(fr_worksheets, fr_tree_btn2, 'frame', 2, 2, 0, 0, 'nsew', **intf.frame_options(*f_0123)),
     )
     sheet_entry = Vm.entry_and_button(fr_sh_name, entry_sheet_name, ew, btn_sheet_name, 'OK', button_width)
+    sheet_entry += [
+        f(fr_sh_name, btn_sheet_up, 'button', 0, 0, 2, 2, 'nsew', **{'text': '↑', 'width': button_width}),
+        f(fr_sh_name, btn_sheet_down, 'button', 0, 0, 3, 3, 'nsew', **{'text': '↓', 'width': button_width}),
+    ]
     tree_ws_btns = [
         f(fr_tree_btn2, btn_del_sheet, 'button', 0, 0, 0, 0, 'nsew', **{'text': 'Del', 'width': button_width}),
         f(fr_tree_btn2, btn_add_sheet, 'button', 0, 0, 1, 1, 'nsew', **{'text': '+', 'width': button_width}),
