@@ -131,6 +131,8 @@ if __name__ == '__main__':
             from src.Entities import Observable
             Observable.is_debug_mode = False
             app = instantiate_app()
+            for i in range(100):
+                app.interactor.move_selections(0, -1)
             app.quit()
 
 
