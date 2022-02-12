@@ -141,7 +141,7 @@ class Worksheets(Observable):
         args = current_sheet_names_order, indexes, shift
         destinations, new_sheet_names_order = Utilities.get_tuple_and_destinations_after_shifting_elements(*args)
         for sheet_name in new_sheet_names_order:
-            new_sheet_data[sheet_name] = self.get_sheet_contents(sheet_name)
+            new_sheet_data[sheet_name] = set(self.get_sheet_contents(sheet_name))
         self._data[self._sheet_data] = new_sheet_data
         return destinations
 
