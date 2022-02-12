@@ -87,13 +87,18 @@ def create_view_model_update_accounts_with_deltas(response_model: dict) -> dict:
 
 
 def create_view_model_worksheets(response_model):
+    def get_parent(sheet_name):
+        return sheet_name_to_parent.get(sheet_name, '')
+
+    gp = get_parent
     headings = ('No', 'Worksheets Name')
     widths = (30, 100)
     stretches = (False, True)
     scroll_v, scroll_h = False, False
     ws_names: tuple = response_model['sheet_names']
     select: tuple = response_model['select_flags']
-    tree_datas = [create_tree_data('', f'{n}', '', (n, name), (), select[n]) for (n, name) in enumerate(ws_names)]
+    sheet_name_to_parent = response_model.get('sheet_name_to_parent', {})
+    tree_datas = [create_tree_data(gp(name), f'{n}', '', (n, name), (), select[n]) for (n, name) in enumerate(ws_names)]
     view_model = create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
     return view_model
 

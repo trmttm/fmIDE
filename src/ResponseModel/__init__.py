@@ -163,12 +163,16 @@ def response_model_to_presenter_states(shape_ids, shapes_positions, texts, conne
     return response_model
 
 
-def response_model_to_presenter_worksheets(sheet_names: tuple, selected=None) -> dict:
+def response_model_to_presenter_worksheets(sheet_names: tuple, selected=None,
+                                           sheet_name_to_parent: dict = None) -> dict:
     if selected is not None:
         select_flags = tuple(sheet_name == selected for sheet_name in sheet_names)
     else:
         select_flags = tuple(sheet_name == sheet_names[-1] for sheet_name in sheet_names)
-    return {'sheet_names': sheet_names, 'select_flags': select_flags}
+    response_model = {'sheet_names': sheet_names, 'select_flags': select_flags}
+    if sheet_name_to_parent is not None:
+        response_model.update({'sheet_name_to_parent': sheet_name_to_parent})
+    return response_model
 
 
 def response_model_to_presenter_show_input_entry(input_text: str, input_values: tuple, number_of_periods: int,

@@ -633,7 +633,9 @@ class Interactor(BoundaryInABC):
     def present_update_worksheets(self):
         ws = self._worksheets
         response_model = ResponseModel.response_model_to_presenter_worksheets
-        self._presenters.update_worksheets(response_model(tuple(ws.sheet_names), ws.selected_sheet))
+        sheet_name_to_parent = {}
+        args = tuple(ws.sheet_names), ws.selected_sheet, sheet_name_to_parent
+        self._presenters.update_worksheets(response_model(*args))
 
     def change_sheet_order(self, indexes: tuple, shift: int) -> tuple:
         new_destinations = self._worksheets.change_sheet_order(indexes, shift)
