@@ -635,6 +635,10 @@ class Interactor(BoundaryInABC):
         response_model = ResponseModel.response_model_to_presenter_worksheets
         self._presenters.update_worksheets(response_model(tuple(ws.sheet_names), ws.selected_sheet))
 
+    def change_sheet_order(self, indexes: tuple, shift: int):
+        self._worksheets.change_sheet_order(indexes, shift)
+        self.present_update_worksheets()
+
     # Copy / Paste Accounts
     def copy_accounts(self):
         self._sf.set_copied_accounts(self.selected_accounts)

@@ -68,6 +68,8 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
         w.btn_save_module: lambda: c.popup_module_save(view, interactor, presenters, mouse),
         w.btn_undo: interactor.undo,
         w.btn_redo: interactor.redo,
+        w.btn_sheet_up: lambda: print('UP'),
+        w.btn_sheet_down: lambda: print('down'),
         'op1': lambda: c.main_specific_add_shape(interactor, view, '+'),
         'op2': lambda: c.main_specific_add_shape(interactor, view, '-'),
         'op3': lambda: c.main_specific_add_shape(interactor, view, 'x'),
