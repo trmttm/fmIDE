@@ -469,25 +469,29 @@ class TestInteractorAndEntity(unittest.TestCase):
         self._interactor.add_new_worksheet()
         self._interactor.add_new_worksheet()
         response_model_caught = self._response_model_catcher.response_models_caught[-4]
-        expectation = {'select_flags': (False, False, True), 'sheet_names': ('Sheet1', 'Sheet2', 'Sheet3')}
+        expectation = {'select_flags': (False, False, True), 'sheet_names': ('Sheet1', 'Sheet2', 'Sheet3'),
+                       'sheet_name_to_parent': {}, }
         self.assertEqual(response_model_caught, expectation)
 
         # Select worksheet
         self._interactor.select_worksheet('Sheet1')
         response_model_caught = self._response_model_catcher.response_models_caught[-4]
-        expectation = {'select_flags': (True, False, False), 'sheet_names': ('Sheet1', 'Sheet2', 'Sheet3')}
+        expectation = {'select_flags': (True, False, False), 'sheet_names': ('Sheet1', 'Sheet2', 'Sheet3'),
+                       'sheet_name_to_parent': {}}
         self.assertEqual(response_model_caught, expectation)
 
         # Delete worksheets
         self._interactor.delete_selected_worksheet()
         response_model_caught = self._response_model_catcher.response_models_caught[-4]
-        expectation = {'select_flags': (False, True), 'sheet_names': ('Sheet2', 'Sheet3')}
+        expectation = {'select_flags': (False, True), 'sheet_names': ('Sheet2', 'Sheet3'),
+                       'sheet_name_to_parent': {}}
         self.assertEqual(response_model_caught, expectation)
 
         # change sheet name
         self._interactor.change_selected_sheet_name('Model')
         response_model_caught = self._response_model_catcher.response_models_caught[-4]
-        expectation = {'select_flags': (False, True), 'sheet_names': ('Sheet2', 'Model')}
+        expectation = {'select_flags': (False, True), 'sheet_names': ('Sheet2', 'Model'),
+                       'sheet_name_to_parent': {}}
         self.assertEqual(response_model_caught, expectation)
 
     def test_output_worksheet_data(self):
