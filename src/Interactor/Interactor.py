@@ -639,6 +639,12 @@ class Interactor(BoundaryInABC):
         self._worksheets.change_sheet_order(indexes, shift)
         self.present_update_worksheets()
 
+    def move_selected_sheets_up(self):
+        pass
+
+    def move_selected_sheets_down(self):
+        pass
+
     # Copy / Paste Accounts
     def copy_accounts(self):
         self._sf.set_copied_accounts(self.selected_accounts)
