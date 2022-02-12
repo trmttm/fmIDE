@@ -675,11 +675,13 @@ def get_direct_links(connections, relay_to_original_mapper, shapes, bb_shift) ->
         1) Shifters are (must be) guaranteed to have one account pointing to itself.
         2) Shifter can point to many things
         """
-        connection_from = connections.get_connections_into(shifter).pop()
-        connection_from = get_original_account(connection_from, mapper)
-        connection_tos = connections.get_connections_out_of(shifter)
-        for connection_to in connection_tos:
-            direct_links_list.append((connection_from, connection_to, shift))
+        connections_into = connections.get_connections_into(shifter)
+        if connections_into:
+            connection_from = connections_into.pop()
+            connection_from = get_original_account(connection_from, mapper)
+            connection_tos = connections.get_connections_out_of(shifter)
+            for connection_to in connection_tos:
+                direct_links_list.append((connection_from, connection_to, shift))
     direct_links = tuple(direct_links_list)
     return direct_links
 
