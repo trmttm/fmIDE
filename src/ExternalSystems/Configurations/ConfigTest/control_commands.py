@@ -202,6 +202,8 @@ def _get_shape_ids_selected_by_tree(interactor: BoundaryInABC, selected_tree_ite
 
 
 def upon_tree_worksheets_click(interactor: BoundaryInABC, view: ViewABC):
+    if len(view.tree_selected_values(vm.tree_worksheets)) != 1:
+        return
     try:
         sheet_name = view.tree_focused_values(vm.tree_worksheets)[1]
     except IndexError:
@@ -1232,3 +1234,9 @@ def set_project_folder_path(path, view: ViewABC, interactor: BoundaryInABC, pres
 def properly_close_app(interactor: BoundaryInABC, view: ViewABC):
     interactor.tear_down()
     view.quit()
+
+
+def move_selected_worksheets(interactor: BoundaryInABC, view: ViewABC, shift: int):
+    indexes = view.get_selected_tree_item_indexes(vm.tree_worksheets)
+    new_selections_index = interactor.change_sheet_order(indexes, shift)
+    view.select_multiple_tree_items(vm.tree_worksheets, new_selections_index)
