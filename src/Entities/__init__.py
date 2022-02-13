@@ -20,6 +20,7 @@ from .Shape import Shapes
 from .ShapeFormat import ShapeFormat
 from .UnitOfMeasure import UnitOfMeasure
 from .VerticalAccounts import VerticalAccounts
+from .WorkSheetRelationship import WorksheetRelationship
 from .Worksheets import Worksheets
 from .commands import Commands
 from .copied_commands import CopiedCommands
@@ -47,6 +48,7 @@ class Entities:
         self._commands = Commands()
         self._copied_commands = CopiedCommands()
         self._shape_format = ShapeFormat()
+        self._worksheet_relationship = WorksheetRelationship()
 
         self._unit_of_measure = UnitOfMeasure()
         self._blank = Blank()
@@ -130,6 +132,10 @@ class Entities:
     @property
     def shape_format(self) -> ShapeFormat:
         return self._shape_format
+
+    @property
+    def worksheet_relationship(self) -> WorksheetRelationship:
+        return self._worksheet_relationship
 
     @property
     def unit_of_measure(self) -> UnitOfMeasure:

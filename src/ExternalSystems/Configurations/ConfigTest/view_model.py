@@ -114,6 +114,8 @@ btn_import_accounts = 'btn_36'
 btn_sheet_name = 'btn_37'
 btn_sheet_up = 'sheet up'
 btn_sheet_down = 'sheet down'
+btn_sheet_left = 'sheet left'
+btn_sheet_right = 'sheet right'
 btn_ie = 'btn_38'
 btn_save_module = 'btn_39'
 btn_switch_conn = 'btn_40'
@@ -135,6 +137,9 @@ btn_set_args = 'btn_set_args'
 btn_set_kwargs = 'btn_set_kwargs'
 btn_project = 'btn_project'
 btn_setting_ok = 'btn_setting_ok'
+
+sheet_dpad_names = (btn_sheet_left, btn_sheet_up, btn_sheet_down, btn_sheet_right)
+
 kw_macro_buttons = {'btn_del_macro': btn_del_macro,
                     'btn_merge_macro': btn_merge_macro,
                     'btn_save_macro': btn_save_macro,
@@ -212,6 +217,7 @@ fr_vertical_ref = 'frame_vertical_ref'
 fr_worksheets = 'frame_worksheets'
 fr_connection = 'frame_connection'
 fr_radio_btn_conn = 'fr_radio_button_connection'
+fr_sheet_d_pad = 'frame_sheet_d_pad'
 
 fr_toplevel = 'frame_toplevel'
 fr_tree_ac_import = 'frame_toplevel_left'
@@ -321,13 +327,14 @@ def start_view_model_factory() -> list:
         f(fr_worksheets, fr_sh_name, 'frame', 1, 1, 0, 0, 'nsew', **intf.frame_options(*f_0)),
     )
     tree_sheets.append(
-        f(fr_worksheets, fr_tree_btn2, 'frame', 2, 2, 0, 0, 'nsew', **intf.frame_options(*f_0123)),
+        f(fr_worksheets, fr_sheet_d_pad, 'frame', 2, 2, 0, 0, 'nsew', **intf.frame_options(*f_0123)),
     )
+    tree_sheets.append(
+        f(fr_worksheets, fr_tree_btn2, 'frame', 3, 3, 0, 0, 'nsew', **intf.frame_options(*f_0123)),
+    )
+    sheet_d_pad = Vm.create_d_pad_model(fr_sheet_d_pad, sheet_dpad_names, button_width)
+    tree_sheets += sheet_d_pad
     sheet_entry = Vm.entry_and_button(fr_sh_name, entry_sheet_name, ew, btn_sheet_name, 'OK', button_width)
-    sheet_entry += [
-        f(fr_sh_name, btn_sheet_up, 'button', 0, 0, 2, 2, 'nsew', **{'text': '↑', 'width': button_width}),
-        f(fr_sh_name, btn_sheet_down, 'button', 0, 0, 3, 3, 'nsew', **{'text': '↓', 'width': button_width}),
-    ]
     tree_ws_btns = [
         f(fr_tree_btn2, btn_del_sheet, 'button', 0, 0, 0, 0, 'nsew', **{'text': 'Del', 'width': button_width}),
         f(fr_tree_btn2, btn_add_sheet, 'button', 0, 0, 1, 1, 'nsew', **{'text': '+', 'width': button_width}),
@@ -475,7 +482,7 @@ def input_entry(combobox_values: tuple) -> list:
     options = intf.top_level_options('Input Setting')
     view_model = [intf.widget_model(root, ie_toplevel, 'toplevel', 0, 0, 0, 0, 'nsew', pad_xy, **options)]
     view_model += Vm.input_entry(ie_toplevel, ie_label, ie_check_btn, ie_canvas_slider, ie_canvas_graph, ie_entry,
-                                 ie_btn_apply, ie_btn_ok, ie_entry_min, ie_entry_max,ie_entry_uom, ie_entry_digits,
+                                 ie_btn_apply, ie_btn_ok, ie_entry_min, ie_entry_max, ie_entry_uom, ie_entry_digits,
                                  ie_combo_box, ie_btn_next, ie_btn_previous, pad_xy, combobox_values)
     return view_model
 

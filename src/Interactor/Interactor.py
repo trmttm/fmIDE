@@ -633,14 +633,22 @@ class Interactor(BoundaryInABC):
     def present_update_worksheets(self):
         ws = self._worksheets
         response_model = ResponseModel.response_model_to_presenter_worksheets
-        sheet_name_to_parent = {}
-        args = tuple(ws.sheet_names), ws.selected_sheet, sheet_name_to_parent
+        args = tuple(ws.sheet_names), ws.selected_sheet, self._worksheet_relationship.sheet_name_to_parent
         self._presenters.update_worksheets(response_model(*args))
 
     def change_sheet_order(self, indexes: tuple, shift: int) -> tuple:
         new_destinations = self._worksheets.change_sheet_order(indexes, shift)
         self.present_update_worksheets()
         return new_destinations
+
+    # Worksheet Relationship
+    def add_worksheet_parent_child_relationships(self, parent_sheet_name: str, child_sheet_names: Iterable):
+        for child_sheet_name in child_sheet_names:
+            self._worksheet_relationship.add_worksheet_parent_child_relationship(parent_sheet_name, child_sheet_name)
+
+    def remove_worksheet_parent_child_relationships(self, child_sheet_names: Iterable):
+        for child_sheet_name in child_sheet_names:
+            self._worksheet_relationship.remove_parent_worksheet(child_sheet_name)
 
     # Copy / Paste Accounts
     def copy_accounts(self):
@@ -1854,7 +1862,11 @@ class Interactor(BoundaryInABC):
             self._connection_ids.clean_data()
             self._shape_format.clean_data(all_shape_ids)
             all_accounts = self._shapes.get_shapes('account')
+
+            # Clean other entities
             self._unit_of_measure.clean_data(all_accounts)
+            self._worksheet_relationship.clean_data()
+
         feedback = self._gateways.save_file(file_name)
         return feedback
 
@@ -2465,6 +2477,7 @@ class Interactor(BoundaryInABC):
         self._copied_commands = entities.copied_commands
         self._shape_format = entities.shape_format
         self._unit_of_measure = entities.unit_of_measure
+        self._worksheet_relationship = entities.worksheet_relationship
 
     # Graph & Slider
     def _extract_account_or_relays_from_selection(self) -> tuple:
