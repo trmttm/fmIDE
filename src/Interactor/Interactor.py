@@ -621,7 +621,14 @@ class Interactor(BoundaryInABC):
             self.set_worksheet_to_selected_shapes_properties(new_sheet_name)
             self.delete_selected_worksheet()
         else:
+            old_sheet_name = self._worksheets.selected_sheet
+            old_sheet_index = self._worksheets.get_sheet_position(old_sheet_name)
+
             self._entities.change_selected_sheet_name(new_sheet_name)
+
+            self._worksheet_relationship.change_sheet_name(old_sheet_name, new_sheet_name)
+            self._worksheets.insert_sheets((new_sheet_name, ), old_sheet_index)
+
             self.select_worksheet(new_sheet_name)
 
     def upon_updating_worksheets(self, previous_sheet_state: tuple):

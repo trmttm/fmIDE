@@ -739,11 +739,11 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
     # Drag all children of any parent
     new_indexes = set(indexes)
     for parent_sheet_name in all_parents_sheet_name:
-        parent_index = all_worksheet_names.index(parent_sheet_name)
+        parent_index = worksheets.get_sheet_position(parent_sheet_name)
         if parent_index in indexes:
             children_names = ws_relationship.get_children_sheet_names(parent_sheet_name)
             for child_name in children_names:
-                child_index = all_worksheet_names.index(child_name)
+                child_index = worksheets.get_sheet_position(child_name)
                 new_indexes.add(child_index)
 
     shifting_down = shift < 0
@@ -765,8 +765,8 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
         if ws_relationship.has_a_parent(sheet_name):
             parent_sheet_name = ws_relationship.get_parent_worksheet(sheet_name)
             all_siblings_names = ws_relationship.get_children_sheet_names(parent_sheet_name)
-            all_siblings_index = tuple(all_worksheet_names.index(name) for name in all_siblings_names)
-            parent_index = all_worksheet_names.index(parent_sheet_name)
+            all_siblings_index = tuple(worksheets.get_sheet_position(name) for name in all_siblings_names)
+            parent_index = worksheets.get_sheet_position(parent_sheet_name)
             the_sheet_is_the_child_at_the_bottom_of_siblings = max(all_siblings_index) == sheet_index
             its_parent_is_not_shifting_down = parent_index not in new_indexes
 

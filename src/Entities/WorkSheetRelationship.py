@@ -41,7 +41,10 @@ class WorksheetRelationship(Observable):
     def clean_data(self):
         for parent_sheet_name in tuple(self._data.keys()):
             if self.get_children_sheet_names(parent_sheet_name) == ():
-                del self._data[parent_sheet_name]
+                self.remove_data(parent_sheet_name)
+
+    def remove_data(self, parent_sheet_name):
+        del self._data[parent_sheet_name]
 
     def get_children_sheet_names(self, parent_sheet_name: str) -> Tuple[str]:
         return tuple(self._data.get(parent_sheet_name, ()))
@@ -62,6 +65,17 @@ class WorksheetRelationship(Observable):
         if len(self._data.get(sheet_name, ())) == 0:
             return False
         return True
+
+    @notify
+    def change_sheet_name(self, from_: str, to_: str):
+        for parent_sheet_name in tuple(self._data.keys()):
+            child_sheet_names = list(self.get_children_sheet_names(parent_sheet_name))
+            if from_ == parent_sheet_name:
+                self._data[to_] = child_sheet_names
+                self.remove_data(parent_sheet_name)
+            elif from_ in child_sheet_names:
+                child_sheet_names.remove(from_)
+                child_sheet_names.append(to_)
 
     @notify
     def merge_data(self, data: dict, *_, **__):

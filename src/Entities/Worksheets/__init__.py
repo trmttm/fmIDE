@@ -102,10 +102,15 @@ class Worksheets(Observable):
     def delete_a_sheet(self, sheet_name: str):
         if len(self.sheet_names) == 1:
             return
-        n = self.sheet_names.index(sheet_name)
+        n = self.get_sheet_position(sheet_name)
         next_selection = self.sheet_names[n - 1]
         self.select_sheet(next_selection)
         del self._data[self._sheet_data][sheet_name]
+
+    def get_sheet_position(self, sheet_name: str) -> int:
+        if sheet_name in self.sheet_names:
+            n = self.sheet_names.index(sheet_name)
+            return n
 
     def add_sheet_contents(self, sheet_name, contents: Iterable):
         for content in contents:
@@ -152,14 +157,15 @@ class Worksheets(Observable):
         return destinations
 
     @notify
-    def insert_sheets(self, sheets_to_insert: Iterable, locations: tuple):
+    def insert_sheets(self, sheets_to_insert: Iterable, location: int):
         new_sheet_data = {}
         for n, (sheet_name, sheet_data) in enumerate(self._data[self._sheet_data].items()):
-            if n == locations:
+            if n == location:
                 for sheet_to_insert in sheets_to_insert:
                     new_sheet_data[sheet_to_insert] = self.get_sheet_contents(sheet_to_insert)
             if sheet_name not in sheets_to_insert:
                 new_sheet_data[sheet_name] = sheet_data
+        self._data[self._sheet_data] = new_sheet_data
 
     @notify
     def remove_contents_from_respective_sheets(self, contents: Iterable):
