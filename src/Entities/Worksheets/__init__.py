@@ -46,7 +46,7 @@ class Worksheets(Observable):
 
     def get_sheet_name_by_index(self, index: int):
         try:
-            self.sheet_names[index]
+            return self.sheet_names[index]
         except IndexError:
             return None
 
