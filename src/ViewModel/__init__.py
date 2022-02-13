@@ -10,8 +10,8 @@ def create_view_model_add_shape(response_model: dict) -> List[dict]:
     return list(response_model.values())
 
 
-def create_tree_data(parent: str, index: str, text: str, values: tuple, tags: tuple, select: bool) -> dict:
-    return {
+def create_tree_data(parent: str, index: str, text: str, values: tuple, tags: tuple, select: bool, id_=None) -> dict:
+    tree_data = {
         'parent': parent,
         'index': index,
         'text': text,
@@ -19,6 +19,9 @@ def create_tree_data(parent: str, index: str, text: str, values: tuple, tags: tu
         'tags': tags,
         'select_this_item': select
     }
+    if id_ is not None:
+        tree_data['id'] = id_
+    return tree_data
 
 
 def create_view_model_tree(headings: tuple, widths: tuple, tree_datas: Iterable, stretches: tuple, scroll_v: bool,
@@ -87,10 +90,10 @@ def create_view_model_update_accounts_with_deltas(response_model: dict) -> dict:
 
 
 def create_view_model_worksheets(response_model):
-    def get_parent(sheet_name):
-        return sheet_name_to_parent.get(sheet_name, '')
+    def get_parent_id(sheet_name):
+        return sheet_name_to_parent.get(sheet_name, None) or ''
 
-    gp = get_parent
+    gp = get_parent_id
     headings = ('No', 'Worksheets Name')
     widths = (30, 100)
     stretches = (False, True)
@@ -98,7 +101,8 @@ def create_view_model_worksheets(response_model):
     ws_names: tuple = response_model['sheet_names']
     select: tuple = response_model['select_flags']
     sheet_name_to_parent = response_model.get('sheet_name_to_parent', {})
-    tree_datas = [create_tree_data(gp(name), f'{n}', '', (n, name), (), select[n]) for (n, name) in enumerate(ws_names)]
+    f = create_tree_data
+    tree_datas = [f(gp(name), f'{n}', name, (n, name), (), select[n], name) for (n, name) in enumerate(ws_names)]
     view_model = create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
     return view_model
 

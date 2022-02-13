@@ -441,7 +441,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -630,16 +630,16 @@ class Interactor(BoundaryInABC):
             self._present_update_account_order()
             self.present_refresh_canvas()
 
+    def change_sheet_order(self, indexes: tuple, shift: int) -> tuple:
+        new_destinations = self._worksheets.change_sheet_order(indexes, shift)
+        self.present_update_worksheets()
+        return new_destinations
+
     def present_update_worksheets(self):
         ws = self._worksheets
         response_model = ResponseModel.response_model_to_presenter_worksheets
         args = tuple(ws.sheet_names), ws.selected_sheet, self._worksheet_relationship.sheet_name_to_parent
         self._presenters.update_worksheets(response_model(*args))
-
-    def change_sheet_order(self, indexes: tuple, shift: int) -> tuple:
-        new_destinations = self._worksheets.change_sheet_order(indexes, shift)
-        self.present_update_worksheets()
-        return new_destinations
 
     # Worksheet Relationship
     def add_worksheet_parent_child_relationships(self, parent_sheet_name: str, child_sheet_names: Iterable):

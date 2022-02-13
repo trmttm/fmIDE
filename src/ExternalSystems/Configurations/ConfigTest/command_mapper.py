@@ -70,6 +70,8 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
         w.btn_redo: interactor.redo,
         w.btn_sheet_up: lambda: c.move_selected_worksheets(interactor, view, -1),
         w.btn_sheet_down: lambda: c.move_selected_worksheets(interactor, view, 1),
+        w.btn_sheet_left: lambda: c.move_selected_worksheets_left(interactor, view),
+        w.btn_sheet_right: lambda: c.move_selected_worksheets_right(interactor, view),
         'op1': lambda: c.main_specific_add_shape(interactor, view, '+'),
         'op2': lambda: c.main_specific_add_shape(interactor, view, '-'),
         'op3': lambda: c.main_specific_add_shape(interactor, view, 'x'),

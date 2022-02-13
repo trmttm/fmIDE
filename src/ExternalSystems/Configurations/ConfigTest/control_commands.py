@@ -1240,3 +1240,19 @@ def move_selected_worksheets(interactor: BoundaryInABC, view: ViewABC, shift: in
     indexes = view.get_selected_tree_item_indexes(vm.tree_worksheets)
     new_selections_index = interactor.change_sheet_order(indexes, shift)
     view.select_multiple_tree_items(vm.tree_worksheets, new_selections_index)
+
+
+def move_selected_worksheets_right(interactor: BoundaryInABC, view: ViewABC):
+    tree = vm.tree_worksheets
+    worksheet_names = tuple(name for (no, name) in view.get_value(tree)['all_values'])
+    children_indexes = view.get_selected_tree_item_indexes(tree)
+
+    parent_sheet_names = []
+    child_sheet_names = []
+    for child_index in children_indexes:
+        if child_index > 0:
+            parent_sheet_names.append(worksheet_names[child_index - 1])
+            child_sheet_names.append(worksheet_names[child_index])
+
+    for parent_sheet_name, child_sheet_name in zip(parent_sheet_names, child_sheet_names):
+        interactor.add_worksheet_parent_child_relationships(parent_sheet_name, child_sheet_names)
