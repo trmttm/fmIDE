@@ -10,21 +10,18 @@ __hide_position = 0
 def update_tree_account(view: ViewABC, view_model, interactor: BoundaryInABC):
     view.switch_tree(vm.tree_account_order)
     view.update_tree(view_model)
-
     keep_focus_away_from_entries_or_trees_so_key_can_manipulate_canvas_only(interactor, view)
 
 
 def update_tree_worksheets(view: ViewABC, view_model, interactor: BoundaryInABC):
     view.switch_tree(vm.tree_worksheets)
     view.update_tree(view_model)
-
     keep_focus_away_from_entries_or_trees_so_key_can_manipulate_canvas_only(interactor, view)
 
 
 def update_tree_connections(view: ViewABC, view_model, interactor: BoundaryInABC):
     view.switch_tree(vm.tree_connections)
     view.update_tree(view_model)
-
     keep_focus_away_from_entries_or_trees_so_key_can_manipulate_canvas_only(interactor, view)
 
 
