@@ -104,6 +104,7 @@ def create_view_model_worksheets(response_model):
     f = create_tree_data
     tree_datas = [f(gp(name), f'{n}', name, (n, name), (), select[n], name) for (n, name) in enumerate(ws_names)]
     view_model = create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
+    view_model.update({'text_width': 130})
     return view_model
 
 
