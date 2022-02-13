@@ -66,6 +66,10 @@ class WorksheetRelationship(Observable):
             return False
         return True
 
+    @property
+    def has_data(self) -> bool:
+        return self._data != {}
+
     @notify
     def change_sheet_name(self, from_: str, to_: str):
         for parent_sheet_name in tuple(self._data.keys()):

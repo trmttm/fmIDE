@@ -441,7 +441,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -2721,6 +2721,14 @@ class Interactor(BoundaryInABC):
                 worksheet_information[sheet_name] = account_order.data
         return worksheet_information
 
+    @property
+    def output_module_information(self) -> dict:
+        module_information = {}
+        for sheet_name in self._worksheets.sheet_names:
+            account_order = self._account_orders.get_account_order(sheet_name)
+            module_information[sheet_name] = account_order.data
+        return module_information
+
     # Gateway Spreadsheet
     def plug_in_gateway_spreadsheet(self, cls_spreadsheet_gateway: Type[SpreadsheetABC]):
         self._spreadsheet = cls_spreadsheet_gateway()
@@ -2814,6 +2822,9 @@ class Interactor(BoundaryInABC):
                     'arguments': self._get_arguments_to_vba_udf(account_used_in_udf),
                 }
                 gateway_model['user_defined_function'] = user_defined_function
+
+        if self._worksheet_relationship.has_data:
+            gateway_model['modules_data'] = self.output_module_information
 
         return gateway_model
 
