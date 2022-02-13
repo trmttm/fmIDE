@@ -49,8 +49,19 @@ class WorksheetRelationship(Observable):
     def get_parent_worksheet(self, child_worksheet_name: str) -> str:
         return self.sheet_name_to_parent.get(child_worksheet_name, None)
 
+    @property
+    def all_parent_sheets(self) -> tuple:
+        return tuple(self._data.keys())
+
     def has_a_parent(self, child_sheet_name: str) -> bool:
         return child_sheet_name in self.sheet_name_to_parent
+
+    def is_a_parent(self, sheet_name: str) -> bool:
+        if sheet_name not in self._data:
+            return False
+        if len(self._data.get(sheet_name, ())) == 0:
+            return False
+        return True
 
     @notify
     def merge_data(self, data: dict, *_, **__):

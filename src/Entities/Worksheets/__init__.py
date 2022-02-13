@@ -152,6 +152,16 @@ class Worksheets(Observable):
         return destinations
 
     @notify
+    def insert_sheets(self, sheets_to_insert: Iterable, locations: tuple):
+        new_sheet_data = {}
+        for n, (sheet_name, sheet_data) in enumerate(self._data[self._sheet_data].items()):
+            if n == locations:
+                for sheet_to_insert in sheets_to_insert:
+                    new_sheet_data[sheet_to_insert] = self.get_sheet_contents(sheet_to_insert)
+            if sheet_name not in sheets_to_insert:
+                new_sheet_data[sheet_name] = sheet_data
+
+    @notify
     def remove_contents_from_respective_sheets(self, contents: Iterable):
         shape_id_to_sheet_name = self.shape_id_to_sheet_name_dict
         for content in contents:

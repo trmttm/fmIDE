@@ -723,19 +723,77 @@ def place_a_shape_above_another(place_this, above_this, gap: int, shapes: Et.Sha
     connections.add_connection(place_this, above_this)
 
 
-def remove_sheet_parents_if_child_shifts_beyond_parant_range(indexes: tuple, shift: int, worksheets: Et.Worksheets,
-                                                             ws_relationship: Et.WorksheetRelationship):
-    all_worksheets = worksheets.sheet_names
-    worksheets_to_shift = tuple(worksheets.get_sheet_name_by_index(index) for index in indexes)
-    for sheet_name in worksheets_to_shift:
-        sheet_destination_index = all_worksheets.index(sheet_name) + shift
-        sheet_has_a_parent = ws_relationship.has_a_parent(sheet_name)
-        if sheet_has_a_parent:
-            parent = ws_relationship.get_parent_worksheet(sheet_name)
-            parent_index = all_worksheets.index(parent)
-            if sheet_destination_index < parent_index:
-                ws_relationship.remove_parent_worksheet(sheet_name)
-            siblings = ws_relationship.get_children_sheet_names(parent)
-            child_is_at_the_end_of_its_parent = siblings[-1] == sheet_name
-            if child_is_at_the_end_of_its_parent:
-                ws_relationship.remove_parent_worksheet(sheet_name)
+def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tuple, shift: int,
+                                                                   worksheets: Et.Worksheets,
+                                                                   ws_relationship: Et.WorksheetRelationship) -> tuple:
+    all_worksheet_names = worksheets.sheet_names
+
+    # Identify all parents
+    all_parents_sheet_name = set(ws_relationship.all_parent_sheets)
+    for sheet_index in indexes:
+        sheet_name = all_worksheet_names[sheet_index]
+        if ws_relationship.has_a_parent(sheet_name):
+            parent_sheet_name = ws_relationship.get_parent_worksheet(sheet_name)
+            all_parents_sheet_name.add(parent_sheet_name)
+
+    # Drag all children of any parent
+    new_indexes = set(indexes)
+    for parent_sheet_name in all_parents_sheet_name:
+        parent_index = all_worksheet_names.index(parent_sheet_name)
+        if parent_index in indexes:
+            children_names = ws_relationship.get_children_sheet_names(parent_sheet_name)
+            for child_name in children_names:
+                child_index = all_worksheet_names.index(child_name)
+                new_indexes.add(child_index)
+
+    shifting_down = shift < 0
+    shifting_up = shift > 0
+    for sheet_index in tuple(new_indexes):
+        sheet_name = all_worksheet_names[sheet_index]
+
+        other_id = sheet_index + shift
+        try:
+            other_sheet_name = all_worksheet_names[other_id]
+        except IndexError:
+            other_sheet_name = None
+        is_a_parent = ws_relationship.is_a_parent(other_sheet_name)
+        has_a_parent = ws_relationship.has_a_parent(other_sheet_name)
+        not_shifting = other_id not in new_indexes
+        other_sheet_exists = other_sheet_name is not None
+        shifting_into_other_parent_range_who_is_not_shifting = other_sheet_exists and (is_a_parent or has_a_parent) and not_shifting
+
+        if ws_relationship.has_a_parent(sheet_name):
+            parent_sheet_name = ws_relationship.get_parent_worksheet(sheet_name)
+            all_siblings_names = ws_relationship.get_children_sheet_names(parent_sheet_name)
+            all_siblings_index = tuple(all_worksheet_names.index(name) for name in all_siblings_names)
+            parent_index = all_worksheet_names.index(parent_sheet_name)
+            the_sheet_is_the_child_at_the_bottom_of_siblings = max(all_siblings_index) == sheet_index
+            its_parent_is_not_shifting_down = parent_index not in new_indexes
+
+            the_sheet_is_the_child_at_the_top_of_siblings = min(all_siblings_index) == sheet_index
+            its_parent_is_not_shifting_up = parent_index not in new_indexes
+
+            if shifting_down:
+                if the_sheet_is_the_child_at_the_bottom_of_siblings and its_parent_is_not_shifting_down:
+                    prevent_the_child_from_shifting(new_indexes, sheet_index)
+            elif shifting_up:
+                if the_sheet_is_the_child_at_the_top_of_siblings and its_parent_is_not_shifting_up:
+                    prevent_the_child_from_shifting(new_indexes, sheet_index)
+        elif shifting_into_other_parent_range_who_is_not_shifting:
+            if is_a_parent:
+                other_parent_name = other_sheet_name
+            else:
+                other_parent_name = ws_relationship.get_parent_worksheet(other_sheet_name)
+            add_the_parent_as_the_child_s_parent(other_parent_name, sheet_name, ws_relationship)
+            if shifting_down:
+                new_indexes.remove(sheet_index)
+
+    return tuple(new_indexes)
+
+
+def prevent_the_child_from_shifting(new_indexes: set, child_index):
+    new_indexes.remove(child_index)
+
+
+def add_the_parent_as_the_child_s_parent(other_parent_name, child_name, ws_relationship: Et.WorksheetRelationship):
+    ws_relationship.add_worksheet_parent_child_relationship(other_parent_name, child_name)
