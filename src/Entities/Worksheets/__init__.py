@@ -162,7 +162,7 @@ class Worksheets(Observable):
         for n, (sheet_name, sheet_data) in enumerate(self._data[self._sheet_data].items()):
             if n == location:
                 for sheet_to_insert in sheets_to_insert:
-                    new_sheet_data[sheet_to_insert] = self.get_sheet_contents(sheet_to_insert)
+                    new_sheet_data[sheet_to_insert] = set(self.get_sheet_contents(sheet_to_insert))
             if sheet_name not in sheets_to_insert:
                 new_sheet_data[sheet_name] = sheet_data
         self._data[self._sheet_data] = new_sheet_data
