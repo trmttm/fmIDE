@@ -1256,3 +1256,13 @@ def move_selected_worksheets_right(interactor: BoundaryInABC, view: ViewABC):
 
     for parent_sheet_name, child_sheet_name in zip(parent_sheet_names, child_sheet_names):
         interactor.add_worksheet_parent_child_relationships(parent_sheet_name, child_sheet_names)
+    interactor.present_update_worksheets()
+
+
+def move_selected_worksheets_left(interactor: BoundaryInABC, view: ViewABC):
+    tree = vm.tree_worksheets
+    worksheet_names = tuple(name for (no, name) in view.get_value(tree)['all_values'])
+    children_indexes = view.get_selected_tree_item_indexes(tree)
+    child_sheet_names = tuple(worksheet_names[child_index] for child_index in children_indexes)
+    interactor.remove_worksheet_parent_child_relationships(child_sheet_names)
+    interactor.present_update_worksheets()

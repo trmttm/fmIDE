@@ -26,7 +26,8 @@ class WorksheetRelationship(Observable):
     def remove_parent_worksheet(self, child_worksheet_name: str):
         parent_worksheet = self.get_parent_worksheet(child_worksheet_name)
         if parent_worksheet is not None:
-            del self._data[parent_worksheet]
+            if child_worksheet_name in self._data[parent_worksheet]:
+                self._data[parent_worksheet].remove(child_worksheet_name)
 
     @property
     def sheet_name_to_parent(self) -> dict:
@@ -47,6 +48,9 @@ class WorksheetRelationship(Observable):
 
     def get_parent_worksheet(self, child_worksheet_name: str) -> str:
         return self.sheet_name_to_parent.get(child_worksheet_name, None)
+
+    def has_a_parent(self, child_sheet_name: str) -> bool:
+        return child_sheet_name in self.sheet_name_to_parent
 
     @notify
     def merge_data(self, data: dict, *_, **__):

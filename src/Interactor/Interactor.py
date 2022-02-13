@@ -643,8 +643,9 @@ class Interactor(BoundaryInABC):
 
     # Worksheet Relationship
     def add_worksheet_parent_child_relationships(self, parent_sheet_name: str, child_sheet_names: Iterable):
-        for child_sheet_name in child_sheet_names:
-            self._worksheet_relationship.add_worksheet_parent_child_relationship(parent_sheet_name, child_sheet_name)
+        for child_name in child_sheet_names:
+            if not self._worksheet_relationship.has_a_parent(child_name):
+                self._worksheet_relationship.add_worksheet_parent_child_relationship(parent_sheet_name, child_name)
 
     def remove_worksheet_parent_child_relationships(self, child_sheet_names: Iterable):
         for child_sheet_name in child_sheet_names:
