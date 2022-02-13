@@ -631,6 +631,9 @@ class Interactor(BoundaryInABC):
             self.present_refresh_canvas()
 
     def change_sheet_order(self, indexes: tuple, shift: int) -> tuple:
+        args = indexes, shift, self._worksheets, self._worksheet_relationship
+        imp9.remove_sheet_parents_if_child_shifts_beyond_parant_range(*args)
+
         new_destinations = self._worksheets.change_sheet_order(indexes, shift)
         self.present_update_worksheets()
         return new_destinations

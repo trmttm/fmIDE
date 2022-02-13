@@ -721,3 +721,21 @@ def place_a_shape_above_another(place_this, above_this, gap: int, shapes: Et.Sha
     shapes.set_x(place_this, x)
     shapes.set_y(place_this, shapes.get_y(above_this) - gap)
     connections.add_connection(place_this, above_this)
+
+
+def remove_sheet_parents_if_child_shifts_beyond_parant_range(indexes: tuple, shift: int, worksheets: Et.Worksheets,
+                                                             ws_relationship: Et.WorksheetRelationship):
+    all_worksheets = worksheets.sheet_names
+    worksheets_to_shift = tuple(worksheets.get_sheet_name_by_index(index) for index in indexes)
+    for sheet_name in worksheets_to_shift:
+        sheet_destination_index = all_worksheets.index(sheet_name) + shift
+        sheet_has_a_parent = ws_relationship.has_a_parent(sheet_name)
+        if sheet_has_a_parent:
+            parent = ws_relationship.get_parent_worksheet(sheet_name)
+            parent_index = all_worksheets.index(parent)
+            if sheet_destination_index < parent_index:
+                ws_relationship.remove_parent_worksheet(sheet_name)
+            siblings = ws_relationship.get_children_sheet_names(parent)
+            child_is_at_the_end_of_its_parent = siblings[-1] == sheet_name
+            if child_is_at_the_end_of_its_parent:
+                ws_relationship.remove_parent_worksheet(sheet_name)
