@@ -2707,7 +2707,11 @@ class Interactor(BoundaryInABC):
         worksheet_information = {}
         for sheet_name in self._worksheets.sheet_names:
             account_order = self._account_orders.get_account_order(sheet_name)
-            worksheet_information[sheet_name] = account_order.data
+            if self._worksheet_relationship.has_a_parent(sheet_name):
+                parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(sheet_name)
+                worksheet_information[parent_sheet_name] += account_order.data # Merge child_sheet data into parent's
+            else:
+                worksheet_information[sheet_name] = account_order.data
         return worksheet_information
 
     # Gateway Spreadsheet
