@@ -746,8 +746,8 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
                 child_index = worksheets.get_sheet_position(child_name)
                 new_indexes.add(child_index)
 
-    shifting_down = shift < 0
-    shifting_up = shift > 0
+    shifting_down = shift > 0
+    shifting_up = shift < 0
     for sheet_index in tuple(new_indexes):
         sheet_name = all_worksheet_names[sheet_index]
 
@@ -785,8 +785,7 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
             else:
                 other_parent_name = ws_relationship.get_parent_worksheet(other_sheet_name)
             add_the_parent_as_the_child_s_parent(other_parent_name, sheet_name, ws_relationship)
-            if shifting_down:
-                new_indexes.remove(sheet_index)
+            new_indexes.remove(sheet_index)
 
     return tuple(new_indexes)
 
