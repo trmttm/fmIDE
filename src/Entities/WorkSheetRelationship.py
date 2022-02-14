@@ -43,8 +43,10 @@ class WorksheetRelationship(Observable):
             if self.get_children_sheet_names(parent_sheet_name) == ():
                 self.remove_data(parent_sheet_name)
 
-    def remove_data(self, parent_sheet_name):
-        del self._data[parent_sheet_name]
+    def remove_data(self, sheet_name: str):
+        if sheet_name in self._data:
+            del self._data[sheet_name]
+        self.remove_parent_worksheet(sheet_name)
 
     def get_children_sheet_names(self, parent_sheet_name: str) -> Tuple[str]:
         return tuple(self._data.get(parent_sheet_name, ()))
