@@ -726,28 +726,13 @@ def place_a_shape_above_another(place_this, above_this, gap: int, shapes: Et.Sha
 def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tuple, shift: int,
                                                                    worksheets: Et.Worksheets,
                                                                    ws_relationship: Et.WorksheetRelationship) -> tuple:
-    all_worksheet_names = worksheets.sheet_names
-
-    # Identify all parents
-    all_parents_sheet_name = set(ws_relationship.all_parent_sheets)
-    for sheet_index in indexes:
-        sheet_name = all_worksheet_names[sheet_index]
-        if ws_relationship.has_a_parent(sheet_name):
-            parent_sheet_name = ws_relationship.get_parent_worksheet(sheet_name)
-            all_parents_sheet_name.add(parent_sheet_name)
-
-    # Drag all children of any parent
-    new_indexes = set(indexes)
-    for parent_sheet_name in all_parents_sheet_name:
-        parent_index = worksheets.get_sheet_position(parent_sheet_name)
-        if parent_index in indexes:
-            children_names = ws_relationship.get_children_sheet_names(parent_sheet_name)
-            for child_name in children_names:
-                child_index = worksheets.get_sheet_position(child_name)
-                new_indexes.add(child_index)
-
     shifting_down = shift > 0
     shifting_up = shift < 0
+
+    all_worksheet_names = worksheets.sheet_names
+    all_parents_sheet_name = identify_all_parents(all_worksheet_names, indexes, ws_relationship)
+    new_indexes = drag_all_children_of_any_parent(all_parents_sheet_name, indexes, worksheets, ws_relationship)
+
     for sheet_index in tuple(new_indexes):
         sheet_name = all_worksheet_names[sheet_index]
 
@@ -760,8 +745,7 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
         has_a_parent = ws_relationship.has_a_parent(other_sheet_name)
         not_shifting = other_id not in new_indexes
         other_sheet_exists = other_sheet_name is not None
-        shifting_into_other_parent_range_who_is_not_shifting = other_sheet_exists and (
-                is_a_parent or has_a_parent) and not_shifting
+        shifting_into_other_parent_range = other_sheet_exists and (is_a_parent or has_a_parent) and not_shifting
 
         if ws_relationship.has_a_parent(sheet_name):
             parent_sheet_name = ws_relationship.get_parent_worksheet(sheet_name)
@@ -780,7 +764,7 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
             elif shifting_up:
                 if the_sheet_is_the_child_at_the_top_of_siblings and its_parent_is_not_shifting_up:
                     prevent_the_child_from_shifting(new_indexes, sheet_index)
-        elif shifting_into_other_parent_range_who_is_not_shifting:
+        elif shifting_into_other_parent_range:
             if len(ws_relationship.get_children_sheet_names(sheet_name)) == 0:
                 if is_a_parent:
                     other_parent_name = other_sheet_name
@@ -791,6 +775,29 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
                     new_indexes.remove(sheet_index)
 
     return tuple(sorted(new_indexes))
+
+
+def drag_all_children_of_any_parent(all_parents_sheet_name: set, indexes: tuple, worksheets: Et.Worksheets,
+                                    ws_relationship: Et.WorksheetRelationship) -> set:
+    new_indexes = set(indexes)
+    for parent_sheet_name in all_parents_sheet_name:
+        parent_index = worksheets.get_sheet_position(parent_sheet_name)
+        if parent_index in indexes:
+            children_names = ws_relationship.get_children_sheet_names(parent_sheet_name)
+            for child_name in children_names:
+                child_index = worksheets.get_sheet_position(child_name)
+                new_indexes.add(child_index)
+    return new_indexes
+
+
+def identify_all_parents(all_worksheet_names: tuple, indexes: tuple, ws_relationship: Et.WorksheetRelationship):
+    all_parents_sheet_name = set(ws_relationship.all_parent_sheets)
+    for sheet_index in indexes:
+        sheet_name = all_worksheet_names[sheet_index]
+        if ws_relationship.has_a_parent(sheet_name):
+            parent_sheet_name = ws_relationship.get_parent_worksheet(sheet_name)
+            all_parents_sheet_name.add(parent_sheet_name)
+    return all_parents_sheet_name
 
 
 def prevent_the_child_from_shifting(new_indexes: set, child_index):
