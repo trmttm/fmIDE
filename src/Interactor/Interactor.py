@@ -441,7 +441,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -681,13 +681,10 @@ class Interactor(BoundaryInABC):
     def remove_worksheet_parent_child_relationships(self, child_sheet_names: Iterable):
         for child_sheet_name in child_sheet_names:
             if self._worksheet_relationship.has_a_parent(child_sheet_name):
-                child_index = self._worksheets.get_sheet_position(child_sheet_name)
                 parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(child_sheet_name)
-                children_sheet_names = self._worksheet_relationship.get_children_sheet_names(parent_sheet_name)
-                number_of_children = len(children_sheet_names)
-                remaining_siblings = number_of_children - children_sheet_names.index(child_sheet_name) - 1
-                location = child_index + remaining_siblings + 1
-
+                children_indexes = tuple(self._worksheets.sheet_names.index(name) for name in
+                                         self._worksheet_relationship.get_children_sheet_names(parent_sheet_name))
+                location = max(children_indexes) + 1
                 self._worksheet_relationship.remove_parent_worksheet(child_sheet_name)
                 self._worksheets.insert_sheets((child_sheet_name,), location)
 
