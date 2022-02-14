@@ -627,7 +627,7 @@ class Interactor(BoundaryInABC):
             self._entities.change_selected_sheet_name(new_sheet_name)
 
             self._worksheet_relationship.change_sheet_name(old_sheet_name, new_sheet_name)
-            self._worksheets.insert_sheets((new_sheet_name, ), old_sheet_index)
+            self._worksheets.insert_sheets((new_sheet_name,), old_sheet_index)
 
             self.select_worksheet(new_sheet_name)
 
@@ -663,8 +663,16 @@ class Interactor(BoundaryInABC):
 
     def remove_worksheet_parent_child_relationships(self, child_sheet_names: Iterable):
         for child_sheet_name in child_sheet_names:
-            self._worksheet_relationship.remove_parent_worksheet(child_sheet_name)
-        # self._worksheets.insert_sheets(child_sheet_names, locations)
+            if self._worksheet_relationship.has_a_parent(child_sheet_name):
+                child_index = self._worksheets.get_sheet_position(child_sheet_name)
+                parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(child_sheet_name)
+                children_sheet_names = self._worksheet_relationship.get_children_sheet_names(parent_sheet_name)
+                number_of_children = len(children_sheet_names)
+                remaining_siblings = number_of_children - children_sheet_names.index(child_sheet_name) - 1
+                location = child_index + remaining_siblings + 1
+
+                self._worksheet_relationship.remove_parent_worksheet(child_sheet_name)
+                self._worksheets.insert_sheets((child_sheet_name,), location)
 
     # Copy / Paste Accounts
     def copy_accounts(self):
@@ -2718,7 +2726,7 @@ class Interactor(BoundaryInABC):
             account_order = self._account_orders.get_account_order(sheet_name)
             if self._worksheet_relationship.has_a_parent(sheet_name):
                 parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(sheet_name)
-                worksheet_information[parent_sheet_name] += account_order.data # Merge child_sheet data into parent's
+                worksheet_information[parent_sheet_name] += account_order.data  # Merge child_sheet data into parent's
             else:
                 worksheet_information[sheet_name] = account_order.data
         return worksheet_information
