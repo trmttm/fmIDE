@@ -780,14 +780,15 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
                 if the_sheet_is_the_child_at_the_top_of_siblings and its_parent_is_not_shifting_up:
                     prevent_the_child_from_shifting(new_indexes, sheet_index)
         elif shifting_into_other_parent_range_who_is_not_shifting:
-            if is_a_parent:
-                other_parent_name = other_sheet_name
-            else:
-                other_parent_name = ws_relationship.get_parent_worksheet(other_sheet_name)
-            add_the_parent_as_the_child_s_parent(other_parent_name, sheet_name, ws_relationship)
-            new_indexes.remove(sheet_index)
+            if len(ws_relationship.get_children_sheet_names(sheet_name)) == 0:
+                if is_a_parent:
+                    other_parent_name = other_sheet_name
+                else:
+                    other_parent_name = ws_relationship.get_parent_worksheet(other_sheet_name)
+                add_the_parent_as_the_child_s_parent(other_parent_name, sheet_name, ws_relationship)
+                new_indexes.remove(sheet_index)
 
-    return tuple(new_indexes)
+    return tuple(sorted(new_indexes))
 
 
 def prevent_the_child_from_shifting(new_indexes: set, child_index):

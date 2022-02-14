@@ -1239,7 +1239,8 @@ def properly_close_app(interactor: BoundaryInABC, view: ViewABC):
 def move_selected_worksheets(interactor: BoundaryInABC, view: ViewABC, shift: int):
     indexes = view.get_selected_tree_item_indexes(vm.tree_worksheets)
     new_selections_index = interactor.change_sheet_order(indexes, shift)
-    view.select_multiple_tree_items(vm.tree_worksheets, new_selections_index)
+    if new_selections_index != ():
+        view.select_multiple_tree_items(vm.tree_worksheets, new_selections_index)
 
 
 def move_selected_worksheets_right(interactor: BoundaryInABC, view: ViewABC):
