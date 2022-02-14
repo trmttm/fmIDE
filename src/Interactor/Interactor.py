@@ -656,7 +656,7 @@ class Interactor(BoundaryInABC):
             return filtered_indexes  # Can't shift that direction further
 
         if filtered_indexes != ():
-            args = adjacent_sheet_name, filtered_indexes, shift, worksheets, self._worksheet_relationship
+            args = adjacent_sheet_name, filtered_indexes, shift, self._worksheets, self._worksheet_relationship
             adjusted_shift = imp9.get_adjusted_shift(*args)
             new_destinations = self._worksheets.change_sheet_order(filtered_indexes, adjusted_shift)
         else:
