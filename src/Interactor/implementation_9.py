@@ -760,7 +760,8 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
         has_a_parent = ws_relationship.has_a_parent(other_sheet_name)
         not_shifting = other_id not in new_indexes
         other_sheet_exists = other_sheet_name is not None
-        shifting_into_other_parent_range_who_is_not_shifting = other_sheet_exists and (is_a_parent or has_a_parent) and not_shifting
+        shifting_into_other_parent_range_who_is_not_shifting = other_sheet_exists and (
+                is_a_parent or has_a_parent) and not_shifting
 
         if ws_relationship.has_a_parent(sheet_name):
             parent_sheet_name = ws_relationship.get_parent_worksheet(sheet_name)
@@ -797,3 +798,22 @@ def prevent_the_child_from_shifting(new_indexes: set, child_index):
 
 def add_the_parent_as_the_child_s_parent(other_parent_name, child_name, ws_relationship: Et.WorksheetRelationship):
     ws_relationship.add_worksheet_parent_child_relationship(other_parent_name, child_name)
+
+
+def get_adjusted_shift(adjacent_sheet_name: str, filtered_indexes: tuple, shift: int, worksheets: Et.Worksheets,
+                       ws_relationship: Et.WorksheetRelationship) -> int:
+    sheet_name_in_question = worksheets.get_sheet_name_by_index(min(filtered_indexes))
+    my_parent = ws_relationship.get_parent_worksheet(sheet_name_in_question)
+    adjacent_has_a_parent = ws_relationship.has_a_parent(adjacent_sheet_name)
+    adjacent_parent = ws_relationship.get_parent_worksheet(adjacent_sheet_name)
+    neither_has_parent = (my_parent is None and adjacent_parent is None)
+    parents_are_different = (adjacent_has_a_parent and (my_parent != adjacent_parent))
+    if adjacent_has_a_parent:
+        adjacent_sheet_name = ws_relationship.get_parent_worksheet(adjacent_sheet_name)
+    if parents_are_different or neither_has_parent:
+        n_adjacent_shapes_children = len(ws_relationship.get_children_sheet_names(adjacent_sheet_name))
+        sign = shift
+        adjusted_shift = sign * (n_adjacent_shapes_children + 1)
+    else:
+        adjusted_shift = shift
+    return adjusted_shift

@@ -639,35 +639,25 @@ class Interactor(BoundaryInABC):
 
     def change_sheet_order(self, indexes: tuple, shift: int) -> tuple:
         if shift not in (1, -1):
-            return indexes
+            return indexes  # Guarantee that shift is 1 or -1
+
         args = indexes, shift, self._worksheets, self._worksheet_relationship
         filtered_indexes = imp9.consider_parent_child_level_and_identify_which_sheets_to_shift(*args)
-        if filtered_indexes != ():
-            if shift > 0:
-                index_in_question = max(filtered_indexes)
-                adjacent_sheet_index = index_in_question + 1
-            else:
-                index_in_question = min(filtered_indexes)
-                adjacent_sheet_index = index_in_question - 1
-            try:
-                adjacent_sheet_name = self._worksheets.sheet_names[adjacent_sheet_index]
-            except IndexError:
-                return filtered_indexes  # Can't shift that direction further
 
-            sheet_name_in_question = self._worksheets.get_sheet_name_by_index(min(filtered_indexes))
-            my_parent = self._worksheet_relationship.get_parent_worksheet(sheet_name_in_question)
-            adjacent_has_a_parent = self._worksheet_relationship.has_a_parent(adjacent_sheet_name)
-            adjacent_parent = self._worksheet_relationship.get_parent_worksheet(adjacent_sheet_name)
-            neither_has_parent = (my_parent is None and adjacent_parent is None)
-            parents_are_different = (adjacent_has_a_parent and (my_parent != adjacent_parent))
-            if adjacent_has_a_parent:
-                adjacent_sheet_name = self._worksheet_relationship.get_parent_worksheet(adjacent_sheet_name)
-            if parents_are_different or neither_has_parent:
-                n_adjacent_shapes_children = len(self._worksheet_relationship.get_children_sheet_names(adjacent_sheet_name))
-                sign = shift
-                adjusted_shift = sign * (n_adjacent_shapes_children + 1)
-            else:
-                adjusted_shift = shift
+        if shift > 0:
+            index_in_question = max(filtered_indexes)
+            adjacent_sheet_index = index_in_question + 1
+        else:
+            index_in_question = min(filtered_indexes)
+            adjacent_sheet_index = index_in_question - 1
+        try:
+            adjacent_sheet_name = self._worksheets.sheet_names[adjacent_sheet_index]
+        except IndexError:
+            return filtered_indexes  # Can't shift that direction further
+
+        if filtered_indexes != ():
+            args = adjacent_sheet_name, filtered_indexes, shift, worksheets, self._worksheet_relationship
+            adjusted_shift = imp9.get_adjusted_shift(*args)
             new_destinations = self._worksheets.change_sheet_order(filtered_indexes, adjusted_shift)
         else:
             new_destinations = indexes
