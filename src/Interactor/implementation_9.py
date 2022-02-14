@@ -787,7 +787,8 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
                 else:
                     other_parent_name = ws_relationship.get_parent_worksheet(other_sheet_name)
                 add_the_parent_as_the_child_s_parent(other_parent_name, sheet_name, ws_relationship)
-                new_indexes.remove(sheet_index)
+                if shifting_up:
+                    new_indexes.remove(sheet_index)
 
     return tuple(sorted(new_indexes))
 
@@ -808,12 +809,17 @@ def get_adjusted_shift(adjacent_sheet_name: str, filtered_indexes: tuple, shift:
     adjacent_parent = ws_relationship.get_parent_worksheet(adjacent_sheet_name)
     neither_has_parent = (my_parent is None and adjacent_parent is None)
     parents_are_different = (adjacent_has_a_parent and (my_parent != adjacent_parent))
+    adjacent_is_my_parent = adjacent_sheet_name == my_parent
     if adjacent_has_a_parent:
         adjacent_sheet_name = ws_relationship.get_parent_worksheet(adjacent_sheet_name)
     if parents_are_different or neither_has_parent:
         n_adjacent_shapes_children = len(ws_relationship.get_children_sheet_names(adjacent_sheet_name))
         sign = shift
         adjusted_shift = sign * (n_adjacent_shapes_children + 1)
+    elif adjacent_is_my_parent:
+        n_adjacent_shapes_children = len(ws_relationship.get_children_sheet_names(adjacent_sheet_name))
+        sign = shift
+        adjusted_shift = sign * (n_adjacent_shapes_children)
     else:
         adjusted_shift = shift
     return adjusted_shift
