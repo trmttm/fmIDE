@@ -191,6 +191,7 @@ class Entities:
         selected_sheet = self._worksheets.selected_sheet
         self._account_orders.delete_account_order(selected_sheet)
         self._selections.delete_selection(selected_sheet)
+        self._worksheet_relationship.remove_data(selected_sheet)
         self._worksheets.delete_selected_sheet()
 
     def delete_a_sheet(self, sheet_name: str):
