@@ -136,3 +136,5 @@ if __name__ == '__main__':
     graph.add_edge('+2', 'cash_eb')
 
     print(tuple(graph.get_simple_cycles()))
+    # print(tuple(graph.get_topological_order()))
+    # print(tuple(graph.get_strongly_connected_components()))
