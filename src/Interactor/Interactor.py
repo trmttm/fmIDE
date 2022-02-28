@@ -684,7 +684,7 @@ class Interactor(BoundaryInABC):
                 parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(child_sheet_name)
                 children_indexes = tuple(self._worksheets.sheet_names.index(name) for name in
                                          self._worksheet_relationship.get_children_sheet_names(parent_sheet_name))
-                location = max(children_indexes) + 1
+                location = max(children_indexes)
                 self._worksheet_relationship.remove_parent_worksheet(child_sheet_name)
                 self._worksheets.insert_sheets((child_sheet_name,), location)
 
