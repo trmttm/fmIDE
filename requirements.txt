@@ -1,10 +1,14 @@
--e git+https://github.com/trmttm/fmCalculator@2764d011ef470c83e42a03e0e522e77b6abc11fd#egg=fm_calculator
--e git+https://github.com/trmttm/fmIDE@ef34d2860bd7f8b368fdc1247e6db45f6ee1d464#egg=fmIDE
--e git+https://github.com/trmttm/Interface@dacd10fa449d61a5869a7d2f432b44f8ca717362#egg=interface
+altgraph==0.17.2
+-e git+https://github.com/trmttm/fmCalculator@157adbe321ace08a4e9b2b5040af6c27bfcfdc60#egg=fm_calculator
+-e git+https://github.com/trmttm/fmIDE@974f28460f8978fb07f062442cbe065c671f67ae#egg=fmIDE
+-e git+https://github.com/trmttm/Interface@22cb9f7732092c7678fc06ec09b1b2ef317b61e4#egg=interface
 -e git+https://github.com/trmttm/KeyboardShortcut@afa66332b33b6dff38119f867801e37e4a0a96a4#egg=keyboard_shortcut
+macholib==1.15.2
+modulegraph==0.19.2
 -e git+https://github.com/trmttm/controller_mouse@8691284c36fd2966154871f1a82b2f84bd15aaec#egg=mouse
 -e git+https://github.com/trmttm/osIdentifier@a799a4ff4b4b1e83d4a477569fda936f112b1515#egg=os_identifier
--e git+https://github.com/trmttm/RPE@5899b478b93828acae3fea822fc6d7d2f367889b#egg=rpe_to_normal
--e git+https://github.com/trmttm/Spreadsheet@23b61bcbdb58677b537d50b780abd8a105e6b896#egg=spreadsheet
--e git+https://github.com/trmttm/ViewTkinter@016dadf90f531236ec047fc831e4db8ed0a8e146#egg=view_tkinter
+py2app==0.27
+-e git+https://github.com/trmttm/RPE@c0fbd744de28ed6e514b918ad529cdd9f940ce36#egg=rpe_to_normal
+-e git+https://github.com/trmttm/Spreadsheet@fc0eaab8d8a7143305e368213927c6e085ffcc7f#egg=spreadsheet
+-e git+https://github.com/trmttm/ViewTkinter@fa26033f4ce8e8b271ec6a0ed5feff1b915c7431#egg=view_tkinter
 XlsxWriter==3.0.2
