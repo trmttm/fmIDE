@@ -1932,16 +1932,28 @@ class Interactor(BoundaryInABC):
 
     # Presenters
     def scale_canvas(self, x_times, y_times):
+        self.set_account_width(int(self.account_width * x_times))
+        self.set_account_height(int(self.account_height * y_times))
+        self.set_account_font_size(int(self.account_font_size * x_times))
+        self.set_operator_width(int(self.operator_width * x_times))
+        self.set_operator_height(int(self.operator_height * y_times))
+        self.set_operator_font_size(int(self.operator_font_size * x_times))
+        self.set_constant_width(int(self.constant_width * x_times))
+        self.set_constant_height(int(self.constant_height * y_times))
+        self.set_constant_font_size(int(self.constant_font_size * x_times))
+        self.set_bb_width(int(self.bb_width * x_times))
+        self.set_bb_height(int(self.bb_height * y_times))
+        self.set_bb_font_size(int(self.bb_font_size * x_times))
         for shape_id in self._shapes.shapes_ids:
-            scaled_x = x_times * self._shapes.get_x(shape_id)
-            scaled_y = y_times * self._shapes.get_y(shape_id)
-            scaled_width = x_times * self._shapes.get_width(shape_id)
-            scaled_height = y_times * self._shapes.get_height(shape_id)
+            scaled_x = int(x_times * self._shapes.get_x(shape_id))
+            scaled_y = int(y_times * self._shapes.get_y(shape_id))
+            scaled_width = int(x_times * self._shapes.get_width(shape_id))
+            scaled_height = int(y_times * self._shapes.get_height(shape_id))
             self._shapes.set_x(shape_id, scaled_x)
             self._shapes.set_y(shape_id, scaled_y)
             self._shapes.set_width(shape_id, scaled_width)
             self._shapes.set_height(shape_id, scaled_height)
-        self._presenters.scale_canvas({'x_times': x_times, 'y_times': y_times})
+        self._present_refresh_canvas()
 
     def present_insert_worksheet_in_input_sheet_mode(self):
         response_model = self._configurations.insert_sheet_name_in_input_sheet
