@@ -3,8 +3,8 @@ from interface_fm import BoundaryInABC
 from interface_keymaps import KeyMapABC
 from interface_mouse import MouseControllerABC
 from interface_view import ViewABC
-
 from src.BoundaryOutput import PresentersABC
+
 from . import constants
 from . import control_commands as c
 from . import view_commands as vc
@@ -175,6 +175,9 @@ def create_design_key_combos(interactor: BoundaryInABC, view: ViewABC, presenter
         (k.none, k.f9): (lambda: i.calculate(), 'Calculated'),
         (k.none, k.f12): (lambda: c.popup_template_save(v, i, p, m), 'Template Save Popup'),
         (shift_sub, k.s): (lambda: c.popup_canvas_save(v, i, p, m), 'Canvas Save'),
+
+        (shift_sub, k.i): (lambda: i.scale_canvas(2, 2), 'Canvas Scaled'),
+        (shift_sub, k.o): (lambda: i.scale_canvas(0.5, 0.5), 'Canvas Scaled'),
 
         (k.none, k.f2): (lambda: c.popup_f2_entry(v, i, p, m), 'Text Focus'),
         (main_modifier, k.l): (lambda: dec_show_btns(c.focus_on_account_entry, v)(v), 'New Focus'),
@@ -405,7 +408,8 @@ def create_canvas_save_key_combos(interactor: BoundaryInABC, view: ViewABC, pres
         # (modifier:int, key:str) : (command:Callables, feedback:str)
         (k.none, k.return_): (lambda: c.upon_canvas_save_button(v, i), 'Save Canvas'),
         (k.none, k.escape): (lambda: c.close_canvas_save_setting_properly(i, v), 'Closed Canvas Save popup Properly.'),
-        (main_modifier, k.w): (lambda: c.close_canvas_save_setting_properly(i, v), 'Closed Canvas Save popup Properly.'),
+        (main_modifier, k.w): (
+            lambda: c.close_canvas_save_setting_properly(i, v), 'Closed Canvas Save popup Properly.'),
     }
 
     wrap_auto_save_functionality(dont_wrap_these_commands_with_auto_save, interactor, key_combos)

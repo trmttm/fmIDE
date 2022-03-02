@@ -113,6 +113,10 @@ class PresentersABC(ABC):
         pass
 
     @abstractmethod
+    def attach_to_present_scale_canvas(self, observer):
+        pass
+
+    @abstractmethod
     def add_shape(self, response_model):
         pass
 
@@ -214,4 +218,8 @@ class PresentersABC(ABC):
 
     @abstractmethod
     def insert_sheet_name_in_input_sheet(self, response_model):
+        pass
+
+    @abstractmethod
+    def scale_canvas(self, response_model):
         pass

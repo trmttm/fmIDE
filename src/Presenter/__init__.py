@@ -1,6 +1,7 @@
 from typing import Callable
 
 from src.BoundaryOutput import PresentersABC
+
 from .AddShape import PresenterAddShape
 from .ClearCanvas import PresenterClearCanvas
 from .Commands import PresenterCommands
@@ -15,6 +16,7 @@ from .Macros import PresenterMacros
 from .MoveShape import PresenterMoveShape
 from .PresenterPassThrough import PresenterPassThrough
 from .RemoveShape import PresenterRemoveShape
+from .ScaleCanvas import PresenterScaleCanvas
 from .States import PresenterStates
 from .Template import PresenterTemplate
 from .UpdateAccountOrder import PresenterUpdateAccountOrder
@@ -54,6 +56,7 @@ class Presenters(PresentersABC):
         self._present_sensitivity_variable_accounts = PresenterAccountsListWithDeltas()
         self._present_data_table_variable_accounts = PresenterAccountsList()
         self._present_insert_sheet_name_in_input_sheet = PresenterPassThrough()
+        self._present_scale_canvas = PresenterScaleCanvas()
 
         self._observers = []
 
@@ -141,6 +144,9 @@ class Presenters(PresentersABC):
 
     def attach_to_present_insert_sheet_name_in_input_sheet(self, observer):
         self._present_insert_sheet_name_in_input_sheet.attach(observer)
+
+    def attach_to_present_scale_canvas(self, observer):
+        self._present_scale_canvas.attach(observer)
 
     def add_shape(self, response_model):
         self._notify(response_model)
@@ -245,3 +251,7 @@ class Presenters(PresentersABC):
     def insert_sheet_name_in_input_sheet(self, response_model):
         self._notify(response_model)
         self._present_insert_sheet_name_in_input_sheet.present(response_model)
+
+    def scale_canvas(self, response_model):
+        self._notify(response_model)
+        self._present_scale_canvas.present(response_model)

@@ -1,9 +1,9 @@
 from interface_fm import BoundaryInABC
 from interface_mouse import MouseControllerABC
 from interface_view import ViewABC
-
 from src.BoundaryOutput import PresentersABC
 from src.Main.configuration_ABC import ConfigurationABC
+
 from . import command_mapper
 from . import control_commands as cc
 from . import keyboard_shortcuts
@@ -38,6 +38,7 @@ class ConfigurationTest(ConfigurationABC):
         p.attach_to_present_update_connection_ids(lambda view_model_: vc.update_tree_connections(v, view_model_, i))
         p.attach_to_present_update_commands(lambda view_model_: vc.update_tree_commands(v, view_model_))
         p.attach_to_present_update_macros(lambda view_model_: vc.update_tree_macros(v, view_model_))
+        p.attach_to_present_scale_canvas(lambda view_model_: v.scale_canvas(view_model_))
 
         cc.upon_menu_button4(v, i, p, mouse)  # Let left tree_id columns stick to frame
         cc.upon_menu_button1(v, i, p, mouse)
