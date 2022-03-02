@@ -33,6 +33,7 @@ class Configurations(Observable):
     _constant_width = 'constant width'
     _constant_height = 'constant height'
     _constant_font_size = 'constant font size'
+    _auto_fit_width_per_letter = '_auto_fit_width_per_letter'
 
     def __init__(self):
         Observable.__init__(self)
@@ -60,6 +61,7 @@ class Configurations(Observable):
                       self._constant_width: 50,
                       self._constant_height: 20,
                       self._constant_font_size: self._default_font_size,
+                      self._auto_fit_width_per_letter: 8,
 
                       }
 
@@ -227,6 +229,13 @@ class Configurations(Observable):
 
     def deactivate_live_calculation(self):
         self._data[self._live_calculation] = False
+
+    @property
+    def auto_fit_width_per_letter(self):
+        return self._data[self._auto_fit_width_per_letter]
+
+    def set_auto_fit_width_per_letter(self, value):
+        self._data[self._auto_fit_width_per_letter] = value
 
     @property
     def account_width(self):

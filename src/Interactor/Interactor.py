@@ -579,10 +579,11 @@ class Interactor(BoundaryInABC):
         self.fit_shapes_width(self._shapes.shapes_ids)
 
     def fit_shapes_width(self, shape_ids: Iterable):
+        auto_fit_width_per_letter = self._configurations.auto_fit_width_per_letter
         for shape_id in shape_ids:
             text = self._shapes.get_text(shape_id)
             try:
-                self._shapes.set_width(shape_id, len(text) * 8)
+                self._shapes.set_width(shape_id, len(text) * auto_fit_width_per_letter)
             except TypeError:
                 pass  # if shape_id is constant
         self.present_refresh_canvas()
@@ -1944,6 +1945,8 @@ class Interactor(BoundaryInABC):
         self.set_bb_width(int(self.bb_width * x_times))
         self.set_bb_height(int(self.bb_height * y_times))
         self.set_bb_font_size(int(self.bb_font_size * x_times))
+        self._configurations.set_auto_fit_width_per_letter(self._configurations.auto_fit_width_per_letter * x_times)
+
         for shape_id in self._shapes.shapes_ids:
             scaled_x = int(x_times * self._shapes.get_x(shape_id))
             scaled_y = int(y_times * self._shapes.get_y(shape_id))
