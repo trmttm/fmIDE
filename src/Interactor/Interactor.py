@@ -1480,15 +1480,20 @@ class Interactor(BoundaryInABC):
         self._present_feedback_user(f'Loaded state', 'success')
 
     def load_file(self, file_name: str):
+        initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
+        self.scale_canvas(1 / initial_scale_x, 1 / initial_scale_y)
         self._gateways.load_state_from_file(file_name)
         self._upon_loading_state()
         self._input_values.change_number_of_periods(self.number_of_periods)
         self._present_feedback_user(f'Loaded file: {file_name}', 'success')
+        self.scale_canvas(initial_scale_x, initial_scale_y)
 
     def merge_file(self, file_name: str):
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self.stop_canvas_refreshing()
         self.stop_highlighting()
+        initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
+        self.scale_canvas(1 / initial_scale_x, 1 / initial_scale_y)
         initial_shapes = set(self._shapes.shapes_ids)
         self._gateways.merge_state_from_file(file_name)
 
@@ -1506,6 +1511,7 @@ class Interactor(BoundaryInABC):
         self.add_inter_sheets_relays(self._connections.new_merged_connections)
         self._present_feedback_user(f'Merged file: {file_name}', 'success')
         self._selection.add_selections_by_shape_ids(shapes_added)
+        self.scale_canvas(initial_scale_x, initial_scale_y)
         if not canvas_refresh_was_prevented_at_the_beginning:
             self.start_canvas_refreshing()
             self.start_highlighting()
