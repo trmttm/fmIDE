@@ -33,6 +33,7 @@ class Configurations(Observable):
     _constant_width = 'constant width'
     _constant_height = 'constant height'
     _constant_font_size = 'constant font size'
+    _all_other_font_size = 'all other font size'
     _auto_fit_width_per_letter = '_auto_fit_width_per_letter'
     _slider_w = '_slider_w'
     _slider_h = '_slider_h'
@@ -78,6 +79,7 @@ class Configurations(Observable):
                       self._constant_width: 50,
                       self._constant_height: 20,
                       self._constant_font_size: self._default_font_size,
+                      self._all_other_font_size: self._default_font_size,
                       self._auto_fit_width_per_letter: 8,
                       self._slider_w: 25,
                       self._slider_h: 200,
@@ -354,6 +356,13 @@ class Configurations(Observable):
 
     def set_constant_font_size(self, value):
         self._data[self._constant_font_size] = value
+
+    @property
+    def all_other_font_size(self):
+        return self._data.get(self._all_other_font_size, self._default_font_size)
+
+    def set_all_other_font_size(self, value):
+        self._data[self._all_other_font_size] = value
 
     @property
     def slider_w(self):

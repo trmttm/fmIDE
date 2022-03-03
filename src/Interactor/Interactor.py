@@ -1176,9 +1176,10 @@ class Interactor(BoundaryInABC):
             'bb': self.bb_font_size,
             'operator': self.operator_font_size,
         }
+        all_other_font_size = self._configurations.all_other_font_size
         shape_id_to_font_size = dict(zip(
             shape_ids,
-            tuple(tag_type_to_font_size.get(self._shapes.get_tag_type(i), 13) for i in shape_ids)))
+            tuple(tag_type_to_font_size.get(self._shapes.get_tag_type(i), all_other_font_size) for i in shape_ids)))
         self._presenters.add_shape(response_model(self._shapes.data, shape_ids, shape_id_to_font_size))
 
     def _present_remove_shape(self, shape_ids_to_delete: Iterable):
@@ -1947,6 +1948,7 @@ class Interactor(BoundaryInABC):
         self.set_bb_width(int(self.bb_width * x_times))
         self.set_bb_height(int(self.bb_height * y_times))
         self.set_bb_font_size(int(self.bb_font_size * x_times))
+        self._configurations.set_all_other_font_size(int(self._configurations.all_other_font_size * x_times))
         self._configurations.set_auto_fit_width_per_letter(self._configurations.auto_fit_width_per_letter * x_times)
         self._configurations.set_slider_w(self._configurations.slider_w * x_times)
         self._configurations.set_slider_h(self._configurations.slider_h * x_times)
