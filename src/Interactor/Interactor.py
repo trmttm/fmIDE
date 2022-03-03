@@ -1954,6 +1954,13 @@ class Interactor(BoundaryInABC):
         self._configurations.set_slider_decimal_h(self._configurations.slider_decimal_h * x_times)
         self._configurations.set_slider_handle_h(self._configurations.slider_handle_h * x_times)
         self._configurations.set_slider_range_dx(self._configurations.slider_range_dx * x_times)
+        self._configurations.set_graph_y_ax_w(self._configurations.graph_y_ax_w * x_times)
+        self._configurations.set_graph_y_ax_height(self._configurations.graph_y_ax_height * x_times)
+        self._configurations.set_graph_range_w(self._configurations.graph_range_w * x_times)
+        self._configurations.set_graph_range_h(self._configurations.graph_range_h * x_times)
+        self._configurations.set_graph_period_w(self._configurations.graph_period_w * x_times)
+        self._configurations.set_graph_period_h(self._configurations.graph_period_h * x_times)
+        self._configurations.set_graph_range_dx(self._configurations.graph_range_dx * x_times)
 
         for shape_id in self._shapes.shapes_ids:
             scaled_x = int(x_times * self._shapes.get_x(shape_id))
@@ -2592,8 +2599,8 @@ class Interactor(BoundaryInABC):
         return selected_inputs
 
     def _add_empty_slider(self, coordinate: tuple = (100, 100), min_max: tuple = (0, 100)) -> Any:
-        slider_id = slider.add_slider(coordinate, min_max, self.add_new_shape, self._connections, self._shapes,
-                                      self._configurations)
+        args = coordinate, min_max, self.add_new_shape, self._connections, self._shapes, self._configurations
+        slider_id = slider.add_slider(*args)
         self.present_refresh_canvas()
         return slider_id
 
@@ -2620,7 +2627,8 @@ class Interactor(BoundaryInABC):
 
         account_ids = self._extract_account_or_relays_from_selection()
         self.clear_selection()
-        graph_id = graph.add_y_axis(coordinate, min_max, self.add_new_shape, self._connections, self._shapes)
+        args = coordinate, min_max, self.add_new_shape, self._connections, self._shapes, self._configurations
+        graph_id = graph.add_y_axis(*args)
         self._selection.select_shape(graph_id)
         if account_ids != ():
             self.add_bars_of_selected_accounts(account_ids)

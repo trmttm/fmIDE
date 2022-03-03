@@ -2,6 +2,7 @@ from typing import Any
 from typing import Iterable
 from typing import Tuple
 
+from ..Entities import Configurations
 from ..Entities import Connections
 from ..Entities import Shapes
 
@@ -16,17 +17,18 @@ bar_distance = 20
 bar_width = 25
 
 
-def add_y_axis(coordinate, min_max, add_new_shape, connections: Connections, shapes: Shapes):
+def add_y_axis(coordinate, min_max, add_new_shape, connections: Connections, shapes: Shapes,
+               configurations: Configurations):
     x, y = coordinate
     min_, max_ = min_max if min_max is not None else (0, 100)
     period = 0
-    y_ax_w = 1
-    y_ax_height = 200
-    range_w = 40
-    range_h = 20
-    period_w = 40
-    period_h = 20
-    range_dx = -60
+    y_ax_w = configurations.graph_y_ax_w
+    y_ax_height = configurations.graph_y_ax_height
+    range_w = configurations.graph_range_w
+    range_h = configurations.graph_range_h
+    period_w = configurations.graph_period_w
+    period_h = configurations.graph_period_h
+    range_dx = configurations.graph_range_dx
 
     graph_id = add_new_shape('', tag_y_axis)
     min_id = add_new_shape(min_, tag_y_min)

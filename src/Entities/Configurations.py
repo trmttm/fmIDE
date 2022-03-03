@@ -42,6 +42,13 @@ class Configurations(Observable):
     _slider_decimal_h = '_slider_decimal_h'
     _slider_handle_h = '_slider_handle_h'
     _slider_range_dx = '_slider_range_dx'
+    _graph_y_ax_w = '_graph_y_ax_w'
+    _graph_y_ax_height = '_graph_y_ax_height'
+    _graph_range_w = '_graph_range_w'
+    _graph_range_h = '_graph_range_h'
+    _graph_period_w = '_graph_period_w'
+    _graph_period_h = '_graph_period_h'
+    _graph_range_dx = '_graph_range_dx'
 
     def __init__(self):
         Observable.__init__(self)
@@ -78,6 +85,13 @@ class Configurations(Observable):
                       self._slider_decimal_h: 20,
                       self._slider_handle_h: 25,
                       self._slider_range_dx: -60,
+                      self._graph_y_ax_w: 1,
+                      self._graph_y_ax_height: 200,
+                      self._graph_range_w: 40,
+                      self._graph_range_h: 20,
+                      self._graph_period_w: 40,
+                      self._graph_period_h: 20,
+                      self._graph_range_dx: 60,
 
                       }
 
@@ -392,3 +406,52 @@ class Configurations(Observable):
 
     def set_slider_range_dx(self, value):
         self._data[self._slider_range_dx] = value
+
+    @property
+    def graph_y_ax_w(self):
+        return self._data[self._graph_y_ax_w]
+
+    def set_graph_y_ax_w(self, value):
+        self._data[self._graph_y_ax_w] = value
+
+    @property
+    def graph_y_ax_height(self):
+        return self._data[self._graph_y_ax_height]
+
+    def set_graph_y_ax_height(self, value):
+        self._data[self._graph_y_ax_height] = value
+
+    @property
+    def graph_range_w(self):
+        return self._data[self._graph_range_w]
+
+    def set_graph_range_w(self, value):
+        self._data[self._graph_range_w] = value
+
+    @property
+    def graph_range_h(self):
+        return self._data[self._graph_range_h]
+
+    def set_graph_range_h(self, value):
+        self._data[self._graph_range_h] = value
+
+    @property
+    def graph_period_w(self):
+        return self._data[self._graph_period_w]
+
+    def set_graph_period_w(self, value):
+        self._data[self._graph_period_w] = value
+
+    @property
+    def graph_period_h(self):
+        return self._data[self._graph_period_h]
+
+    def set_graph_period_h(self, value):
+        self._data[self._graph_period_h] = value
+
+    @property
+    def graph_range_dx(self):
+        return self._data[self._graph_range_dx]
+
+    def set_graph_range_dx(self, value):
+        self._data[self._graph_range_dx] = value
