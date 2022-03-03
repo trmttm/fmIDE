@@ -6,6 +6,35 @@ from .. import Utilities
 
 
 class Configurations(Observable):
+    _default_delta = 10
+    _default_font_size = 13 if os_identifier.is_mac else 10
+    _default_account_width = 50
+    _default_account_height = 20
+    _default_operator_width = 50
+    _default_operator_height = 20
+    _default_slider_w = 25
+    _default_slider_h = 200
+    _default_slider_range_w = 40
+    _default_slider_range_h = 20
+    _default_slider_decimal_w = 40
+    _default_slider_decimal_h = 20
+    _default_slider_handle_h = 25
+    _default_slider_range_dx = 60
+    _default_graph_y_ax_w = 1
+    _default_graph_y_ax_height = 200
+    _default_graph_range_w = 40
+    _default_graph_range_h = 20
+    _default_graph_period_w = 40
+    _default_graph_period_h = 20
+    _default_graph_range_dx = 60
+    _default_scale_x = 1
+    _default_scale_y = 1
+    _default_bb_width = 50
+    _default_bb_height = 20
+    _default_constant_width = 50
+    _default_constant_height = 20
+    _default_auto_fit_width_per_letter = 8
+
     _number_of_periods = 'nop'
     _bb_shift = 'bb_shift'
     _default_shape_position_increment = 'default_increment'
@@ -14,13 +43,11 @@ class Configurations(Observable):
     _target_accounts_sensitivity = '_target_accounts_sensitivity'
     _variable_accounts_sensitivity = '_variable_accounts_sensitivity'
     _sensitivity_deltas = '_sensitivity_deltas'
-    _default_delta = 10
     _insert_sheet_name_in_input_sheet = '_insert_sheet_name_in_input_sheet'
     _prevent_refresh_canvas = '_prevent_refresh_canvas'
     _default_command_file_name = 'Commands.xlsm'
     _clean_state_prior_to_save = 'clean_up_state_before_pickling_though_expensive'
     _live_calculation = 'live_calculation'
-    _default_font_size = 13 if os_identifier.is_mac else 10
     _account_width = 'account width'
     _account_height = 'account height'
     _account_font_size = 'account font size'
@@ -67,37 +94,37 @@ class Configurations(Observable):
                       self._prevent_refresh_canvas: False,
                       self._clean_state_prior_to_save: True,
                       self._live_calculation: True,
-                      self._account_width: 50,
-                      self._account_height: 20,
+                      self._account_width: self._default_account_width,
+                      self._account_height: self._default_account_height,
                       self._account_font_size: self._default_font_size,
-                      self._operator_width: 50,
-                      self._operator_height: 20,
+                      self._operator_width: self._default_operator_width,
+                      self._operator_height: self._default_operator_height,
                       self._operator_font_size: self._default_font_size,
-                      self._bb_width: 50,
-                      self._bb_height: 20,
+                      self._bb_width: self._default_bb_width,
+                      self._bb_height: self._default_bb_height,
                       self._bb_font_size: self._default_font_size,
-                      self._constant_width: 50,
-                      self._constant_height: 20,
+                      self._constant_width: self._default_constant_width,
+                      self._constant_height: self._default_constant_height,
                       self._constant_font_size: self._default_font_size,
                       self._all_other_font_size: self._default_font_size,
-                      self._auto_fit_width_per_letter: 8,
-                      self._slider_w: 25,
-                      self._slider_h: 200,
-                      self._slider_range_w: 40,
-                      self._slider_range_h: 20,
-                      self._slider_decimal_w: 40,
-                      self._slider_decimal_h: 20,
-                      self._slider_handle_h: 25,
-                      self._slider_range_dx: -60,
-                      self._graph_y_ax_w: 1,
-                      self._graph_y_ax_height: 200,
-                      self._graph_range_w: 40,
-                      self._graph_range_h: 20,
-                      self._graph_period_w: 40,
-                      self._graph_period_h: 20,
-                      self._graph_range_dx: 60,
-                      self._scale_x: 1,
-                      self._scale_y: 1,
+                      self._auto_fit_width_per_letter: self._default_auto_fit_width_per_letter,
+                      self._slider_w: self._default_slider_w,
+                      self._slider_h: self._default_slider_h,
+                      self._slider_range_w: self._default_slider_range_w,
+                      self._slider_range_h: self._default_slider_range_h,
+                      self._slider_decimal_w: self._default_slider_decimal_w,
+                      self._slider_decimal_h: self._default_slider_decimal_h,
+                      self._slider_handle_h: self._default_slider_handle_h,
+                      self._slider_range_dx: self._default_slider_range_dx,
+                      self._graph_y_ax_w: self._default_graph_y_ax_w,
+                      self._graph_y_ax_height: self._default_graph_y_ax_height,
+                      self._graph_range_w: self._default_graph_range_w,
+                      self._graph_range_h: self._default_graph_range_h,
+                      self._graph_period_w: self._default_graph_period_w,
+                      self._graph_period_h: self._default_graph_period_h,
+                      self._graph_range_dx: self._default_graph_range_dx,
+                      self._scale_x: self._default_scale_x,
+                      self._scale_y: self._default_scale_y,
 
                       }
 
@@ -268,91 +295,91 @@ class Configurations(Observable):
 
     @property
     def auto_fit_width_per_letter(self):
-        return self._data[self._auto_fit_width_per_letter]
+        return self._data.get(self._auto_fit_width_per_letter, self._default_auto_fit_width_per_letter)
 
     def set_auto_fit_width_per_letter(self, value):
         self._data[self._auto_fit_width_per_letter] = value
 
     @property
     def account_width(self):
-        return self._data[self._account_width]
+        return self._data.get(self._account_width, self._default_account_width)
 
     def set_account_width(self, value):
         self._data[self._account_width] = value
 
     @property
     def account_height(self):
-        return self._data[self._account_height]
+        return self._data.get(self._account_height, self._default_account_height)
 
     def set_account_height(self, value):
         self._data[self._account_height] = value
 
     @property
     def account_font_size(self):
-        return self._data[self._account_font_size]
+        return self._data.get(self._account_font_size, self._default_font_size)
 
     def set_account_font_size(self, value):
         self._data[self._account_font_size] = value
 
     @property
     def operator_width(self):
-        return self._data[self._operator_width]
+        return self._data.get(self._operator_width, self._default_operator_width)
 
     def set_operator_width(self, value):
         self._data[self._operator_width] = value
 
     @property
     def operator_height(self):
-        return self._data[self._operator_height]
+        return self._data.get(self._operator_height, self._default_operator_height)
 
     def set_operator_height(self, value):
         self._data[self._operator_height] = value
 
     @property
     def operator_font_size(self):
-        return self._data[self._operator_font_size]
+        return self._data.get(self._operator_font_size, self._default_font_size)
 
     def set_operator_font_size(self, value):
         self._data[self._operator_font_size] = value
 
     @property
     def bb_width(self):
-        return self._data[self._bb_width]
+        return self._data.get(self._bb_width, self._default_bb_width)
 
     def set_bb_width(self, value):
         self._data[self._bb_width] = value
 
     @property
     def bb_height(self):
-        return self._data[self._bb_height]
+        return self._data.get(self._bb_height, self._default_bb_height)
 
     def set_bb_height(self, value):
         self._data[self._bb_height] = value
 
     @property
     def bb_font_size(self):
-        return self._data[self._bb_font_size]
+        return self._data.get(self._bb_font_size, self._default_font_size)
 
     def set_bb_font_size(self, value):
         self._data[self._bb_font_size] = value
 
     @property
     def constant_width(self):
-        return self._data[self._constant_width]
+        return self._data.get(self._constant_width, self._default_constant_width)
 
     def set_constant_width(self, value):
         self._data[self._constant_width] = value
 
     @property
     def constant_height(self):
-        return self._data[self._constant_height]
+        return self._data.get(self._constant_height, self._default_constant_height)
 
     def set_constant_height(self, value):
         self._data[self._constant_height] = value
 
     @property
     def constant_font_size(self):
-        return self._data[self._constant_font_size]
+        return self._data.get(self._constant_font_size, self._default_font_size)
 
     def set_constant_font_size(self, value):
         self._data[self._constant_font_size] = value
@@ -366,119 +393,119 @@ class Configurations(Observable):
 
     @property
     def slider_w(self):
-        return self._data[self._slider_w]
+        return self._data.get(self._slider_w, self._default_slider_w)
 
     def set_slider_w(self, value):
         self._data[self._slider_w] = value
 
     @property
     def slider_h(self):
-        return self._data[self._slider_h]
+        return self._data.get(self._slider_h, self._default_slider_h)
 
     def set_slider_h(self, value):
         self._data[self._slider_h] = value
 
     @property
     def slider_range_w(self):
-        return self._data[self._slider_range_w]
+        return self._data.get(self._slider_range_w, self._default_slider_range_w)
 
     def set_slider_range_w(self, value):
         self._data[self._slider_range_w] = value
 
     @property
     def slider_range_h(self):
-        return self._data[self._slider_range_h]
+        return self._data.get(self._slider_range_h, self._default_slider_range_h)
 
     def set_slider_range_h(self, value):
         self._data[self._slider_range_h] = value
 
     @property
     def slider_decimal_w(self):
-        return self._data[self._slider_decimal_w]
+        return self._data.get(self._slider_decimal_w, self._default_slider_decimal_w)
 
     def set_slider_decimal_w(self, value):
         self._data[self._slider_decimal_w] = value
 
     @property
     def slider_decimal_h(self):
-        return self._data[self._slider_decimal_h]
+        return self._data.get(self._slider_decimal_h, self._default_slider_decimal_h)
 
     def set_slider_decimal_h(self, value):
         self._data[self._slider_decimal_h] = value
 
     @property
     def slider_handle_h(self):
-        return self._data[self._slider_handle_h]
+        return self._data.get(self._slider_handle_h, self._default_slider_handle_h)
 
     def set_slider_handle_h(self, value):
         self._data[self._slider_handle_h] = value
 
     @property
     def slider_range_dx(self):
-        return self._data[self._slider_range_dx]
+        return self._data.get(self._slider_range_dx, self._default_slider_range_dx)
 
     def set_slider_range_dx(self, value):
         self._data[self._slider_range_dx] = value
 
     @property
     def graph_y_ax_w(self):
-        return self._data[self._graph_y_ax_w]
+        return self._data.get(self._graph_y_ax_w, self._default_graph_y_ax_w)
 
     def set_graph_y_ax_w(self, value):
         self._data[self._graph_y_ax_w] = value
 
     @property
     def graph_y_ax_height(self):
-        return self._data[self._graph_y_ax_height]
+        return self._data.get(self._graph_y_ax_height, self._default_graph_y_ax_height)
 
     def set_graph_y_ax_height(self, value):
         self._data[self._graph_y_ax_height] = value
 
     @property
     def graph_range_w(self):
-        return self._data[self._graph_range_w]
+        return self._data.get(self._graph_range_w, self._default_graph_range_w)
 
     def set_graph_range_w(self, value):
         self._data[self._graph_range_w] = value
 
     @property
     def graph_range_h(self):
-        return self._data[self._graph_range_h]
+        return self._data.get(self._graph_range_h, self._default_graph_range_h)
 
     def set_graph_range_h(self, value):
         self._data[self._graph_range_h] = value
 
     @property
     def graph_period_w(self):
-        return self._data[self._graph_period_w]
+        return self._data.get(self._graph_period_w, self._default_graph_period_w)
 
     def set_graph_period_w(self, value):
         self._data[self._graph_period_w] = value
 
     @property
     def graph_period_h(self):
-        return self._data[self._graph_period_h]
+        return self._data.get(self._graph_period_h, self._default_graph_period_h)
 
     def set_graph_period_h(self, value):
         self._data[self._graph_period_h] = value
 
     @property
     def graph_range_dx(self):
-        return self._data[self._graph_range_dx]
+        return self._data.get(self._graph_range_dx, self._default_graph_range_dx)
 
     def set_graph_range_dx(self, value):
         self._data[self._graph_range_dx] = value
 
     @property
     def scale_x(self):
-        return self._data[self._scale_x]
+        return self._data.get(self._scale_x, self._default_scale_x)
 
     def set_scale_x(self, value):
         self._data[self._scale_x] = value
 
     @property
     def scale_y(self):
-        return self._data[self._scale_y]
+        return self._data.get(self._scale_y, self._default_scale_y)
 
     def set_scale_y(self, value):
         self._data[self._scale_y] = value

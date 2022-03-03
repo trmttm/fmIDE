@@ -54,7 +54,8 @@ class SystemState(Mm.OriginatorABC):
         entities.selections.set_data(state[7])
         entities.worksheets.set_data(state[8])
 
-        # 9 configuration should not be loaded.
+        # 9 configuration should not be loaded. => WHY?
+        restore_if_state_exists_otherwise_initialize(entities.configurations, 9, state)
         restore_if_state_exists_otherwise_initialize(entities.input_values, 10, state)
         restore_if_state_exists_otherwise_initialize(entities.input_ranges, 11, state)
         restore_if_state_exists_otherwise_initialize(entities.connection_ids, 12, state)
