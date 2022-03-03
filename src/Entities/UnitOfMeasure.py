@@ -36,8 +36,9 @@ class UnitOfMeasure(Observable):
                 del self._data[shape_id]
 
     @notify
-    def copy(self, from_id, to_id):
-        self.add_unit_of_measure(to_id, self.get_unit_of_measure(from_id))
+    def copy(self, from_id, to_id, account_ids: tuple):
+        if from_id in account_ids:
+            self.add_unit_of_measure(to_id, self.get_unit_of_measure(from_id))
 
     @notify
     def change_shape_id(self, old_shape_id, new_shape_id):

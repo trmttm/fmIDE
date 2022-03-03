@@ -441,7 +441,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -991,6 +991,7 @@ class Interactor(BoundaryInABC):
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self.stop_canvas_refreshing()
 
+        account_ids = self._shapes.get_shapes('account')
         original_to_copies = {}
         for shape_id in tuple(shape_ids):
             text = self._shapes.get_text(shape_id)
@@ -1006,7 +1007,7 @@ class Interactor(BoundaryInABC):
             self._format.copy(shape_id, copy_id)
             self._number_format.copy(shape_id, copy_id)
             self._vertical_accounts.copy(shape_id, copy_id)
-            self._unit_of_measure.copy(shape_id, copy_id)
+            self._unit_of_measure.copy(shape_id, copy_id, account_ids)
 
         self._connections.copy(original_to_copies)
 
