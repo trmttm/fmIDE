@@ -2,6 +2,7 @@ from typing import Any
 from typing import Callable
 from typing import Iterable
 
+from ..Entities import Configurations
 from ..Entities import Connections
 from ..Entities import InputDecimals
 from ..Entities import InputRanges
@@ -16,18 +17,19 @@ slider_decimal = 'slider_decimal'
 slider_non_handle_items = (slider_range, slider_min, slider_max, slider_gauge, slider_decimal)
 
 
-def add_slider(coordinate, min_max, add_new_shape, connections: Connections, shapes: Shapes, decimal: int = 1) -> Any:
+def add_slider(coordinate, min_max, add_new_shape, connections: Connections, shapes: Shapes,
+               configurations: Configurations, decimal: int = 1) -> Any:
     x, y = coordinate
     min_, max_ = min_max if min_max is not None else (0, 100)
-    slider_w = 25
-    slider_h = 200
-    range_w = 40
-    range_h = 20
-    decimal_w = 40
-    decimal_h = 20
-    handle_h = 25
+    slider_w = configurations.slider_w
+    slider_h = configurations.slider_h
+    range_w = configurations.slider_range_w
+    range_h = configurations.slider_range_h
+    decimal_w = configurations.slider_decimal_w
+    decimal_h = configurations.slider_decimal_h
+    handle_h = configurations.slider_handle_h
     handle_y = y + slider_h - handle_h / 2
-    range_dx = -60
+    range_dx = configurations.slider_range_dx
 
     slider_id = add_new_shape('', slider_range)
     handle_id = add_new_shape('', slider_handle)
@@ -270,7 +272,8 @@ def _get_min_id_and_max_id_from_slider_id(slider_id, connections: Connections, s
 
 
 def add_sliders_for_selected_inputs(inputs_or_their_relays: tuple, add_new_shape: Callable, connections: Connections,
-                                    input_ranges: InputRanges, input_decimals: InputDecimals, shapes: Shapes) -> tuple:
+                                    input_ranges: InputRanges, input_decimals: InputDecimals, shapes: Shapes,
+                                    configurations: Configurations) -> tuple:
     slider_ids = []
     relative_position = (150, 0)
     for input_or_its_relay in inputs_or_their_relays:
@@ -281,7 +284,7 @@ def add_sliders_for_selected_inputs(inputs_or_their_relays: tuple, add_new_shape
 
         coordinate = (shapes.get_x(base_id) + relative_position[0], shapes.get_y(base_id) + relative_position[1])
 
-        slider_id = add_slider(coordinate, min_max, add_new_shape, connections, shapes, decimals)
+        slider_id = add_slider(coordinate, min_max, add_new_shape, connections, shapes, configurations, decimals)
         slider_ids.append(slider_id)
     return tuple(slider_ids)
 
@@ -313,7 +316,7 @@ def create_args_to_cache_data_table(shape_ids: Iterable, connections: Connection
         min_v, max_v = get_min_value_max_value_from_slider_id(slider_id, connections, shapes)
         decimal = _get_decimal_value_from_slider_id(slider_id, connections, shapes)
         increment = 1 / (10 ** decimal)
-        total_steps = int((max_v- min_v) / increment)
+        total_steps = int((max_v - min_v) / increment)
         input_ids = get_input_ids_from_slider_id(slider_id, connections, shapes)
         input_values = tuple(min_v + n * (max_v - min_v) / total_steps for n in range(total_steps)) + (max_v,)
         return input_ids, input_values

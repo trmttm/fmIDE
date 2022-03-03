@@ -34,6 +34,14 @@ class Configurations(Observable):
     _constant_height = 'constant height'
     _constant_font_size = 'constant font size'
     _auto_fit_width_per_letter = '_auto_fit_width_per_letter'
+    _slider_w = '_slider_w'
+    _slider_h = '_slider_h'
+    _slider_range_w = '_slider_range_w'
+    _slider_range_h = '_slider_range_h'
+    _slider_decimal_w = '_slider_decimal_w'
+    _slider_decimal_h = '_slider_decimal_h'
+    _slider_handle_h = '_slider_handle_h'
+    _slider_range_dx = '_slider_range_dx'
 
     def __init__(self):
         Observable.__init__(self)
@@ -62,6 +70,14 @@ class Configurations(Observable):
                       self._constant_height: 20,
                       self._constant_font_size: self._default_font_size,
                       self._auto_fit_width_per_letter: 8,
+                      self._slider_w: 25,
+                      self._slider_h: 200,
+                      self._slider_range_w: 40,
+                      self._slider_range_h: 20,
+                      self._slider_decimal_w: 40,
+                      self._slider_decimal_h: 20,
+                      self._slider_handle_h: 25,
+                      self._slider_range_dx: -60,
 
                       }
 
@@ -320,3 +336,59 @@ class Configurations(Observable):
 
     def set_constant_font_size(self, value):
         self._data[self._constant_font_size] = value
+
+    @property
+    def slider_w(self):
+        return self._data[self._slider_w]
+
+    def set_slider_w(self, value):
+        self._data[self._slider_w] = value
+
+    @property
+    def slider_h(self):
+        return self._data[self._slider_h]
+
+    def set_slider_h(self, value):
+        self._data[self._slider_h] = value
+
+    @property
+    def slider_range_w(self):
+        return self._data[self._slider_range_w]
+
+    def set_slider_range_w(self, value):
+        self._data[self._slider_range_w] = value
+
+    @property
+    def slider_range_h(self):
+        return self._data[self._slider_range_h]
+
+    def set_slider_range_h(self, value):
+        self._data[self._slider_range_h] = value
+
+    @property
+    def slider_decimal_w(self):
+        return self._data[self._slider_decimal_w]
+
+    def set_slider_decimal_w(self, value):
+        self._data[self._slider_decimal_w] = value
+
+    @property
+    def slider_decimal_h(self):
+        return self._data[self._slider_decimal_h]
+
+    def set_slider_decimal_h(self, value):
+        self._data[self._slider_decimal_h] = value
+
+    @property
+    def slider_handle_h(self):
+        return self._data[self._slider_handle_h]
+
+    def set_slider_handle_h(self, value):
+        self._data[self._slider_handle_h] = value
+
+    @property
+    def slider_range_dx(self):
+        return self._data[self._slider_range_dx]
+
+    def set_slider_range_dx(self, value):
+        self._data[self._slider_range_dx] = value

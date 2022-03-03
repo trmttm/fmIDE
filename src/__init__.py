@@ -132,8 +132,8 @@ if __name__ == '__main__':
             Observable.is_debug_mode = False
             app = instantiate_app()
             for i in range(10):
-                app.interactor.select_worksheet('CAPEX')
-                app.interactor.select_worksheet('Inventory')
+                app.interactor.select_worksheet('FS')
+                app.interactor.select_worksheet('DCF')
             app.quit()
 
 

@@ -1946,6 +1946,14 @@ class Interactor(BoundaryInABC):
         self.set_bb_height(int(self.bb_height * y_times))
         self.set_bb_font_size(int(self.bb_font_size * x_times))
         self._configurations.set_auto_fit_width_per_letter(self._configurations.auto_fit_width_per_letter * x_times)
+        self._configurations.set_slider_w(self._configurations.slider_w * x_times)
+        self._configurations.set_slider_h(self._configurations.slider_h * x_times)
+        self._configurations.set_slider_range_w(self._configurations.slider_range_w * x_times)
+        self._configurations.set_slider_range_h(self._configurations.slider_range_h * x_times)
+        self._configurations.set_slider_decimal_w(self._configurations.slider_decimal_w * x_times)
+        self._configurations.set_slider_decimal_h(self._configurations.slider_decimal_h * x_times)
+        self._configurations.set_slider_handle_h(self._configurations.slider_handle_h * x_times)
+        self._configurations.set_slider_range_dx(self._configurations.slider_range_dx * x_times)
 
         for shape_id in self._shapes.shapes_ids:
             scaled_x = int(x_times * self._shapes.get_x(shape_id))
@@ -2584,7 +2592,8 @@ class Interactor(BoundaryInABC):
         return selected_inputs
 
     def _add_empty_slider(self, coordinate: tuple = (100, 100), min_max: tuple = (0, 100)) -> Any:
-        slider_id = slider.add_slider(coordinate, min_max, self.add_new_shape, self._connections, self._shapes)
+        slider_id = slider.add_slider(coordinate, min_max, self.add_new_shape, self._connections, self._shapes,
+                                      self._configurations)
         self.present_refresh_canvas()
         return slider_id
 
@@ -2596,7 +2605,8 @@ class Interactor(BoundaryInABC):
         add_new_shape = self.add_new_shape
         i_or_r = inputs_or_their_relays
 
-        slider_ids = slider.add_sliders_for_selected_inputs(i_or_r, add_new_shape, connections, ir, id_, shapes)
+        slider_ids = slider.add_sliders_for_selected_inputs(i_or_r, add_new_shape, connections, ir, id_, shapes,
+                                                            self._configurations)
         new_relay_ids = self.add_relay_by_shape_ids(i_or_r)
         self.fit_shapes_width(new_relay_ids)
         for slider_id, relay_id in zip(slider_ids, new_relay_ids):
