@@ -49,6 +49,8 @@ class Configurations(Observable):
     _graph_period_w = '_graph_period_w'
     _graph_period_h = '_graph_period_h'
     _graph_range_dx = '_graph_range_dx'
+    _scale_x = '_scale_x'
+    _scale_y = '_scale_y'
 
     def __init__(self):
         Observable.__init__(self)
@@ -92,6 +94,8 @@ class Configurations(Observable):
                       self._graph_period_w: 40,
                       self._graph_period_h: 20,
                       self._graph_range_dx: 60,
+                      self._scale_x: 1,
+                      self._scale_y: 1,
 
                       }
 
@@ -455,3 +459,17 @@ class Configurations(Observable):
 
     def set_graph_range_dx(self, value):
         self._data[self._graph_range_dx] = value
+
+    @property
+    def scale_x(self):
+        return self._data[self._scale_x]
+
+    def set_scale_x(self, value):
+        self._data[self._scale_x] = value
+
+    @property
+    def scale_y(self):
+        return self._data[self._scale_y]
+
+    def set_scale_y(self, value):
+        self._data[self._scale_y] = value

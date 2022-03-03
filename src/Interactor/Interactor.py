@@ -1933,6 +1933,8 @@ class Interactor(BoundaryInABC):
 
     # Presenters
     def scale_canvas(self, x_times, y_times):
+        self._configurations.set_scale_x(self._configurations.scale_x * x_times)
+        self._configurations.set_scale_y(self._configurations.scale_y * y_times)
         self.set_account_width(int(self.account_width * x_times))
         self.set_account_height(int(self.account_height * y_times))
         self.set_account_font_size(int(self.account_font_size * x_times))
