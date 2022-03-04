@@ -1096,45 +1096,47 @@ class TestInteractorAndEntity(unittest.TestCase):
                        '_key_partner_sockets': {61: ('to_CF_Total_delta_Working_Capital',)}}
         self.assertEqual(self._connection_ids._data, expectation)
 
-    # def test_clean_pickles(self):
-    #     from EntityGateway.FilesSystemIO import negative_list
-    #     file_names = self._interactor.get_pickle_file_names(negative_list)
-    #     for folder_name in file_names:
-    #         try:
-    #             self._interactor.load_file(folder_name)
-    #
-    #             for connection_from, connection_to in tuple(self._interactor._connections.data):
-    #                 if connection_from not in self._shapes.data or connection_to not in self._shapes.data:
-    #                     self._interactor._connections.remove_connection(connection_from, connection_to)
-    #         except:
-    #             pass
-    #         try:
-    #             if type(self._interactor._connection_ids._data) == set:
-    #                 self._interactor._connection_ids.__init__()
-    #         except:
-    #             pass
-    #         try:
-    #             for data_dictionary in self._interactor._connection_ids._data.values():
-    #                 for format_key in tuple(data_dictionary.keys()):
-    #                     if 'S' in str(format_key) or data_dictionary[format_key] == () or format_key not in self._interactor._shapes.data:
-    #                         del data_dictionary[format_key]
-    #         except:
-    #             pass
-    #         try:
-    #             for sheet_name in tuple(self._account_orders.data.keys()):
-    #                 if sheet_name not in self._worksheets.sheet_names:
-    #                     self._account_orders.delete_account_order(sheet_name)
-    #         except:
-    #             pass
-    #
-    #         in_a_sheet = self._interactor._worksheets.get_worksheet_of_an_account
-    #         shapes_to_erase = tuple(i for i in self._shapes.shapes_ids if in_a_sheet(i) is None)
-    #         try:
-    #             self._interactor.erase_shapes_by_shape_ids(shapes_to_erase)
-    #         except:
-    #             pass
-    #
-    #         self._interactor.save_state_to_file(folder_name)
+    def test_clean_pickles(self):
+        from ..EntityGateway import GateWays
+        negative_list = GateWays.negative_list
+        file_names = self._interactor.get_pickle_file_names(negative_list)
+        for folder_name in file_names:
+            # try:
+            #     self._interactor.load_file(folder_name)
+            #
+            #     for connection_from, connection_to in tuple(self._interactor._connections.data):
+            #         if connection_from not in self._shapes.data or connection_to not in self._shapes.data:
+            #             self._interactor._connections.remove_connection(connection_from, connection_to)
+            # except:
+            #     pass
+            # try:
+            #     if type(self._interactor._connection_ids._data) == set:
+            #         self._interactor._connection_ids.__init__()
+            # except:
+            #     pass
+            # try:
+            #     for data_dictionary in self._interactor._connection_ids._data.values():
+            #         for format_key in tuple(data_dictionary.keys()):
+            #             if 'S' in str(format_key) or data_dictionary[format_key] == () or format_key not in self._interactor._shapes.data:
+            #                 del data_dictionary[format_key]
+            # except:
+            #     pass
+            # try:
+            #     for sheet_name in tuple(self._account_orders.data.keys()):
+            #         if sheet_name not in self._worksheets.sheet_names:
+            #             self._account_orders.delete_account_order(sheet_name)
+            # except:
+            #     pass
+            #
+            # in_a_sheet = self._interactor._worksheets.get_worksheet_of_an_account
+            # shapes_to_erase = tuple(i for i in self._shapes.shapes_ids if in_a_sheet(i) is None)
+            # try:
+            #     self._interactor.erase_shapes_by_shape_ids(shapes_to_erase)
+            # except:
+            #     pass
+
+            self._interactor.save_state_to_file(folder_name)
+
     def test_dependencies(self):
         path_test_pickles = self._path_test_pickles
         pickle_name = 'test_circular_reference'

@@ -604,10 +604,10 @@ class Interactor(BoundaryInABC):
         self._present_shape_properties()
         self._presenters.select_worksheet({'sheet_name': self.selected_sheet})
 
-    def select_worksheet(self, sheet_name: str):
+    def select_worksheet(self, sheet_name: str, update=False):
         if self.selected_sheet != sheet_name:
             self._worksheets.select_sheet(sheet_name)
-            self._presenters.select_worksheet({'sheet_name': self.selected_sheet})
+            self._presenters.select_worksheet({'sheet_name': self.selected_sheet, 'update': update})
             self._present_update_account_order()
             self.present_update_worksheets()
             self._present_shape_properties()
@@ -839,7 +839,8 @@ class Interactor(BoundaryInABC):
         self._upon_selection((shape_id_under_mouse,))
 
     def unselect_shapes(self, request_models: Iterable):
-        self._selection.unselect_shapes(request_models)
+        for selection in self._selections.data.values():
+            selection.unselect_shapes(request_models)
 
     def clear_selection(self):
         self._selection.clear_selection()
@@ -1212,6 +1213,7 @@ class Interactor(BoundaryInABC):
             self._presenters.remove_shape(canvas_tags)
             self._present_connect_shapes()
 
+        self._worksheets.select_sheet(initial_selected_sheet)
         self._presenters.select_worksheet({'sheet_name': initial_selected_sheet})
 
     # Rectangle

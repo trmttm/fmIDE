@@ -212,7 +212,7 @@ def upon_tree_worksheets_click(interactor: BoundaryInABC, view: ViewABC):
         sheet_name = view.tree_focused_values(vm.tree_worksheets)[1]
     except IndexError:
         return
-    interactor.select_worksheet(sheet_name)
+    interactor.select_worksheet(sheet_name, update=True)
 
 
 def upon_delete_template(view: ViewABC, interactor: BoundaryInABC, negative_list):
@@ -1283,8 +1283,11 @@ def upon_add_worksheet(view: ViewABC, view_model_: dict, mouse: MouseControllerA
 def upon_select_worksheet(view: ViewABC, view_model_: dict):
     frame_canvas = view_model_.get('frame_canvas')
     canvas_id = view_model_.get('canvas_id')
+    update = view_model_.get('update', False)
     view.switch_frame(frame_canvas)
     view.switch_canvas(canvas_id)
+    if update:
+        view.update()
 
 
 def upon_delete_worksheet(view: ViewABC, view_model_: dict):
