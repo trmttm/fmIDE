@@ -39,13 +39,17 @@ def main_specific_add_shape(interactor: BoundaryInABC, view: ViewABC, value: str
     focus_on_account_entry(view)
 
 
+def get_current_design_canvas(interactor: BoundaryInABC):
+    return f'canvas_{interactor.selected_sheet}'
+
+
 def focus_on_account_entry(view: ViewABC):
     view.focus(vm.entry_id)
 
 
 def upon_menu_button1(view: ViewABC, interactor: BoundaryInABC, presenters: PresentersABC, mouse: MouseControllerABC):
     view.switch_frame(vm.fr_fmd)
-    view.switch_canvas(vm.canvas_id)
+    view.switch_canvas(get_current_design_canvas(interactor))
     interactor.present_update_worksheets()
     view.focus(vm.entry_id)
     interactor.change_active_keymap(cns.keymap_design)
@@ -208,8 +212,7 @@ def upon_tree_worksheets_click(interactor: BoundaryInABC, view: ViewABC):
         sheet_name = view.tree_focused_values(vm.tree_worksheets)[1]
     except IndexError:
         return
-    if view.current_canvas == vm.canvas_id:
-        interactor.select_worksheet(sheet_name)
+    interactor.select_worksheet(sheet_name)
 
 
 def upon_delete_template(view: ViewABC, interactor: BoundaryInABC, negative_list):
@@ -578,7 +581,7 @@ def popup_input_entry(view: ViewABC, interactor: BoundaryInABC, mouse_cls: Type[
 
 
 def upon_popup_close(view: ViewABC, interactor: BoundaryInABC):
-    view.switch_canvas(vm.canvas_id)
+    view.switch_canvas(get_current_design_canvas(interactor))
     interactor.clear_input_being_modified()
     interactor.refresh_properties()
 
@@ -597,7 +600,7 @@ def upon_input_entry_controller_command(view: ViewABC, interactor: BoundaryInABC
         rounded_values = tuple(float(round(value, digits)) for value in values)
         original_canvas = vm.ie_canvas_slider if by_slider else vm.ie_canvas_graph
 
-        view.switch_canvas(vm.canvas_id)
+        view.switch_canvas(get_current_design_canvas(interactor))
         apply_to_input_account_being_modified(digits, interactor, rounded_values)
         interactor.calculate()
         view.switch_canvas(original_canvas)
@@ -693,7 +696,7 @@ def apply_to_input_account_being_modified(digits: int, interactor: BoundaryInABC
 def ok_input_entry(view: ViewABC, interactor: BoundaryInABC, vci: Vci):
     apply_input_entry(view, interactor)
     vci.close(vm.ie_toplevel)
-    view.switch_canvas(vm.canvas_id)
+    view.switch_canvas(get_current_design_canvas(interactor))
 
 
 def next_input(view: ViewABC, interactor: BoundaryInABC):
@@ -1266,3 +1269,26 @@ def move_selected_worksheets_left(interactor: BoundaryInABC, view: ViewABC):
     child_sheet_names = tuple(worksheet_names[child_index] for child_index in children_indexes)
     interactor.remove_worksheet_parent_child_relationships(child_sheet_names)
     interactor.present_update_worksheets()
+
+
+def upon_add_worksheet(view: ViewABC, view_model_: dict, mouse: MouseControllerABC):
+    view_model = view_model_.get('view_model')
+    canvas_id = view_model_.get('canvas_id')
+    if not view.widget_exists(canvas_id):
+        view.add_widgets(view_model)
+        view.bind_command_to_widget(canvas_id, mouse.handle)
+        upon_select_worksheet(view, view_model_)
+
+
+def upon_select_worksheet(view: ViewABC, view_model_: dict):
+    frame_canvas = view_model_.get('frame_canvas')
+    canvas_id = view_model_.get('canvas_id')
+    view.switch_frame(frame_canvas)
+    view.switch_canvas(canvas_id)
+
+
+def upon_delete_worksheet(view: ViewABC, view_model_: dict):
+    frame_canvas = view_model_.get('frame_canvas')
+    canvas_id = view_model_.get('canvas_id')
+    view.remove_widget(frame_canvas)
+    view.remove_widget(canvas_id)

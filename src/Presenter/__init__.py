@@ -3,9 +3,11 @@ from typing import Callable
 from src.BoundaryOutput import PresentersABC
 
 from .AddShape import PresenterAddShape
+from .AddWorksheet import PresenterAddWorksheet
 from .ClearCanvas import PresenterClearCanvas
 from .Commands import PresenterCommands
 from .ConnectShape import PresenterConnectShape
+from .DeleteWorksheet import PresenterDeleteWorksheet
 from .DrawLine import PresenterDrawLine
 from .DrawRectangle import PresenterDrawRectangle
 from .FeedbackUser import PresenterFeedbackUser
@@ -16,6 +18,7 @@ from .Macros import PresenterMacros
 from .MoveShape import PresenterMoveShape
 from .PresenterPassThrough import PresenterPassThrough
 from .RemoveShape import PresenterRemoveShape
+from .SelectWorksheet import PresenterSelectWorksheet
 from .States import PresenterStates
 from .Template import PresenterTemplate
 from .UpdateAccountOrder import PresenterUpdateAccountOrder
@@ -55,6 +58,9 @@ class Presenters(PresentersABC):
         self._present_sensitivity_variable_accounts = PresenterAccountsListWithDeltas()
         self._present_data_table_variable_accounts = PresenterAccountsList()
         self._present_insert_sheet_name_in_input_sheet = PresenterPassThrough()
+        self._present_add_worksheet = PresenterAddWorksheet()
+        self._present_select_worksheet = PresenterSelectWorksheet()
+        self._present_delete_worksheet = PresenterDeleteWorksheet()
 
         self._observers = []
 
@@ -142,6 +148,15 @@ class Presenters(PresentersABC):
 
     def attach_to_present_insert_sheet_name_in_input_sheet(self, observer):
         self._present_insert_sheet_name_in_input_sheet.attach(observer)
+
+    def attach_to_present_add_worksheet(self, observer):
+        self._present_add_worksheet.attach(observer)
+
+    def attach_to_present_select_worksheet(self, observer):
+        self._present_select_worksheet.attach(observer)
+
+    def attach_to_present_delete_worksheet(self, observer):
+        self._present_delete_worksheet.attach(observer)
 
     def add_shape(self, response_model):
         self._notify(response_model)
@@ -246,3 +261,15 @@ class Presenters(PresentersABC):
     def insert_sheet_name_in_input_sheet(self, response_model):
         self._notify(response_model)
         self._present_insert_sheet_name_in_input_sheet.present(response_model)
+
+    def add_worksheet(self, response_model):
+        self._notify(response_model)
+        self._present_add_worksheet.present(response_model)
+
+    def select_worksheet(self, response_model):
+        self._notify(response_model)
+        self._present_select_worksheet.present(response_model)
+
+    def delete_work_sheet(self, response_model):
+        self._notify(response_model)
+        self._present_delete_worksheet.present(response_model)

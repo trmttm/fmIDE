@@ -113,6 +113,18 @@ class PresentersABC(ABC):
         pass
 
     @abstractmethod
+    def attach_to_present_add_worksheet(self, observer):
+        pass
+
+    @abstractmethod
+    def attach_to_present_select_worksheet(self, observer):
+        pass
+
+    @abstractmethod
+    def attach_to_present_delete_worksheet(self, observer):
+        pass
+
+    @abstractmethod
     def add_shape(self, response_model):
         pass
 
@@ -214,4 +226,16 @@ class PresentersABC(ABC):
 
     @abstractmethod
     def insert_sheet_name_in_input_sheet(self, response_model):
+        pass
+
+    @abstractmethod
+    def add_worksheet(self, response_model):
+        pass
+
+    @abstractmethod
+    def select_worksheet(self, response_model):
+        pass
+
+    @abstractmethod
+    def delete_work_sheet(self, response_model):
         pass

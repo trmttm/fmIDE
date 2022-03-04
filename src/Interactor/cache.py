@@ -59,5 +59,5 @@ class Cache:
         self._connections_filtered = None
 
     @property
-    def connections_filetered_are_cached(self) -> bool:
+    def connections_filtered_are_cached(self) -> bool:
         return self._connections_filtered is not None
