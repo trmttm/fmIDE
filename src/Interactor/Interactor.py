@@ -599,7 +599,7 @@ class Interactor(BoundaryInABC):
         self._present_update_account_order()
         self.present_update_worksheets()
         self._present_shape_properties()
-        self._presenters.select_worksheet({'sheet_name': self.selected_sheet})
+        self._presenters.select_worksheet({'sheet_name': sheet_name})
 
     def select_worksheet(self, sheet_name: str, update=False):
         if self.selected_sheet != sheet_name:
