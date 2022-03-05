@@ -591,8 +591,8 @@ class Interactor(BoundaryInABC):
         return self._worksheets.selected_sheet
 
     def add_new_worksheet(self, sheet_name: str = None):
-        self._entities.add_new_worksheet(sheet_name)
-        self._upon_add_new_sheet(sheet_name)
+        sheet_name_added = self._entities.add_new_worksheet(sheet_name)
+        self._upon_add_new_sheet(sheet_name_added)
 
     def _upon_add_new_sheet(self, sheet_name):
         self._presenters.add_worksheet({'sheet_name': sheet_name, 'color': 'white'})

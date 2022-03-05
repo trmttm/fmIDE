@@ -149,11 +149,12 @@ class Entities:
     def rpe(self) -> RPE:
         return RPE
 
-    def add_new_worksheet(self, sheet_name: str):
+    def add_new_worksheet(self, sheet_name: str) -> str:
         sheet_name = self._worksheets.get_valid_sheet_name(sheet_name)
         self._account_orders.create_new_account_order(sheet_name, AccountOrder())
         self._selections.create_new_selection(sheet_name, Selection())
         self._worksheets.add_new_worksheet(sheet_name)
+        return sheet_name
 
     def change_selected_sheet_name(self, sheet_name: str):
         if sheet_name in self._worksheets.sheet_names:
