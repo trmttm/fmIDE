@@ -1507,7 +1507,7 @@ class Interactor(BoundaryInABC):
         self._upon_loading_state()
         self._input_values.change_number_of_periods(self.number_of_periods)
         self._present_feedback_user(f'Loaded state', 'success')
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_add_shapes()
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes()
 
     def load_file(self, file_name: str):
         initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
@@ -1559,7 +1559,9 @@ class Interactor(BoundaryInABC):
 
         self._present_feedback_user(f'Merged file: {file_name}', 'success')
 
-    def _add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(self, initial_shapes):
+    def _add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(self, initial_shapes: set = None):
+        if initial_shapes is None:
+            initial_shapes = set()
         worksheet_initially_selected = self.selected_sheet
         for new_worksheet in self._get_updated_worksheets(initial_shapes):
             if new_worksheet is None:
@@ -1575,12 +1577,6 @@ class Interactor(BoundaryInABC):
         new_shapes = set(self._shapes.shapes_ids) - initial_shapes  # including auto-relays
         worksheets_that_need_updating = set(self._worksheets.get_worksheet_of_an_account(s) for s in new_shapes)
         return worksheets_that_need_updating
-
-    def _add_necessary_worksheets_upon_loading_or_merging_files_and_add_shapes(self):
-        for new_worksheet in self._worksheets.sheet_names:
-            self._upon_add_new_sheet(new_worksheet)
-            self.select_worksheet(new_worksheet)
-            self._present_refresh_canvas()
 
     def remove_templates(self, pickle_names: tuple):
         for pickle_name in pickle_names:
@@ -1902,7 +1898,8 @@ class Interactor(BoundaryInABC):
         shape_ids = self.get_selection_sorted_by_account_order()
         self.move_contents_to_different_sheet(shape_ids, sheet_to)
         self.add_inter_sheets_relays()
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_add_shapes()
+
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(set(shape_ids))
 
     def move_contents_to_different_sheet(self, shape_ids: tuple, sheet_to):
         y_shift_to_prevent_overlap = self.get_y_shift_to_prevent_overlap(shape_ids, sheet_to)
