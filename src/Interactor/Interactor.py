@@ -1446,12 +1446,14 @@ class Interactor(BoundaryInABC):
 
     def save_state_to_file(self, file_name: str):
         self._selection.clear_selection()
+        initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
+        self.scale_canvas(1 / initial_scale_x, 1 / initial_scale_y)
         feedback = self._clean_data_and_save_as_template_file(file_name)
         if feedback == 'success':
             self.feedback_user(f'{file_name} saved.', 'success')
         else:
             self.feedback_user(feedback, 'error')
-
+        self.scale_canvas(initial_scale_x, initial_scale_y)
     def save_current_sheet_as_module(self, file_name: str):
         initial_shapes = set(self._shapes.shapes_ids)
         temporary_gateways = imp9.save_state_without_using_memento(self._gateways.__class__, self._entities)
