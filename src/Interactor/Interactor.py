@@ -1454,6 +1454,7 @@ class Interactor(BoundaryInABC):
         else:
             self.feedback_user(feedback, 'error')
         self.scale_canvas(initial_scale_x, initial_scale_y)
+
     def save_current_sheet_as_module(self, file_name: str):
         initial_shapes = set(self._shapes.shapes_ids)
         temporary_gateways = imp9.save_state_without_using_memento(self._gateways.__class__, self._entities)
@@ -1515,9 +1516,9 @@ class Interactor(BoundaryInABC):
         self._gateways.load_state_from_file(file_name)
         self._upon_loading_state()
         self._input_values.change_number_of_periods(self.number_of_periods)
-        self._present_feedback_user(f'Loaded file: {file_name}', 'success')
         self.scale_canvas(initial_scale_x, initial_scale_y)
         self._add_necessary_worksheets_upon_loading_or_merging_files(initial_shapes)
+        self._present_feedback_user(f'Loaded file: {file_name}', 'success')
 
     def merge_file(self, file_name: str):
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
@@ -1540,12 +1541,12 @@ class Interactor(BoundaryInABC):
         self._input_values.change_number_of_periods(self.number_of_periods)
         self.auto_connect()
         self.add_inter_sheets_relays(self._connections.new_merged_connections)
-        self._present_feedback_user(f'Merged file: {file_name}', 'success')
         self.scale_canvas(initial_scale_x, initial_scale_y)
         if not canvas_refresh_was_prevented_at_the_beginning:
             self.start_canvas_refreshing()
             self.start_highlighting()
             self._add_necessary_worksheets_upon_loading_or_merging_files(initial_shapes)
+        self._present_feedback_user(f'Merged file: {file_name}', 'success')
 
     def _add_necessary_worksheets_upon_loading_or_merging_files(self, initial_shapes):
         new_shapes = set(self._shapes.shapes_ids) - initial_shapes  # including auto-relays
