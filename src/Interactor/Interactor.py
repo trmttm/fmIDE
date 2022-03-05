@@ -1895,8 +1895,9 @@ class Interactor(BoundaryInABC):
         self._presenters.update_shape_properties(response_model(*imp9.get_common_properties(*args1)))
 
     def set_property_to_selection(self, key: str, value):
-        self.set_properties(key, self._selection.data, value)
-        self.present_refresh_canvas()
+        shape_ids = self._selection.data
+        self.set_properties(key, shape_ids, value)
+        self.present_refresh_canvas_minimum(shape_ids)
 
     def worksheet_exists(self, sheet_name: str) -> bool:
         existing_worksheet_names = self._worksheets.sheet_names
