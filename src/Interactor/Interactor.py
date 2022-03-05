@@ -1537,7 +1537,6 @@ class Interactor(BoundaryInABC):
         for shape_id in shapes_added:
             self._shapes.set_y(shape_id, self._shapes.get_y(shape_id) + y_shift)
 
-        self._upon_loading_state()
         self._input_values.change_number_of_periods(self.number_of_periods)
         self.auto_connect()
         self.add_inter_sheets_relays(self._connections.new_merged_connections)
