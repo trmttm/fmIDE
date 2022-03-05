@@ -963,36 +963,44 @@ class Interactor(BoundaryInABC):
         self._presenters.move_shapes(response_model(shape_ids, delta_x, delta_y, self._shapes.data))
 
     def align_left(self):
-        self._shapes.align_shapes_to_left(self.selection_except_blanks)
-        self.present_refresh_canvas()
+        selected_shapes = self.selection_except_blanks
+        self._shapes.align_shapes_to_left(selected_shapes)
+        self.present_refresh_canvas_minimum(selected_shapes)
 
     def align_right(self):
-        self._shapes.align_shapes_to_right(self.selection_except_blanks)
-        self.present_refresh_canvas()
+        selected_shapes = self.selection_except_blanks
+        self._shapes.align_shapes_to_right(selected_shapes)
+        self.present_refresh_canvas_minimum(selected_shapes)
 
     def align_top(self):
-        self._shapes.align_shapes_to_top(self.selection_except_blanks)
-        self.present_refresh_canvas()
+        selected_shapes = self.selection_except_blanks
+        self._shapes.align_shapes_to_top(selected_shapes)
+        self.present_refresh_canvas_minimum(selected_shapes)
 
     def align_bottom(self):
-        self._shapes.align_shapes_to_bottom(self.selection_except_blanks)
-        self.present_refresh_canvas()
+        selected_shapes = self.selection_except_blanks
+        self._shapes.align_shapes_to_bottom(selected_shapes)
+        self.present_refresh_canvas_minimum(selected_shapes)
 
     def align_middle_horizontal(self):
-        self._shapes.align_middle_horizontal(self.selection_except_blanks)
-        self.present_refresh_canvas()
+        selected_shapes = self.selection_except_blanks
+        self._shapes.align_middle_horizontal(selected_shapes)
+        self.present_refresh_canvas_minimum(selected_shapes)
 
     def align_middle_vertical(self):
-        self._shapes.align_middle_vertical(self.selection_except_blanks)
-        self.present_refresh_canvas()
+        selected_shapes = self.selection_except_blanks
+        self._shapes.align_middle_vertical(selected_shapes)
+        self.present_refresh_canvas_minimum(selected_shapes)
 
     def evenly_distribute_horizontally(self):
-        self._shapes.evenly_distribute_horizontally(self.selection_except_blanks)
-        self.present_refresh_canvas()
+        selected_shapes = self.selection_except_blanks
+        self._shapes.evenly_distribute_horizontally(selected_shapes)
+        self.present_refresh_canvas_minimum(selected_shapes)
 
     def evenly_distribute_vertically(self):
-        self._shapes.evenly_distribute_vertically(self.selection_except_blanks)
-        self.present_refresh_canvas()
+        selected_shapes = self.selection_except_blanks
+        self._shapes.evenly_distribute_vertically(selected_shapes)
+        self.present_refresh_canvas_minimum(selected_shapes)
 
     # Adding
     def add_new_shape(self, text: str = 'Text', tag: str = None):
