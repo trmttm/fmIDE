@@ -22,7 +22,6 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
     sc = c.set_configuration_value
     command_dictionary = {
         # w.root: lambda *args: interactor.feedback_user(f'Mouse wheel {args}'),
-        w.canvas_id: mouse.handle,
         w.button_1: lambda: c.main_specific_add_shape(interactor, view, ),
         w.btn_erase_shape: interactor.erase_selected_shapes,
         w.btn_tree_ac_up: interactor.move_selection_up,

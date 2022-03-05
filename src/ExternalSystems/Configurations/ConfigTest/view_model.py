@@ -11,7 +11,6 @@ number_format_values = ('whole number', '1-digit', '2-digit', '%')
 
 root = 'root'
 
-canvas_id = 'canvas'
 canvas_template = 'canvas_template'
 
 entry_id = 'entry_to_focus'
@@ -434,13 +433,9 @@ def start_view_model_factory() -> list:
         f(fr_width, button_24, 'button', 0, 0, 2, 2, 'nsew', **{'text': '-w', 'width': button_width}),
         f(fr_width, button_25, 'button', 0, 0, 3, 3, 'nsew', **{'text': '+W', 'width': button_width}),
     ]
-    fmd_canvas = [
-        f(fr_canvas, canvas_id, 'canvas', 0, 0, 0, 0, 'nsew', bg='white'),
-    ]
 
     fmd = fmd_root
     fmd += fmd_button + groups_of_buttons
-    fmd += fmd_canvas
     fmd += switchable2
     fmd += tree_sheets + sheet_entry + tree_ws_btns
     fmd += tree_connection + connection_entry + tree_radio_buttons + tree_connection_btns

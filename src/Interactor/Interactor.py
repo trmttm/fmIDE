@@ -441,7 +441,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -1553,6 +1553,7 @@ class Interactor(BoundaryInABC):
 
     def _add_necessary_worksheets_upon_loading_or_merging_files(self, initial_shapes):
         new_shapes = set(self._shapes.shapes_ids) - initial_shapes  # including auto-relays
+        worksheet_initially_selected = self.selected_sheet
         worksheets_that_need_updating = set(self._worksheets.get_worksheet_of_an_account(s) for s in new_shapes)
         for new_worksheet in worksheets_that_need_updating:
             if new_worksheet is None:
@@ -1560,6 +1561,7 @@ class Interactor(BoundaryInABC):
             self._upon_add_new_sheet(new_worksheet)
             self.select_worksheet(new_worksheet)
             self.present_refresh_canvas()
+        self.select_worksheet(worksheet_initially_selected)
 
     def _add_necessary_worksheets_upon_loading_or_merging_files_and_add_shapes(self):
         for new_worksheet in self._worksheets.sheet_names:
@@ -1662,10 +1664,11 @@ class Interactor(BoundaryInABC):
         self.present_refresh_canvas()
         self._present_update_account_order()
 
+        initially_selected_sheet = self.selected_sheet
         for sheet_name in self._worksheets.sheet_names:
             self._worksheets.select_sheet(sheet_name)
-            self._upon_add_new_sheet(sheet_name)
-        self.select_worksheet(self.selected_sheet)
+            self._upon_add_new_sheet(sheet_name)  # create canvas
+        self.select_worksheet(initially_selected_sheet)
         # support for old pickle without connections to relay
         for relay in self._shapes.get_shapes('relay'):
             original_ac = self._shapes.get_shape_it_represents(relay)
