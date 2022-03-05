@@ -1677,11 +1677,6 @@ class Interactor(BoundaryInABC):
         self.present_refresh_canvas()
         self._present_update_account_order()
 
-        initially_selected_sheet = self.selected_sheet
-        for sheet_name in self._worksheets.sheet_names:
-            self._worksheets.select_sheet(sheet_name)
-            self._upon_add_new_sheet(sheet_name)  # create canvas
-        self.select_worksheet(initially_selected_sheet)
         # support for old pickle without connections to relay
         for relay in self._shapes.get_shapes('relay'):
             original_ac = self._shapes.get_shape_it_represents(relay)
