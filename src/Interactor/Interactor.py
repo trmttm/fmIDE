@@ -2798,6 +2798,7 @@ class Interactor(BoundaryInABC):
             self.start_canvas_refreshing()
 
     def add_new_live_value(self, shape_id, period: int = 0):
+        initial_shape_ids = set(self._shapes.shapes_ids)
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self.stop_canvas_refreshing()
 
@@ -2808,8 +2809,9 @@ class Interactor(BoundaryInABC):
         self._shapes.set_text(lv_id, string_value)
 
         if not canvas_refresh_was_prevented_at_the_beginning:
+            new_shape_ids = set(self._shapes.shapes_ids) - initial_shape_ids
             self.start_canvas_refreshing()
-            self.present_refresh_canvas()
+            self.present_refresh_canvas_minimum(new_shape_ids)
 
     def update_live_values(self, data_table: dict = None):
         if data_table is None:
@@ -2820,9 +2822,10 @@ class Interactor(BoundaryInABC):
 
     # Shape Format
     def set_fill_to_selection(self, color):
-        for shape_id in self._selection.data:
+        shape_ids = self._selection.data
+        for shape_id in shape_ids:
             self.set_fill(shape_id, color)
-        self.present_refresh_canvas()
+        self.present_refresh_canvas_minimum(shape_ids)
 
     def remove_fill_of_selection(self):
         shape_ids = self._selection.data
