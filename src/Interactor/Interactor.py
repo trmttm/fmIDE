@@ -1902,6 +1902,7 @@ class Interactor(BoundaryInABC):
         shape_ids = self.get_selection_sorted_by_account_order()
         self.move_contents_to_different_sheet(shape_ids, sheet_to)
         self.add_inter_sheets_relays()
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_add_shapes()
 
     def move_contents_to_different_sheet(self, shape_ids: tuple, sheet_to):
         y_shift_to_prevent_overlap = self.get_y_shift_to_prevent_overlap(shape_ids, sheet_to)
