@@ -2,6 +2,8 @@ from interface_fm import BoundaryInABC
 from interface_mouse import MouseControllerABC
 from interface_view import ViewABC
 
+from .control_commands import focus_on_canvas
+
 request_save_click = {'save click coordinate': True}
 request_draw_rectangle = rdr = {'line_width': 3, 'line_color': 'black'}
 request_draw_rectangle2 = {'line_width': 3, 'line_color': 'red'}
@@ -25,6 +27,7 @@ def create_mouse_configuration(interactor: BoundaryInABC, view: ViewABC, mouse: 
         [7, interactor.clear_rectangles, mouse.is_left_release, {}],
         [8, interactor.erase_all_lines, mouse.is_left_release, {}],
         [9, interactor.exit_point, mouse.is_left_release, exit_by],
+        [80, lambda request: focus_on_canvas(view), mouse.is_left_release, {}],
 
         # Ctrl Left
         [20, interactor.do_nothing, mouse.is_control_left_click, request_save_click],
@@ -110,4 +113,3 @@ def move_or_select(interactor: BoundaryInABC, mouse: MouseControllerABC, request
         interactor.select_shapes_in_range(request=request)
     elif mouse.is_moving_shape_mode:
         interactor.move_selections(request=request)
-

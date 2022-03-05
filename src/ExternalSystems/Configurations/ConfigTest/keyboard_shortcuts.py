@@ -157,10 +157,12 @@ def create_design_key_combos(interactor: BoundaryInABC, view: ViewABC, presenter
         (shift_sub, k.left): (lambda: i.align_left(), 'Aligned Left'),
         (shift_sub, k.right): (lambda: i.align_right(), 'Aligned Right'),
 
-        (shift_main, k.up): (lambda: i.match_selected_shapes_width(), 'Match width'),
-        (shift_main, k.down): (lambda: i.fit_selected_shapes_width(), 'Fit Width'),
-        (shift_main, k.left): (lambda: i.decrease_width_of_selected_shapes(), 'Reduce Width'),
-        (shift_main, k.right): (lambda: i.increase_width_of_selected_shapes(), 'Increase Width'),
+        (shift_main, k.up): (lambda: prevent_widget_interference(i.match_selected_shapes_width)(), 'Match width'),
+        (shift_main, k.down): (lambda: prevent_widget_interference(i.fit_selected_shapes_width)(), 'Fit Width'),
+        (shift_main, k.left): (
+        lambda: prevent_widget_interference(i.decrease_width_of_selected_shapes)(), 'Reduce Width'),
+        (shift_main, k.right): (
+        lambda: prevent_widget_interference(i.increase_width_of_selected_shapes)(), 'Increase Width'),
 
         (main_modifier, k.up): (lambda: i.evenly_distribute_vertically(), 'Evenly distribute Vertically'),
         (main_modifier, k.down): (lambda: i.align_middle_vertical(), 'Align Middle Vertical'),

@@ -1295,3 +1295,7 @@ def upon_delete_worksheet(view: ViewABC, view_model_: dict):
     canvas_id = view_model_.get('canvas_id')
     view.remove_widget(frame_canvas)
     view.remove_widget(canvas_id)
+
+
+def focus_on_canvas(view: ViewABC):
+    view.focus(vm.button_1)
