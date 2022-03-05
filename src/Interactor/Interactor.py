@@ -557,7 +557,7 @@ class Interactor(BoundaryInABC):
     def change_widths(self, delta, shape_ids: Iterable):
         for shape_id in shape_ids:
             self._shapes.set_width(shape_id, self._shapes.get_width(shape_id) + delta)
-        self.present_refresh_canvas()
+        self.present_refresh_canvas_minimum(shape_ids)
 
     def match_selected_shapes_width(self):
         self.match_shapes_width(self.selection_except_blanks)
@@ -567,7 +567,7 @@ class Interactor(BoundaryInABC):
             max_width = max(tuple(self._shapes.get_width(shape_id) for shape_id in shape_ids))
             for shape_id in shape_ids:
                 self._shapes.set_width(shape_id, max_width)
-            self.present_refresh_canvas()
+            self.present_refresh_canvas_minimum(shape_ids)
 
     def fit_selected_shapes_width(self):
         self.fit_shapes_width(self.selection_except_blanks)
@@ -583,7 +583,7 @@ class Interactor(BoundaryInABC):
                 self._shapes.set_width(shape_id, len(text) * auto_fit_width_per_letter)
             except TypeError:
                 pass  # if shape_id is constant
-        self.present_refresh_canvas()
+        self.present_refresh_canvas_minimum(shape_ids)
 
     # Worksheets
     @property
@@ -1035,18 +1035,18 @@ class Interactor(BoundaryInABC):
         self._connections.copy(original_to_copies)
 
         self.clear_selection()
-        self.add_shapes_to_selection(tuple(original_to_copies.values()))
+        copied_shape_ids = tuple(original_to_copies.values())
+        self.add_shapes_to_selection(copied_shape_ids)
 
         if not canvas_refresh_was_prevented_at_the_beginning:
             self.start_canvas_refreshing()
-            self.present_refresh_canvas()
+            self.present_refresh_canvas_minimum(copied_shape_ids)
 
     def copy_selection(self):
         self.copy_shapes(self._selection.data)
 
     def add_relay(self):
         self.add_relay_by_shape_ids(self._selection.data)
-        self.present_refresh_canvas()
 
     def add_relay_by_shape_ids(self, shape_ids: Iterable) -> tuple:
         shapes = self._shapes
@@ -1070,7 +1070,7 @@ class Interactor(BoundaryInABC):
         self.clear_selection()
         self.add_shapes_to_selection(new_shape_ids)
         self.fit_selected_shapes_width()
-        self.present_refresh_canvas()
+        self.present_refresh_canvas_minimum(new_shape_ids)
 
     def add_inter_sheets_relays(self, connections_passed: set = None):
         relays = self._shapes.get_shapes('relay')
@@ -1511,11 +1511,15 @@ class Interactor(BoundaryInABC):
         self.upon_updating_worksheets(previous_sheet_state)
 
     def load_memento(self, memento):
+        canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self._gateways.load_state_from_memento(memento)
         self._upon_loading_state()
         self._input_values.change_number_of_periods(self.number_of_periods)
-        self._present_feedback_user(f'Loaded state', 'success')
+        self.start_canvas_refreshing()
         self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes()
+        if canvas_refresh_was_prevented_at_the_beginning:
+            self.stop_canvas_refreshing()
+        self._present_feedback_user(f'Loaded state', 'success')
 
     def load_file(self, file_name: str):
         initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
@@ -1571,7 +1575,8 @@ class Interactor(BoundaryInABC):
         if initial_shapes is None:
             initial_shapes = set()
         worksheet_initially_selected = self.selected_sheet
-        for new_worksheet in self._get_updated_worksheets(initial_shapes):
+        worksheets_to_update = self._get_updated_worksheets(initial_shapes)
+        for new_worksheet in worksheets_to_update:
             if new_worksheet is None:
                 continue
             self._upon_add_new_sheet(new_worksheet)
@@ -2134,7 +2139,7 @@ class Interactor(BoundaryInABC):
         self._present_connection_ids()
         self._present_highlight_automatic()
 
-    def present_refresh_canvas_minimum(self, minimum_shapes_to_update: tuple):
+    def present_refresh_canvas_minimum(self, minimum_shapes_to_update: Iterable):
         self._present_remove_shape(minimum_shapes_to_update)
         self._present_add_shape(minimum_shapes_to_update)
         self._present_connect_shapes()
@@ -2661,6 +2666,7 @@ class Interactor(BoundaryInABC):
 
     # Slider
     def add_slider_of_selected_input_accounts(self):
+        initial_shapes = set(self._shapes.shapes_ids)
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self.stop_canvas_refreshing()
 
@@ -2672,8 +2678,9 @@ class Interactor(BoundaryInABC):
             self._add_slider_of_selected_input_accounts(selected_inputs)
 
         if not canvas_refresh_was_prevented_at_the_beginning:
+            new_shape_ids = set(self._shapes.shapes_ids) - initial_shapes
             self.start_canvas_refreshing()
-            self.present_refresh_canvas()
+            self.present_refresh_canvas_minimum(new_shape_ids)
 
     def _get_selected_inputs_or_their_relays(self) -> tuple:
         input_accounts = self.input_accounts
@@ -2686,7 +2693,6 @@ class Interactor(BoundaryInABC):
     def _add_empty_slider(self, coordinate: tuple = (100, 100), min_max: tuple = (0, 100)) -> Any:
         args = coordinate, min_max, self.add_new_shape, self._connections, self._shapes, self._configurations
         slider_id = slider.add_slider(*args)
-        self.present_refresh_canvas()
         return slider_id
 
     def _add_slider_of_selected_input_accounts(self, inputs_or_their_relays: tuple):
@@ -2707,6 +2713,7 @@ class Interactor(BoundaryInABC):
 
     # Graph
     def add_a_y_axis_of_selected_accounts(self, coordinate: tuple = (), min_max: tuple = None):
+        initial_shapes = set(self._shapes.shapes_ids)
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self.stop_canvas_refreshing()
 
@@ -2722,8 +2729,9 @@ class Interactor(BoundaryInABC):
         self._update_graph_bars_and_live_values()
 
         if not canvas_refresh_was_prevented_at_the_beginning:
+            new_shape_ids = set(self._shapes.shapes_ids) - initial_shapes
             self.start_canvas_refreshing()
-            self.present_refresh_canvas()
+            self.present_refresh_canvas_minimum(new_shape_ids)
 
     def _add_an_empty_bar(self, graph_id) -> Any:
         bar_id = graph.add_bar(graph_id, self.add_new_shape, self._shapes, self._connections)
@@ -2731,6 +2739,7 @@ class Interactor(BoundaryInABC):
         return bar_id
 
     def add_bar_of_selected_accounts(self):
+        initial_shapes = set(self._shapes.shapes_ids)
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self.stop_canvas_refreshing()
 
@@ -2738,8 +2747,9 @@ class Interactor(BoundaryInABC):
         self.add_bars_of_selected_accounts(account_ids)
 
         if not canvas_refresh_was_prevented_at_the_beginning:
+            new_shape_id = set(self._shapes.shapes_ids) - initial_shapes
             self.start_canvas_refreshing()
-            self.present_refresh_canvas()
+            self.present_refresh_canvas_minimum(new_shape_id)
 
     def add_bars_of_selected_accounts(self, account_or_relays: tuple):
         bar_ids_dict = {}
@@ -2815,8 +2825,9 @@ class Interactor(BoundaryInABC):
         self.present_refresh_canvas()
 
     def remove_fill_of_selection(self):
-        self.remove_fills(self._selection.data)
-        self.present_refresh_canvas()
+        shape_ids = self._selection.data
+        self.remove_fills(shape_ids)
+        self.present_refresh_canvas_minimum(shape_ids)
 
     def set_fill(self, shape_id, color):
         self._shape_format.set_fill(shape_id, color)
