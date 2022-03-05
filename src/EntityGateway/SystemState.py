@@ -90,9 +90,6 @@ class SystemState(Mm.OriginatorABC):
         merge_state_if_available(entities.unit_of_measure, 20, shape_id_converter, state)
         merge_state_if_available(entities.worksheet_relationship, 21, shape_id_converter, state)
 
-        loaded_shapes: set = set(shape_id_converter.values())
-        entities.selection.set_data(loaded_shapes)
-
     def set_last_state(self, state):
         self._last_state = state
 
