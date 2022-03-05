@@ -19,7 +19,7 @@ class Configurations(Observable):
     _default_slider_decimal_w = 40
     _default_slider_decimal_h = 20
     _default_slider_handle_h = 25
-    _default_slider_range_dx = 60
+    _default_slider_range_dx = -60
     _default_graph_y_ax_w = 1
     _default_graph_y_ax_height = 200
     _default_graph_range_w = 40
