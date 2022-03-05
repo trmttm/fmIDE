@@ -1567,9 +1567,8 @@ class Interactor(BoundaryInABC):
             if new_worksheet is None:
                 continue
             self._upon_add_new_sheet(new_worksheet)
-            self.select_worksheet(new_worksheet)
-            # self._worksheets.select_sheet(new_worksheet)
-            # self._presenters.select_worksheet({'sheet_name': self.selected_sheet, 'update': False})
+            self._worksheets.select_sheet(new_worksheet)
+            self._presenters.select_worksheet({'sheet_name': self.selected_sheet, 'update': False})
             self.present_refresh_canvas()
         self.select_worksheet(worksheet_initially_selected)
 
