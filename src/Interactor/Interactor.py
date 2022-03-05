@@ -441,7 +441,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -1385,23 +1385,20 @@ class Interactor(BoundaryInABC):
 
     @property
     def connections_filtered(self) -> set:
-        if not self._cache.connections_filtered_are_cached:
-            connections = self._connections.data
-            sht_contents = self.sheet_contents
-            selected = self._selection.data
-            tt = 'relay', graph.tag_y_axis, graph.tag_bar, slider.slider_range, 'account', 'relay', live_value.tag_live_value
-            tag_types_to_shape_ids = self._shapes.create_tag_type_to_shape_ids_dictionary(tt, sht_contents)
+        connections = self._connections.data
+        sht_contents = self.sheet_contents
+        selected = self._selection.data
+        tt = 'relay', graph.tag_y_axis, graph.tag_bar, slider.slider_range, 'account', 'relay', live_value.tag_live_value
+        tag_types_to_shape_ids = self._shapes.create_tag_type_to_shape_ids_dictionary(tt, sht_contents)
 
-            relays = tag_types_to_shape_ids['relay']
-            y_axes = tag_types_to_shape_ids[graph.tag_y_axis]
-            bars = tag_types_to_shape_ids[graph.tag_bar]
-            na = no_arrows = tag_types_to_shape_ids[slider.slider_range]
-            accounts = tag_types_to_shape_ids['account'] + tag_types_to_shape_ids['relay']
-            live_values = tag_types_to_shape_ids[live_value.tag_live_value]
-            args = sht_contents, selected, relays, y_axes, bars, na, accounts, live_values
-            connections_filtered = set(c for c in connections if imp9.connection_filter(c, *args))
-        else:
-            connections_filtered = self._cache.connections_filtered
+        relays = tag_types_to_shape_ids['relay']
+        y_axes = tag_types_to_shape_ids[graph.tag_y_axis]
+        bars = tag_types_to_shape_ids[graph.tag_bar]
+        na = no_arrows = tag_types_to_shape_ids[slider.slider_range]
+        accounts = tag_types_to_shape_ids['account'] + tag_types_to_shape_ids['relay']
+        live_values = tag_types_to_shape_ids[live_value.tag_live_value]
+        args = sht_contents, selected, relays, y_axes, bars, na, accounts, live_values
+        connections_filtered = set(c for c in connections if imp9.connection_filter(c, *args))
         return connections_filtered
 
     # Line
