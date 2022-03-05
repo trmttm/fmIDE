@@ -406,8 +406,6 @@ class Interactor(BoundaryInABC):
         self.save_state_to_memory()
         if request is not None:
             entry_by = request['entry_by']
-            if entry_by == 'mouse':
-                self._cache.set_connections_filtered(self.connections_filtered)
         self._sf.set_entry_by(entry_by)
         self._sf.set_previous_commands_to_previous_previous_commands()
 
@@ -421,7 +419,6 @@ class Interactor(BoundaryInABC):
         if self._sf.previous_commands_are_not_set:
             self._sf.set_previous_commands(self._sf.previous_previous_commands)
         if exit_by == 'mouse':
-            self._cache.clear_connections_filtered()
             self._upon_selection(self._selection.data)
 
     def set_previous_command(self, f: Callable, args: tuple, kwargs: dict):
