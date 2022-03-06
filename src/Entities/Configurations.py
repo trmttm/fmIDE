@@ -26,7 +26,7 @@ class Configurations(Observable):
     _default_graph_range_h = 20
     _default_graph_period_w = 40
     _default_graph_period_h = 20
-    _default_graph_range_dx = 60
+    _default_graph_range_dx = -60
     _default_scale_x = 1
     _default_scale_y = 1
     _default_bb_width = 50
