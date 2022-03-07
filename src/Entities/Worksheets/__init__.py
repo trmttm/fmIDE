@@ -44,6 +44,10 @@ class Worksheets(Observable):
                 d[content] = sheet_name
         return d
 
+    @property
+    def sheet_name_to_sheet_contents(self) -> Dict[str, set]:
+        return dict(self._data[self._sheet_data])  # returning copy
+
     def get_sheet_name_by_index(self, index: int):
         try:
             return self.sheet_names[index]

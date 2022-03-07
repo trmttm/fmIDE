@@ -2,6 +2,7 @@ import copy
 import os
 from typing import Any
 from typing import Callable
+from typing import Dict
 from typing import Iterable
 from typing import Type
 from typing import Union
@@ -1479,7 +1480,7 @@ class Interactor(BoundaryInABC):
         self.scale_canvas(initial_scale_x, initial_scale_y)
 
     def save_current_sheet_as_module(self, file_name: str):
-        initial_shapes = set(self._shapes.shapes_ids)
+        initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         temporary_gateways = imp9.save_state_without_using_memento(self._gateways.__class__, self._entities)
 
         self._memorize_who_to_dynamically_connect_with()
@@ -1488,7 +1489,7 @@ class Interactor(BoundaryInABC):
 
         imp9.restore_state_without_using_memento(temporary_gateways)
         self._upon_loading_state()
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_shapes)
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
     def _memorize_who_to_dynamically_connect_with(self):
         for from_, to_ in self._connections.data:
@@ -1526,25 +1527,26 @@ class Interactor(BoundaryInABC):
         self.upon_updating_worksheets(previous_sheet_state)
 
     def load_memento(self, memento):
+        initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self._gateways.load_state_from_memento(memento)
         self._upon_loading_state()
         self._input_values.change_number_of_periods(self.number_of_periods)
         self.start_canvas_refreshing()
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes()
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
         if canvas_refresh_was_prevented_at_the_beginning:
             self.stop_canvas_refreshing()
         self._present_feedback_user(f'Loaded state', 'success')
 
     def load_file(self, file_name: str):
         initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
-        initial_shapes = set(self._shapes.shapes_ids)
+        initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         self.scale_canvas(1 / initial_scale_x, 1 / initial_scale_y)
         self._gateways.load_state_from_file(file_name)
         self._upon_loading_state()
         self._input_values.change_number_of_periods(self.number_of_periods)
         self.scale_canvas(initial_scale_x, initial_scale_y)
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_shapes)
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
         self._present_feedback_user(f'Loaded file: {file_name}', 'success')
 
     def merge_file(self, file_name: str):
@@ -1554,6 +1556,7 @@ class Interactor(BoundaryInABC):
         initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
         self.scale_canvas(1 / initial_scale_x, 1 / initial_scale_y)
         initial_shapes = set(self._shapes.shapes_ids)
+        initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         self._gateways.merge_state_from_file(file_name)
 
         current_sheet = self.selected_sheet
@@ -1568,7 +1571,7 @@ class Interactor(BoundaryInABC):
         self.auto_connect()
         self.add_inter_sheets_relays(self._connections.new_merged_connections)
         self.scale_canvas(initial_scale_x, initial_scale_y)
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_shapes)
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
         # Properly select new shapes in each worksheet
         for worksheet in self._worksheets.sheet_names:
@@ -1582,15 +1585,14 @@ class Interactor(BoundaryInABC):
         if not canvas_refresh_was_prevented_at_the_beginning:
             self.start_canvas_refreshing()
             self.start_highlighting()
-            self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_shapes)
+            self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
         self._present_feedback_user(f'Merged file: {file_name}', 'success')
 
-    def _add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(self, initial_shapes: set = None):
-        if initial_shapes is None:
-            initial_shapes = set()
+    def _add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(
+            self, initial_sheet_name_to_sheet_contents: Dict[str, set]):
         worksheet_initially_selected = self.selected_sheet
-        worksheets_to_update = self._get_updated_worksheets(initial_shapes)
+        worksheets_to_update = self._get_updated_worksheets(initial_sheet_name_to_sheet_contents)
         for new_worksheet in worksheets_to_update:
             if new_worksheet is None:
                 continue
@@ -1600,9 +1602,11 @@ class Interactor(BoundaryInABC):
             self.present_refresh_canvas()
         self.select_worksheet(worksheet_initially_selected)
 
-    def _get_updated_worksheets(self, initial_shapes):
-        new_shapes = set(self._shapes.shapes_ids) - initial_shapes  # including auto-relays
-        worksheets_that_need_updating = set(self._worksheets.get_worksheet_of_an_account(s) for s in new_shapes)
+    def _get_updated_worksheets(self, initial_sheet_name_to_sheet_contents: Dict[str, set]) -> set:
+        worksheets_that_need_updating = set()
+        for sh_name in self._worksheets.sheet_names:
+            if self._worksheets.get_sheet_contents(sh_name) != initial_sheet_name_to_sheet_contents.get(sh_name, set()):
+                worksheets_that_need_updating.add(sh_name)
         return worksheets_that_need_updating
 
     def remove_templates(self, pickle_names: tuple):
@@ -1624,11 +1628,11 @@ class Interactor(BoundaryInABC):
         self._present_feedback_user(f'Saved all stated to {file_name}')
 
     def load_all_from_file(self, file_name: str):
-        initial_shapes = set(self._shapes.shapes_ids)
+        initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         self._gateways.restore_all_states_from_file(file_name)
         self._upon_loading_state()
         self._present_feedback_user(f'Loaded all states from file: {file_name}')
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_shapes)
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
     def load_pickle_files_list(self, negative_list: tuple = None):
         file_names = self.get_pickle_file_names(negative_list)
@@ -1678,18 +1682,18 @@ class Interactor(BoundaryInABC):
             self._present_save_slot()
 
     def undo(self):
-        initial_shapes = set(self._shapes.shapes_ids)
+        initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         self._gateways.undo()
         self._upon_loading_state()
         self._present_save_slot()
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_shapes)
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
     def redo(self):
-        initial_shapes = set(self._shapes.shapes_ids)
+        initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         self._gateways.redo()
         self._upon_loading_state()
         self._present_save_slot()
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_shapes)
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
     def change_path_pickles(self, directory: str):
         self._gateways.change_path_pickles(directory)
@@ -1925,11 +1929,12 @@ class Interactor(BoundaryInABC):
             self.feedback_user(f'Worksheet {sheet_to} does not exist.', 'error')
             return
 
+        initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         shape_ids = self.get_selection_sorted_by_account_order()
         self.move_contents_to_different_sheet(shape_ids, sheet_to)
         self.add_inter_sheets_relays()
-
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(set(shape_ids))
+        self.select_worksheet(sheet_to)
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
     def move_contents_to_different_sheet(self, shape_ids: tuple, sheet_to):
         y_shift_to_prevent_overlap = self.get_y_shift_to_prevent_overlap(shape_ids, sheet_to)
@@ -1945,8 +1950,6 @@ class Interactor(BoundaryInABC):
             self._shapes.set_y(shape_id, self._shapes.get_y(shape_id) + y_shift_to_prevent_overlap)
             if shape_id in accounts_before_blank:
                 account_order_of_sheet_to.add_blank_to_last()
-
-        self.present_refresh_canvas()
 
         texts = self._get_texts_of_shapes(shape_ids)
         self.feedback_user(f'Items moved to {sheet_to}: {texts}', 'success')
