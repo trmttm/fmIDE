@@ -10,7 +10,7 @@ class StatesAndFlags:
         self._prevent_refresh_canvas = False
         self._previous_previous_commands = []
         self._previous_commands = []
-        self._sheet_name_dc
+        self._sheet_name_dictionary = {}
 
     @property
     def entry_by(self):
@@ -144,3 +144,24 @@ class StatesAndFlags:
         """
         self.set_previous_previous_commands(self.previous_commands)
         self.clear_previous_commands()
+
+    def add_worksheet(self, new_sheet_name):
+        old_sheet_name = self._sheet_name_dictionary.get(new_sheet_name, None)
+        self._add_work_sheet(old_sheet_name, new_sheet_name)
+
+    def remove_worksheet(self, sheet_name):
+        if sheet_name in self._sheet_name_dictionary:
+            del self._sheet_name_dictionary[sheet_name]
+
+    def change_worksheet(self, old_sheet_name, new_sheet_name):
+        self._add_work_sheet(old_sheet_name, new_sheet_name)
+        self.remove_worksheet(old_sheet_name)
+
+    def get_sheet_name_to_pass_to_presenter(self, sheet_name) -> str:
+        return self._sheet_name_dictionary.get(sheet_name, None)
+
+    def _add_work_sheet(self, old_sheet_name, new_sheet_name):
+        if old_sheet_name is None:
+            self._sheet_name_dictionary[new_sheet_name] = new_sheet_name
+        else:
+            self._sheet_name_dictionary[new_sheet_name] = old_sheet_name
