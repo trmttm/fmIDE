@@ -7,8 +7,8 @@ from .. import Utilities
 
 class Configurations(Observable):
     _default_nop = 10
-    _default_bb_shift = (0, 5)
     _default_bb_shift = -1
+    _default_shape_position_increment_value = (0, 5)
     _default_move_shape_increment = (25, 25)
     _default_save_file_name = 'Excel'
     _default_delta = 10
@@ -89,7 +89,7 @@ class Configurations(Observable):
         Observable.__init__(self)
         self._data = {self._number_of_periods: self._default_nop,
                       self._bb_shift: self._default_bb_shift,
-                      self._default_shape_position_increment: self._default_bb_shift,
+                      self._default_shape_position_increment: self._default_shape_position_increment_value,
                       self._move_shape_increment: self._default_move_shape_increment,
                       self._save_file_name: self._default_save_file_name,
                       self._target_accounts_sensitivity: (),

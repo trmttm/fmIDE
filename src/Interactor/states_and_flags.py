@@ -10,6 +10,7 @@ class StatesAndFlags:
         self._prevent_refresh_canvas = False
         self._previous_previous_commands = []
         self._previous_commands = []
+        self._sheet_name_dc
 
     @property
     def entry_by(self):
