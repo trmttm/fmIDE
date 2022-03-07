@@ -6,6 +6,11 @@ from .. import Utilities
 
 
 class Configurations(Observable):
+    _default_nop = 10
+    _default_bb_shift = (0, 5)
+    _default_bb_shift = -1
+    _default_move_shape_increment = (25, 25)
+    _default_save_file_name = 'Excel'
     _default_delta = 10
     _default_font_size = 13 if os_identifier.is_mac else 10
     _default_account_width = 50
@@ -82,11 +87,11 @@ class Configurations(Observable):
 
     def __init__(self):
         Observable.__init__(self)
-        self._data = {self._number_of_periods: 10,
-                      self._bb_shift: -1,
-                      self._default_shape_position_increment: (0, 5),
-                      self._move_shape_increment: (25, 25),
-                      self._save_file_name: 'Excel',
+        self._data = {self._number_of_periods: self._default_nop,
+                      self._bb_shift: self._default_bb_shift,
+                      self._default_shape_position_increment: self._default_bb_shift,
+                      self._move_shape_increment: self._default_move_shape_increment,
+                      self._save_file_name: self._default_save_file_name,
                       self._target_accounts_sensitivity: (),
                       self._variable_accounts_sensitivity: (),
                       self._sensitivity_deltas: {},
@@ -130,7 +135,7 @@ class Configurations(Observable):
 
     @property
     def number_of_periods(self) -> int:
-        return self._data[self._number_of_periods]
+        return self._data.get(self._number_of_periods, self._default_nop)
 
     @notify
     def set_number_of_periods(self, number_of_periods: int):
@@ -138,7 +143,7 @@ class Configurations(Observable):
 
     @property
     def bb_shift(self) -> int:
-        return self._data[self._bb_shift]
+        return self._data.get(self._bb_shift, self._default_bb_shift)
 
     @notify
     def set_bb_shift(self, bb_shift: int):
@@ -146,7 +151,7 @@ class Configurations(Observable):
 
     @property
     def default_shape_position_increment(self) -> tuple:
-        return self._data[self._default_shape_position_increment]
+        return self._data.get(self._default_shape_position_increment)
 
     @notify
     def set_default_shape_position_increment(self, x, y):
@@ -154,7 +159,7 @@ class Configurations(Observable):
 
     @property
     def move_shape_increment(self) -> tuple:
-        return self._data[self._move_shape_increment]
+        return self._data.get(self._move_shape_increment, self._default_move_shape_increment)
 
     @notify
     def set_move_shape_increment(self, x: int, y: int):
@@ -167,7 +172,7 @@ class Configurations(Observable):
 
     @property
     def save_file_name(self):
-        return self._data[self._save_file_name]
+        return self._data.get(self._save_file_name, self._default_save_file_name)
 
     def turn_on_insert_sheet_names_in_input_sheet(self):
         self._data[self._insert_sheet_name_in_input_sheet] = True
@@ -177,7 +182,7 @@ class Configurations(Observable):
 
     @property
     def insert_sheet_name_in_input_sheet(self) -> bool:
-        return self._data[self._insert_sheet_name_in_input_sheet]
+        return self._data.get(self._insert_sheet_name_in_input_sheet, False)
 
     # Sensitivity Setting
     @property
@@ -217,7 +222,7 @@ class Configurations(Observable):
 
     @property
     def sensitivity_target_accounts(self) -> tuple:
-        return self._data[self._target_accounts_sensitivity]
+        return self._data.get(self._target_accounts_sensitivity, ())
 
     def add_sensitivity_variable_accounts(self, account_ids: tuple):
         for account_id in account_ids:
@@ -247,7 +252,7 @@ class Configurations(Observable):
 
     @property
     def sensitivity_variable_accounts(self) -> tuple:
-        return self._data[self._variable_accounts_sensitivity]
+        return self._data.get(self._variable_accounts_sensitivity, ())
 
     def set_sensitivity_deltas(self, account_ids: tuple, delta: float):
         for account_id in account_ids:
@@ -275,7 +280,7 @@ class Configurations(Observable):
 
     @property
     def state_cleaner_is_activated(self) -> bool:
-        return self._data[self._clean_state_prior_to_save]
+        return self._data.get(self._clean_state_prior_to_save, True)
 
     def activate_state_cleaner(self):
         self._data[self._clean_state_prior_to_save] = True
@@ -285,7 +290,7 @@ class Configurations(Observable):
 
     @property
     def live_calculation_is_activated(self) -> bool:
-        return self._data[self._live_calculation]
+        return self._data.get(self._live_calculation, True)
 
     def activate_live_calculation(self):
         self._data[self._live_calculation] = True
