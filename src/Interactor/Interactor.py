@@ -626,12 +626,16 @@ class Interactor(BoundaryInABC):
         self.erase_shapes_by_shape_ids(self.sheet_contents)
         self._sf.remove_worksheet(selected_sheet)
         self._entities.delete_selected_sheet()
-        self._presenters.delete_work_sheet({'sheet_name': selected_sheet})
+        self._present_delete_worksheet(selected_sheet)
         new_selected_sheet = self.selected_sheet
         self._presenter_select_sheet(new_selected_sheet)  # switch canvas
         self._present_update_account_order()
         self.present_update_worksheets()
         self._present_shape_properties()
+
+    def _present_delete_worksheet(self, selected_sheet):  # remove frame and canvas widget
+        sheet_name_to_presenter = self._sf.get_sheet_name_to_pass_to_presenter(selected_sheet)
+        self._presenters.delete_work_sheet({'sheet_name': sheet_name_to_presenter})
 
     def delete_empty_worksheets(self):
         for sheet_name in self._worksheets.sheet_names:
@@ -1649,6 +1653,8 @@ class Interactor(BoundaryInABC):
         return self._gateways.pickle_macro_file_names
 
     def reset(self):
+        for sheet_name in self._worksheets.sheet_names:
+            self._present_delete_worksheet(sheet_name)
         self.clear_all_cache()
         old_entities = self._entities
         commands = old_entities.commands
@@ -3183,6 +3189,7 @@ class Interactor(BoundaryInABC):
     def clear_all_cache(self):
         self.clear_cache_audit_results()
         self.clear_cache_slider()
+        self._sf.__init__()
 
     def cache_audit_results(self):
         self._cache.set_cache_audit_results(self._get_audit_results(self._get_minimum_shape_ids_to_update()))
