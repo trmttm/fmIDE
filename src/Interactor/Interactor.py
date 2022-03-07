@@ -438,7 +438,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -600,17 +600,22 @@ class Interactor(BoundaryInABC):
         self._present_update_account_order()
         self.present_update_worksheets()
         self._present_shape_properties()
-        sheet_name_to_presenter = self._sf.get_sheet_name_to_pass_to_presenter(sheet_name)
-        self._presenters.select_worksheet({'sheet_name': sheet_name_to_presenter})
+        self._presenter_select_sheet(sheet_name)
 
     def select_worksheet(self, sheet_name: str, update=False):
         if self.selected_sheet != sheet_name:
             self._worksheets.select_sheet(sheet_name)
-            sheet_name_to_presenter = self._sf.get_sheet_name_to_pass_to_presenter(sheet_name)
-            self._presenters.select_worksheet({'sheet_name': sheet_name_to_presenter, 'update': update})
+            self._presenter_select_sheet(sheet_name, update)
             self._present_update_account_order()
             self.present_update_worksheets()
             self._present_shape_properties()
+
+    def _presenter_select_sheet(self, sheet_name, update: bool = None):
+        sheet_name_to_presenter = self._sf.get_sheet_name_to_pass_to_presenter(sheet_name)
+        response_model = {'sheet_name': sheet_name_to_presenter}
+        if update is not None:
+            response_model.update({'update': update})
+        self._presenters.select_worksheet(response_model)
 
     def delete_selected_worksheet(self):
         if len(self._worksheets.sheet_names) == 1:
@@ -623,8 +628,7 @@ class Interactor(BoundaryInABC):
         self._entities.delete_selected_sheet()
         self._presenters.delete_work_sheet({'sheet_name': selected_sheet})
         new_selected_sheet = self.selected_sheet
-        sheet_name_to_presenter = self._sf.get_sheet_name_to_pass_to_presenter(new_selected_sheet)
-        self._presenters.select_worksheet({'sheet_name': sheet_name_to_presenter})  # switch canvas
+        self._presenter_select_sheet(new_selected_sheet)  # switch canvas
         self._present_update_account_order()
         self.present_update_worksheets()
         self._present_shape_properties()
@@ -1221,14 +1225,12 @@ class Interactor(BoundaryInABC):
         # hence different canvas.
         for sheet_name in self._worksheets.sheet_names:
             self._worksheets.select_sheet(sheet_name)
-            sheet_name_to_presenter = self._sf.get_sheet_name_to_pass_to_presenter(sheet_name)
-            self._presenters.select_worksheet({'sheet_name': sheet_name_to_presenter})
+            self._presenter_select_sheet(sheet_name)
             self._presenters.remove_shape(canvas_tags)
             self._present_connect_shapes()
 
         self._worksheets.select_sheet(initial_selected_sheet)
-        sheet_name_to_presenter = self._sf.get_sheet_name_to_pass_to_presenter(initial_selected_sheet)
-        self._presenters.select_worksheet({'sheet_name': sheet_name_to_presenter})
+        self._presenter_select_sheet(initial_selected_sheet)
 
     # Rectangle
     def draw_rectangle(self, coordinate_from=None, coordinate_to=None, line_width=None, line_color=None, request=None):
@@ -1590,8 +1592,7 @@ class Interactor(BoundaryInABC):
                 continue
             self._upon_add_new_sheet(new_worksheet)
             self._worksheets.select_sheet(new_worksheet)
-            sheet_name_to_presenter = self._sf.get_sheet_name_to_pass_to_presenter(self.selected_sheet)
-            self._presenters.select_worksheet({'sheet_name': sheet_name_to_presenter, 'update': False})
+            self._presenter_select_sheet(self.selected_sheet, False)
             self.present_refresh_canvas()
         self.select_worksheet(worksheet_initially_selected)
 
