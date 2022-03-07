@@ -161,7 +161,8 @@ class StatesAndFlags:
         return self._sheet_name_dictionary.get(sheet_name, None)
 
     def _add_work_sheet(self, old_sheet_name, new_sheet_name):
-        if old_sheet_name is None:
+        oldest_sheet_name = self.get_sheet_name_to_pass_to_presenter(old_sheet_name)
+        if oldest_sheet_name is None:
             self._sheet_name_dictionary[new_sheet_name] = new_sheet_name
         else:
-            self._sheet_name_dictionary[new_sheet_name] = old_sheet_name
+            self._sheet_name_dictionary[new_sheet_name] = oldest_sheet_name

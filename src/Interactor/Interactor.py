@@ -439,7 +439,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -2161,10 +2161,11 @@ class Interactor(BoundaryInABC):
         self._present_highlight_automatic()
 
     def present_refresh_canvas_minimum(self, minimum_shapes_to_update: Iterable):
-        self._present_remove_shape(minimum_shapes_to_update)
-        self._present_add_shape(minimum_shapes_to_update)
-        self._present_connect_shapes()
-        self._present_highlight_automatic(minimum_shapes_to_update)  # Comment out this to achieve super fast slider
+        if not self.prevent_refresh_canvas:
+            self._present_remove_shape(minimum_shapes_to_update)
+            self._present_add_shape(minimum_shapes_to_update)
+            self._present_connect_shapes()
+            self._present_highlight_automatic(minimum_shapes_to_update)  # Comment out this to achieve super fast slider
 
     def _get_minimum_shape_ids_to_update(self) -> tuple:
         s, g, v = slider, graph, live_value
