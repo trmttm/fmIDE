@@ -1107,9 +1107,8 @@ class Interactor(BoundaryInABC):
                 continue
 
             connection_from = self._shapes.get_shape_it_represents_or_self(connection_from)
-            a = set(self._shapes.shapes_ids)
-            self.add_relay_by_shape_ids((connection_from,))
-            new_relay_id = (set(self._shapes.shapes_ids) - a).pop()
+            new_shape_ids = self.add_relay_by_shape_ids((connection_from,))
+            new_relay_id = new_shape_ids[0]
 
             initial_relay_x = self._shapes.get_x(connection_to) + self._shapes.get_width(connection_to) + 30
             initial_relay_y = self._shapes.get_y(connection_to)
@@ -2318,6 +2317,7 @@ class Interactor(BoundaryInABC):
             for candidate in candidates:
                 if not self.are_connected(candidate, shape_id):
                     self._connections.add_connection(candidate, shape_id)
+                    self._connections.add_new_merged_connections(candidate, shape_id)
 
     def plug_into_sockets(self, connection_ids: tuple, shape_id):
         for candidate in self._get_candidates(connection_ids):
