@@ -297,6 +297,10 @@ class GateWays(GateWayABC):
         if not os.path.exists(new_folder_path):
             os.mkdir(new_folder_path)
 
+    @staticmethod
+    def path_exists(path) -> bool:
+        return os.path.exists(path)
+
     def attach_to_notification(self, observer):
         if observer not in self._observers:
             self._observers += (observer,)

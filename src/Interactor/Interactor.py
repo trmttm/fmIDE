@@ -253,8 +253,9 @@ class Interactor(BoundaryInABC):
     def create_project_folder(self, path):
         feedback = self._gateways.create_project_folder(path)
         if feedback == 'success':
-            self._gateways.embed_resources_to_project_folder(path)
             self.set_project_folder_path(path)
+            if not self._gateways.path_exists(path):
+                self._gateways.embed_resources_to_project_folder(path)  # This overwrites modified pickle!
 
     def clear_project_history(self):
         self._load_config.clear()
