@@ -440,7 +440,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -2580,7 +2580,7 @@ class Interactor(BoundaryInABC):
 
         self.start_canvas_refreshing()
         self.start_highlighting()
-        self.present_refresh_canvas()
+        self.update_canvas()
         if succeeded:
             return_values = return_values_or_error
             self._present_feedback_user('Macro completed!', 'success')
@@ -3066,6 +3066,11 @@ class Interactor(BoundaryInABC):
     def calculate(self):
         data_table = self.create_data_table()
         self._update_graph_bars_and_live_values(data_table)
+
+    def update_canvas(self):
+        self.start_highlighting()
+        self.start_canvas_refreshing()
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes({})
 
     def create_data_table(self):
         gateway_model = self.create_calculation_gateway_model()

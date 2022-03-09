@@ -131,9 +131,13 @@ if __name__ == '__main__':
             from src.Entities import Observable
             Observable.is_debug_mode = False
             app = instantiate_app()
+            app.interactor.reset()
+            app.interactor.stop_canvas_refreshing()
+            app.interactor.stop_highlighting()
+            app.interactor.merge_file('Financial Statements')
             for i in range(10):
-                app.interactor.select_worksheet('FS')
-                app.interactor.select_worksheet('DCF')
+                app.interactor.merge_file('Tr Revenue')
+            app.interactor.update_canvas()
             app.quit()
 
 

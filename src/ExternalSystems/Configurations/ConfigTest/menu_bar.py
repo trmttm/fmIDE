@@ -102,6 +102,7 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
             },
             'Erase Selected': lambda: interactor.erase_selected_shapes(),
             'Calculate': lambda: interactor.calculate(),
+            'Update Canvas': lambda: interactor.update_canvas(),
         },
         'Analyze': {
             'Add Graph': {
