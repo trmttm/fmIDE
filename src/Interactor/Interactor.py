@@ -646,13 +646,18 @@ class Interactor(BoundaryInABC):
                 self.delete_selected_worksheet()
 
     def change_selected_sheet_name(self, sheet_name: str):
+        old_sheet_name = self.selected_sheet
         new_sheet_name = sheet_name
-        if sheet_name in self._worksheets.sheet_names:
-            self.add_shapes_to_selection(self.sheet_contents)
+        if new_sheet_name in self._worksheets.sheet_names:
+            shape_ids_to_move = self.sheet_contents
+            self.add_shapes_to_selection(shape_ids_to_move)
             self.set_worksheet_to_selected_shapes_properties(new_sheet_name)
+            self.select_worksheet(old_sheet_name)
             self.delete_selected_worksheet()
+            self.select_worksheet(new_sheet_name)
+            self._selection.select_shapes_by_shape_ids(shape_ids_to_move)
+            self.present_refresh_canvas_minimum(shape_ids_to_move)
         else:
-            old_sheet_name = self.selected_sheet
             self._sf.change_worksheet(old_sheet_name, new_sheet_name)
             old_sheet_index = self._worksheets.get_sheet_position(old_sheet_name)
 
