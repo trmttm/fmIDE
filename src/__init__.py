@@ -132,12 +132,10 @@ if __name__ == '__main__':
             Observable.is_debug_mode = False
             app = instantiate_app()
             app.interactor.reset()
-            app.interactor.stop_canvas_refreshing()
-            app.interactor.stop_highlighting()
-            app.interactor.merge_file('Financial Statements')
-            for i in range(10):
-                app.interactor.merge_file('Tr Revenue')
-            app.interactor.update_canvas()
+            app.view.switch_frame('frame_macro')
+            app.interactor.merge_macro('Test_Commands2')
+            app.interactor.run_macro()
+
             app.quit()
 
 

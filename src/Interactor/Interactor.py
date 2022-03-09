@@ -3197,9 +3197,12 @@ class Interactor(BoundaryInABC):
 
     # Caching
     def clear_all_cache(self):
+        canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         self.clear_cache_audit_results()
         self.clear_cache_slider()
         self._sf.__init__()
+        if canvas_refresh_was_prevented_at_the_beginning:
+            self.stop_canvas_refreshing()
 
     def cache_audit_results(self):
         self._cache.set_cache_audit_results(self._get_audit_results(self._get_minimum_shape_ids_to_update()))
