@@ -440,7 +440,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -1098,6 +1098,7 @@ class Interactor(BoundaryInABC):
     def add_inter_sheets_relays(self, connections_passed: set = None):
         relays = self._shapes.get_shapes('relay')
         connections_to_evaluation = set(self._connections.data) if connections_passed is None else connections_passed
+        sheet_to_right_most_x = {}
         for connection_from, connection_to in connections_to_evaluation:
             sheet_from = self._worksheets.get_worksheet_of_an_account(connection_from)
             sheet_to = self._worksheets.get_worksheet_of_an_account(connection_to)
@@ -1113,11 +1114,21 @@ class Interactor(BoundaryInABC):
             if self._shapes.get_tag_type(connection_from) != 'account':
                 continue
 
+            external_relay_x = sheet_to_right_most_x.get(sheet_to, None)
+            if external_relay_x is None:
+                sheet_contents = self._worksheets.get_sheet_contents(sheet_to)
+                relay_removed = tuple(c for c in sheet_contents if self._shapes.get_tag_type(c) != 'relay')
+                right_most_shape_id = self._shapes.get_right_most_shape_id(relay_removed)
+                right_most_x = self._shapes.get_x(right_most_shape_id)
+                right_most_width = self._shapes.get_width(right_most_shape_id) + 25
+                external_relay_x = right_most_x + right_most_width
+            sheet_to_right_most_x[sheet_to] = external_relay_x
+            initial_relay_x = external_relay_x
+
             connection_from = self._shapes.get_shape_it_represents_or_self(connection_from)
             new_shape_ids = self.add_relay_by_shape_ids((connection_from,))
             new_relay_id = new_shape_ids[0]
 
-            initial_relay_x = self._shapes.get_x(connection_to) + self._shapes.get_width(connection_to) + 30
             initial_relay_y = self._shapes.get_y(connection_to)
             self.fit_shapes_width((new_relay_id,))
 

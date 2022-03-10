@@ -131,10 +131,7 @@ if __name__ == '__main__':
             from src.Entities import Observable
             Observable.is_debug_mode = False
             app = instantiate_app()
-            app.interactor.reset()
-            app.view.switch_frame('frame_macro')
-            app.interactor.merge_macro('Test_Commands2')
-            app.interactor.run_macro()
+            app.interactor.load_file('00 Tutorial 00 Revenue')
 
             app.quit()
 
