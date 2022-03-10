@@ -1114,21 +1114,11 @@ class Interactor(BoundaryInABC):
             if self._shapes.get_tag_type(connection_from) != 'account':
                 continue
 
-            external_relay_x = sheet_to_right_most_x.get(sheet_to, None)
-            if external_relay_x is None:
-                sheet_contents = self._worksheets.get_sheet_contents(sheet_to)
-                relay_removed = tuple(c for c in sheet_contents if self._shapes.get_tag_type(c) != 'relay')
-                right_most_shape_id = self._shapes.get_right_most_shape_id(relay_removed)
-                right_most_x = self._shapes.get_x(right_most_shape_id)
-                right_most_width = self._shapes.get_width(right_most_shape_id) + 25
-                external_relay_x = right_most_x + right_most_width
-            sheet_to_right_most_x[sheet_to] = external_relay_x
-            initial_relay_x = external_relay_x
-
             connection_from = self._shapes.get_shape_it_represents_or_self(connection_from)
             new_shape_ids = self.add_relay_by_shape_ids((connection_from,))
             new_relay_id = new_shape_ids[0]
 
+            initial_relay_x = self._figure_out_x_where_to_place_new_relay(sheet_to, sheet_to_right_most_x)
             initial_relay_y = self._shapes.get_y(connection_to)
             self.fit_shapes_width((new_relay_id,))
 
@@ -1137,6 +1127,18 @@ class Interactor(BoundaryInABC):
             self._shapes.set_y(new_relay_id, initial_relay_y)
             self._connections.remove_connection(connection_from, connection_to)
             self._connections.add_connection(new_relay_id, connection_to)
+
+    def _figure_out_x_where_to_place_new_relay(self, sheet_to, sheet_to_right_most_x):
+        external_relay_x = sheet_to_right_most_x.get(sheet_to, None)
+        if external_relay_x is None:
+            sheet_contents = self._worksheets.get_sheet_contents(sheet_to)
+            relay_removed = tuple(c for c in sheet_contents if self._shapes.get_tag_type(c) != 'relay')
+            right_most_shape_id = self._shapes.get_right_most_shape_id(relay_removed)
+            right_most_x = self._shapes.get_x(right_most_shape_id)
+            right_most_width = self._shapes.get_width(right_most_shape_id) + 25
+            external_relay_x = right_most_x + right_most_width
+        sheet_to_right_most_x[sheet_to] = external_relay_x
+        return external_relay_x
 
     def add_new_shapes(self, request_models: Iterable) -> set:
         all_shape_ids_before = set(self._shapes.shapes_ids)
