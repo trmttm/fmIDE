@@ -440,7 +440,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -1629,7 +1629,8 @@ class Interactor(BoundaryInABC):
     def _get_updated_worksheets(self, initial_sheet_name_to_sheet_contents: Dict[str, set]) -> set:
         worksheets_that_need_updating = set()
         for sh_name in self._worksheets.sheet_names:
-            if self._worksheets.get_sheet_contents(sh_name) != initial_sheet_name_to_sheet_contents.get(sh_name, set()):
+            if set(self._worksheets.get_sheet_contents(sh_name)) != initial_sheet_name_to_sheet_contents.get(sh_name,
+                                                                                                             set()):
                 worksheets_that_need_updating.add(sh_name)
         return worksheets_that_need_updating
 

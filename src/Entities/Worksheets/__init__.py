@@ -1,3 +1,4 @@
+import copy
 from typing import Dict
 from typing import Iterable
 
@@ -46,7 +47,7 @@ class Worksheets(Observable):
 
     @property
     def sheet_name_to_sheet_contents(self) -> Dict[str, set]:
-        return dict(self._data[self._sheet_data])  # returning copy
+        return copy.deepcopy(self._data[self._sheet_data])
 
     def get_sheet_name_by_index(self, index: int):
         try:
