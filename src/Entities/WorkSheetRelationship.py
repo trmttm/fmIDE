@@ -82,7 +82,7 @@ class WorksheetRelationship(Observable):
             elif from_ in child_sheet_names:
                 child_sheet_names.remove(from_)
                 child_sheet_names.append(to_)
-            self._data[parent_sheet_name] = child_sheet_names
+                self._data[parent_sheet_name] = child_sheet_names
 
     @notify
     def merge_data(self, data: dict, *_, **__):
