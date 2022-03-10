@@ -532,7 +532,9 @@ def get_external_dependents(connections_out, sheet_name, shape_id_to_sheet_name:
 
 def get_y_shift_to_prevent_overlap(shape_ids: tp.Iterable, sheet_to_contents: dict, increment_y, shapes: Et.Shapes):
     bottom_shape = shapes.get_bottom_shape_id(shape_ids)
+    bottom_shape_sheet_to = shapes.get_bottom_shape_id(sheet_to_contents)
     largest_y_in_sheet_from = shapes.get_y(bottom_shape)
+    largest_y_in_sheet_to = shapes.get_y(bottom_shape_sheet_to)
 
     if len(sheet_to_contents) > 0:
         top_shape = shapes.get_top_shape_id(sheet_to_contents)
@@ -543,7 +545,7 @@ def get_y_shift_to_prevent_overlap(shape_ids: tp.Iterable, sheet_to_contents: di
     if largest_y_in_sheet_from + increment_y < smallest_y_in_sheet_to:
         return 0
     else:
-        return largest_y_in_sheet_from + increment_y
+        return largest_y_in_sheet_to + increment_y
 
 
 def get_external_dependencies_sheets(connections_in, id_to_sheet, sheet_name):

@@ -440,7 +440,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -651,11 +651,9 @@ class Interactor(BoundaryInABC):
         if new_sheet_name in self._worksheets.sheet_names:
             shape_ids_to_move = self.sheet_contents
             self.add_shapes_to_selection(shape_ids_to_move)
-            self.set_worksheet_to_selected_shapes_properties(new_sheet_name)
-            self.select_worksheet(old_sheet_name)
+            self.move_contents_to_different_sheet(shape_ids_to_move, new_sheet_name)
             self.delete_selected_worksheet()
             self.select_worksheet(new_sheet_name)
-            self._selection.select_shapes_by_shape_ids(shape_ids_to_move)
             self.present_refresh_canvas_minimum(shape_ids_to_move)
         else:
             self._sf.change_worksheet(old_sheet_name, new_sheet_name)
