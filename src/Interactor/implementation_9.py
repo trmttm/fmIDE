@@ -534,7 +534,10 @@ def get_y_shift_to_prevent_overlap(shape_ids: tp.Iterable, sheet_to_contents: di
     bottom_shape = shapes.get_bottom_shape_id(shape_ids)
     bottom_shape_sheet_to = shapes.get_bottom_shape_id(sheet_to_contents)
     largest_y_in_sheet_from = shapes.get_y(bottom_shape)
-    largest_y_in_sheet_to = shapes.get_y(bottom_shape_sheet_to)
+    if bottom_shape_sheet_to is not None:
+        largest_y_in_sheet_to = shapes.get_y(bottom_shape_sheet_to)
+    else:
+        largest_y_in_sheet_to = 0
 
     if len(sheet_to_contents) > 0:
         top_shape = shapes.get_top_shape_id(sheet_to_contents)

@@ -1,4 +1,3 @@
-import copy
 import unittest
 
 from . import test_cases as tc
@@ -18,7 +17,8 @@ class TestInteractorAndEntity(unittest.TestCase):
         from src.EntityGateway import GateWays
         from .catchers import NotificationCatcher, ResponseModelCatcher, ViewResponseModelCatcher
 
-        self._path_test_pickles = f'{os.getcwd()}/{"src/Tests"}/{"pickles"}'
+        cwd = os.getcwd().replace('fmide/src', 'fmide')
+        self._path_test_pickles = f'{cwd}/{"src/Tests"}/{"pickles"}'
 
         entities = Entities()
         presenters = Presenters()
@@ -98,10 +98,9 @@ class TestInteractorAndEntity(unittest.TestCase):
     def test_interactor_erase_shape(self):
         add_shapes(self._interactor)
 
-        data_before_erase = copy.deepcopy(self._shapes.data)
         self._interactor.erase_shapes(tuple({'shape_id': shape_id} for shape_id in self._shapes_to_delete))
 
-        response_model_caught = self._response_model_catcher.response_models_caught[-1]
+        response_model_caught = self._response_model_catcher.response_models_caught[-3]
         expectation = tc.test_cases_erase_shapes_expected_response_model(self._shapes, self._shapes_to_delete)
         self.assertEqual(response_model_caught, expectation)
 
