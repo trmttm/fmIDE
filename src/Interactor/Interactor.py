@@ -1096,39 +1096,44 @@ class Interactor(BoundaryInABC):
         self.present_refresh_canvas_minimum(new_shape_ids)
 
     def add_inter_sheets_relays(self, connections_passed: set = None):
-        relays = self._shapes.get_shapes('relay')
+        all_relays = self._shapes.get_shapes('relay')
         connections_to_evaluation = set(self._connections.data) if connections_passed is None else connections_passed
         sheet_to_right_most_x = {}
         for connection_from, connection_to in connections_to_evaluation:
-            sheet_from = self._worksheets.get_worksheet_of_an_account(connection_from)
-            sheet_to = self._worksheets.get_worksheet_of_an_account(connection_to)
+            if self._need_to_add_inter_sheet_relay(connection_from, connection_to, all_relays):
+                sheet_to = self._worksheets.get_worksheet_of_an_account(connection_to)
+                connection_from = self._shapes.get_shape_it_represents_or_self(connection_from)
+                new_shape_ids = self.add_relay_by_shape_ids((connection_from,))
+                new_relay_id = new_shape_ids[0]
 
-            if sheet_from == sheet_to:
-                continue
-            if connection_to in relays:
-                continue
-            if sheet_to is None:
-                continue
-            if sheet_from is None:
-                continue
-            if self._shapes.get_tag_type(connection_from) != 'account':
-                continue
+                initial_relay_x = self._figure_out_x_where_to_place_new_relay(sheet_to, sheet_to_right_most_x)
+                initial_relay_y = self._shapes.get_y(connection_to)
+                self.fit_shapes_width((new_relay_id,))
 
-            connection_from = self._shapes.get_shape_it_represents_or_self(connection_from)
-            new_shape_ids = self.add_relay_by_shape_ids((connection_from,))
-            new_relay_id = new_shape_ids[0]
+                self.move_contents_to_different_sheet((new_relay_id,), sheet_to)
+                self._shapes.set_x(new_relay_id, initial_relay_x)
+                self._shapes.set_y(new_relay_id, initial_relay_y)
+                self._connections.remove_connection(connection_from, connection_to)
+                self._connections.add_connection(new_relay_id, connection_to)
 
-            initial_relay_x = self._figure_out_x_where_to_place_new_relay(sheet_to, sheet_to_right_most_x)
-            initial_relay_y = self._shapes.get_y(connection_to)
-            self.fit_shapes_width((new_relay_id,))
+    def _need_to_add_inter_sheet_relay(self, connection_from, connection_to, all_relays) -> bool:
+        needs_inter_sheet_relay = True
+        sheet_from = self._worksheets.get_worksheet_of_an_account(connection_from)
+        sheet_to = self._worksheets.get_worksheet_of_an_account(connection_to)
 
-            self.move_contents_to_different_sheet((new_relay_id,), sheet_to)
-            self._shapes.set_x(new_relay_id, initial_relay_x)
-            self._shapes.set_y(new_relay_id, initial_relay_y)
-            self._connections.remove_connection(connection_from, connection_to)
-            self._connections.add_connection(new_relay_id, connection_to)
+        if sheet_from == sheet_to:
+            needs_inter_sheet_relay = False
+        if connection_to in all_relays:
+            needs_inter_sheet_relay = False
+        if sheet_to is None:
+            needs_inter_sheet_relay = False
+        if sheet_from is None:
+            needs_inter_sheet_relay = False
+        if self._shapes.get_tag_type(connection_from) != 'account':
+            needs_inter_sheet_relay = False
+        return needs_inter_sheet_relay
 
-    def _figure_out_x_where_to_place_new_relay(self, sheet_to, sheet_to_right_most_x):
+    def _figure_out_x_where_to_place_new_relay(self, sheet_to, sheet_to_right_most_x) -> int:
         external_relay_x = sheet_to_right_most_x.get(sheet_to, None)
         if external_relay_x is None:
             sheet_contents = self._worksheets.get_sheet_contents(sheet_to)
