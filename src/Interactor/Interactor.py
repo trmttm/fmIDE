@@ -649,22 +649,25 @@ class Interactor(BoundaryInABC):
         old_sheet_name = self.selected_sheet
         new_sheet_name = sheet_name
         if new_sheet_name in self._worksheets.sheet_names:
-            shape_ids_to_move = self.sheet_contents
-            self.add_shapes_to_selection(shape_ids_to_move)
-            self.move_contents_to_different_sheet(shape_ids_to_move, new_sheet_name)
-            self.delete_selected_worksheet()
-            self.select_worksheet(new_sheet_name)
-            self.present_refresh_canvas_minimum(shape_ids_to_move)
+            self._change_selected_sheet_name_to_existing_sheet_name(new_sheet_name)
         else:
-            self._sf.change_worksheet(old_sheet_name, new_sheet_name)
-            old_sheet_index = self._worksheets.get_sheet_position(old_sheet_name)
+            self._change_selected_sheet_name_to_a_new_sheet_name(new_sheet_name, old_sheet_name)
 
-            self._entities.change_selected_sheet_name(new_sheet_name)
+    def _change_selected_sheet_name_to_existing_sheet_name(self, new_sheet_name):
+        shape_ids_to_move = self.sheet_contents
+        self.add_shapes_to_selection(shape_ids_to_move)
+        self.move_contents_to_different_sheet(shape_ids_to_move, new_sheet_name)
+        self.delete_selected_worksheet()
+        self.select_worksheet(new_sheet_name)
+        self.present_refresh_canvas_minimum(shape_ids_to_move)
 
-            self._worksheet_relationship.change_sheet_name(old_sheet_name, new_sheet_name)
-            self._worksheets.insert_sheets((new_sheet_name,), old_sheet_index)
-
-            self.select_worksheet(new_sheet_name)
+    def _change_selected_sheet_name_to_a_new_sheet_name(self, new_sheet_name, old_sheet_name):
+        self._sf.change_worksheet(old_sheet_name, new_sheet_name)
+        old_sheet_index = self._worksheets.get_sheet_position(old_sheet_name)
+        self._entities.change_selected_sheet_name(new_sheet_name)
+        self._worksheet_relationship.change_sheet_name(old_sheet_name, new_sheet_name)
+        self._worksheets.insert_sheets((new_sheet_name,), old_sheet_index)
+        self.select_worksheet(new_sheet_name)
 
     def upon_updating_worksheets(self, previous_sheet_state: tuple):
         current_state = (self._worksheets.sheet_names, self.selected_sheet)
