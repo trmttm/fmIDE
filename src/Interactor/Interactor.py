@@ -1629,9 +1629,12 @@ class Interactor(BoundaryInABC):
     def _get_updated_worksheets(self, initial_sheet_name_to_sheet_contents: Dict[str, set]) -> set:
         worksheets_that_need_updating = set()
         for sh_name in self._worksheets.sheet_names:
-            if set(self._worksheets.get_sheet_contents(sh_name)) != initial_sheet_name_to_sheet_contents.get(sh_name,
-                                                                                                             set()):
+            current_state = set(self._worksheets.get_sheet_contents(sh_name))
+            initial_state = initial_sheet_name_to_sheet_contents.get(sh_name, set())
+            if current_state != initial_state:
                 worksheets_that_need_updating.add(sh_name)
+        sheets_to_register = set(self._worksheets.sheet_names) - self._sf.registered_worksheets  # often blank sheets
+        worksheets_that_need_updating = worksheets_that_need_updating.union(sheets_to_register)
         return worksheets_that_need_updating
 
     def remove_templates(self, pickle_names: tuple):

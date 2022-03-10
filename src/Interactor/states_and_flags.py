@@ -145,6 +145,10 @@ class StatesAndFlags:
         self.set_previous_previous_commands(self.previous_commands)
         self.clear_previous_commands()
 
+    @property
+    def registered_worksheets(self) -> set:
+        return set(self._sheet_name_dictionary.keys())
+
     def add_worksheet(self, new_sheet_name):
         old_sheet_name = self._sheet_name_dictionary.get(new_sheet_name, None)
         self._add_work_sheet(old_sheet_name, new_sheet_name)
