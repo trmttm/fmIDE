@@ -11,6 +11,7 @@ class StatesAndFlags:
         self._previous_previous_commands = []
         self._previous_commands = []
         self._sheet_name_dictionary = {}
+        self._sheet_id = 0
 
     @property
     def entry_by(self):
@@ -150,8 +151,7 @@ class StatesAndFlags:
         return set(self._sheet_name_dictionary.keys())
 
     def add_worksheet(self, new_sheet_name):
-        old_sheet_name = self._sheet_name_dictionary.get(new_sheet_name, None)
-        self._add_work_sheet(old_sheet_name, new_sheet_name)
+        self._add_work_sheet(new_sheet_name, new_sheet_name)
 
     def remove_worksheet(self, sheet_name):
         if sheet_name in self._sheet_name_dictionary:
@@ -165,7 +165,15 @@ class StatesAndFlags:
         return self._sheet_name_dictionary.get(sheet_name, None)
 
     def _add_work_sheet(self, old_sheet_name, new_sheet_name):
-        oldest_sheet_name = self.get_sheet_name_to_pass_to_presenter(old_sheet_name)
+        someone_elses_old_sheet_names = []
+        for some_one_else_sheet_name, some_one_else_old_sheet_name in self._sheet_name_dictionary.items():
+            if some_one_else_sheet_name != some_one_else_old_sheet_name:
+                someone_elses_old_sheet_names.append(some_one_else_old_sheet_name)
+        if new_sheet_name in someone_elses_old_sheet_names:
+            oldest_sheet_name = f'{new_sheet_name}_{self._sheet_id}'
+            self._sheet_id += 1
+        else:
+            oldest_sheet_name = self.get_sheet_name_to_pass_to_presenter(old_sheet_name)
         if oldest_sheet_name is None:
             self._sheet_name_dictionary[new_sheet_name] = new_sheet_name
         else:

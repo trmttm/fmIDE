@@ -597,8 +597,9 @@ class Interactor(BoundaryInABC):
         self._upon_add_new_sheet(sheet_name_added)
 
     def _upon_add_new_sheet(self, sheet_name):
-        self._presenters.add_worksheet({'sheet_name': sheet_name, 'color': 'white'})
         self._sf.add_worksheet(sheet_name)
+        sheet_name_to_presenter = self._sf.get_sheet_name_to_pass_to_presenter(sheet_name)
+        self._presenters.add_worksheet({'sheet_name': sheet_name_to_presenter, 'color': 'white'})
         self._present_update_account_order()
         self.present_update_worksheets()
         self._present_shape_properties()
