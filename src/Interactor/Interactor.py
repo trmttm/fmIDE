@@ -1594,9 +1594,9 @@ class Interactor(BoundaryInABC):
 
         self._input_values.change_number_of_periods(self.number_of_periods)
         self.auto_connect()
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
         self.add_inter_sheets_relays(self._connections.new_merged_connections)
         self.scale_canvas(initial_scale_x, initial_scale_y)
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
         # Properly select new shapes in each worksheet
         for worksheet in self._worksheets.sheet_names:
