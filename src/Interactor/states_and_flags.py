@@ -169,7 +169,9 @@ class StatesAndFlags:
         # Below block of codes prevents this error by creating oldest_sheet_name with id for the new_sheet_name.
         someone_elses_old_sheet_names = []
         for some_one_else_sheet_name, some_one_else_old_sheet_name in self._sheet_name_dictionary.items():
-            if some_one_else_sheet_name != some_one_else_old_sheet_name:
+            has_old_sheet_name = (some_one_else_sheet_name != some_one_else_old_sheet_name)
+            is_someone_else = (some_one_else_sheet_name != old_sheet_name)
+            if has_old_sheet_name and is_someone_else:
                 someone_elses_old_sheet_names.append(some_one_else_old_sheet_name)
         if new_sheet_name in someone_elses_old_sheet_names:
             oldest_sheet_name = f'{new_sheet_name}_{self._sheet_id}'
