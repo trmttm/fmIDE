@@ -34,7 +34,7 @@ def create_view_model_pickle_loader_list(response_model: dict) -> dict:
     headings = ('No', 'Name')
     widths = (50, 200)
     stretches = (False, True)
-    scroll_v, scroll_h = False, False
+    scroll_v, scroll_h = True, False
     file_names = response_model['file_names']
     always_false = False
     tree_datas = [create_tree_data('', f'{n}', '', (n, name), (), always_false) for (n, name) in enumerate(file_names)]
@@ -46,7 +46,7 @@ def create_view_model_update_account_order(response_model: dict):
     headings = ('No', 'Name')
     widths = (30, 100)
     stretches = (False, True)
-    scroll_v, scroll_h = False, False
+    scroll_v, scroll_h = True, False
     account_names = response_model['account_names']
     select = response_model['select_flags']
     tree_datas = [create_tree_data('', f'{n}', '', (n, name), (), select[n]) for (n, name) in enumerate(account_names)]
@@ -58,7 +58,7 @@ def create_view_model_update_accounts(response_model: dict) -> dict:
     headings = ('No', 'ID', 'Account Name', 'Sheet')
     widths = (50, 50, 100, 100)
     stretches = (False, False, True, False)
-    scroll_v, scroll_h = False, False
+    scroll_v, scroll_h = True, False
 
     input_accounts = response_model['accounts']
     texts = response_model['texts']
@@ -75,7 +75,7 @@ def create_view_model_update_accounts_with_deltas(response_model: dict) -> dict:
     headings = ('No', 'ID', 'Deltas', 'Account Name', 'Sheet')
     widths = (50, 50, 50, 100, 100)
     stretches = (False, False, False, True, False)
-    scroll_v, scroll_h = False, False
+    scroll_v, scroll_h = True, False
 
     input_accounts = response_model['accounts']
     deltas = response_model['deltas']
@@ -97,7 +97,7 @@ def create_view_model_worksheets(response_model):
     headings = ('No', 'Worksheets Name')
     widths = (30, 100)
     stretches = (False, True)
-    scroll_v, scroll_h = False, False
+    scroll_v, scroll_h = True, False
     ws_names: tuple = response_model['sheet_names']
     select: tuple = response_model['select_flags']
     sheet_name_to_parent = response_model.get('sheet_name_to_parent', {})
@@ -112,7 +112,7 @@ def create_view_model_connection_ids(response_model):
     headings = ('No', 'Type', 'Connection_IDs')
     widths = (30, 50, 100)
     stretches = (False, False, True)
-    scroll_v, scroll_h = False, False
+    scroll_v, scroll_h = True, False
     types_names: tuple = response_model['type_and_names']
     select: tuple = response_model['select_flags']
     tree_datas = []
@@ -262,7 +262,7 @@ def create_view_model_update_commands(response_model: dict):
     headings = ('No', 'Command Name', 'args', 'kwargs')
     widths = (40, 100, 130, 130)
     stretches = (False, True, True, True)
-    scroll_v, scroll_h = False, False
+    scroll_v, scroll_h = True, False
     c = response_model['commands']
     select = response_model['select_flags']
     tree_datas = [create_tree_data('', f'{n}', '', (n, key, a, k), (), select[n]) for (n, (key, a, k)) in enumerate(c)]
@@ -274,7 +274,7 @@ def create_view_model_update_macros(response_model: dict):
     headings = ('No', 'Macro Name')
     widths = (30, 250)
     stretches = (False, True)
-    scroll_v, scroll_h = False, False
+    scroll_v, scroll_h = True, False
     c = response_model['macros']
     select = response_model['select_flags']
     tree_datas = [create_tree_data('', f'{n}', '', (n, file_name), (), select[n]) for (n, (file_name)) in enumerate(c)]
