@@ -441,7 +441,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -1603,6 +1603,11 @@ class Interactor(BoundaryInABC):
             self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
         self._present_feedback_user(f'Merged file: {file_name}', 'success')
+
+    def merge_file_to_selected_sheet(self, file_name: str):
+        initially_selected_sheet = self.selected_sheet
+        self.merge_file(file_name)
+        self.change_selected_sheet_name(initially_selected_sheet)
 
     def _place_newly_merged_shapes(self, initial_shapes: set):
         worksheets = self._worksheets

@@ -160,9 +160,9 @@ def create_design_key_combos(interactor: BoundaryInABC, view: ViewABC, presenter
         (shift_main, k.up): (lambda: prevent_widget_interference(i.match_selected_shapes_width)(), 'Match width'),
         (shift_main, k.down): (lambda: prevent_widget_interference(i.fit_selected_shapes_width)(), 'Fit Width'),
         (shift_main, k.left): (
-        lambda: prevent_widget_interference(i.decrease_width_of_selected_shapes)(), 'Reduce Width'),
+            lambda: prevent_widget_interference(i.decrease_width_of_selected_shapes)(), 'Reduce Width'),
         (shift_main, k.right): (
-        lambda: prevent_widget_interference(i.increase_width_of_selected_shapes)(), 'Increase Width'),
+            lambda: prevent_widget_interference(i.increase_width_of_selected_shapes)(), 'Increase Width'),
 
         (main_modifier, k.up): (lambda: i.evenly_distribute_vertically(), 'Evenly distribute Vertically'),
         (main_modifier, k.down): (lambda: i.align_middle_vertical(), 'Align Middle Vertical'),
@@ -326,6 +326,7 @@ def create_search_window_key_combos(interactor: BoundaryInABC, view: ViewABC, pr
         (k.none, k.up): (lambda: c.search_tree_focus_up(v, vm.tree_search), 'Select tree up'),
         (k.none, k.down): (lambda: c.search_tree_focus_down(v, vm.tree_search), 'Select tree down'),
         (k.none, k.return_): (lambda: c.execute_searched_command(v, i), 'Execute selected command.'),
+        (k.shift, k.return_): (lambda: c.execute_searched_command_merge_to_current_sheet(v, i), 'Execute command.'),
         (k.none, k.escape): (lambda: c.close_search_window_properly(i, v), 'Closed Search Window Properly.'),
         (main_modifier, k.w): (lambda: c.close_search_window_properly(i, v), 'Closed Search Window Properly.'),
     }

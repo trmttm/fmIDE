@@ -5,12 +5,12 @@ from typing import Type
 from interface_fm import BoundaryInABC
 from interface_mouse import MouseControllerABC
 from interface_view import ViewABC
-from src import Utilities
-from src import ViewModel as VM
 from src.BoundaryOutput import PresentersABC
 from src.Controller import InputEntryController
 from src.Utilities import auto_complete
 
+from src import Utilities
+from src import ViewModel as VM
 from . import constants as cns
 from . import keyboard_shortcuts
 from . import menu_bar
@@ -959,13 +959,23 @@ def popup_search_window(view: ViewABC, interactor: BoundaryInABC, presenters: Pr
 
 
 def execute_searched_command(view: ViewABC, interactor: BoundaryInABC):
+    merge_method = interactor.merge_file
+    _execute_searched_command(view, interactor, merge_method)
+
+
+def execute_searched_command_merge_to_current_sheet(view: ViewABC, interactor: BoundaryInABC):
+    merge_method = interactor.merge_file_to_selected_sheet
+    _execute_searched_command(view, interactor, merge_method)
+
+
+def _execute_searched_command(view: ViewABC, interactor: BoundaryInABC, merge_method: Callable):
     i = interactor
     try:
         group, name = view.tree_selected_values(vm.tree_search)[0]
     except IndexError:
         return
     if group == 'Transaction':
-        i.merge_file(name)
+        merge_method(name)
     elif group == 'Macro':
         initial_commands = i.commands
         recording_mode = i.turned_on_macro_recording
