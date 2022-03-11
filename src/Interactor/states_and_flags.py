@@ -165,6 +165,8 @@ class StatesAndFlags:
         return self._sheet_name_dictionary.get(sheet_name, None)
 
     def _add_work_sheet(self, old_sheet_name, new_sheet_name):
+        # IF new_sheet_name == someone else's old sheet name, then someone else will unintendedly point to the new sheet
+        # Below block of codes prevents this error by creating oldest_sheet_name with id for the new_sheet_name.
         someone_elses_old_sheet_names = []
         for some_one_else_sheet_name, some_one_else_old_sheet_name in self._sheet_name_dictionary.items():
             if some_one_else_sheet_name != some_one_else_old_sheet_name:
@@ -174,6 +176,7 @@ class StatesAndFlags:
             self._sheet_id += 1
         else:
             oldest_sheet_name = self.get_sheet_name_to_pass_to_presenter(old_sheet_name)
+
         if oldest_sheet_name is None:
             self._sheet_name_dictionary[new_sheet_name] = new_sheet_name
         else:
