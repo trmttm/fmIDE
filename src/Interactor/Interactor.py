@@ -19,6 +19,7 @@ from . import graph
 from . import implementation_5 as imp5
 from . import implementation_9 as imp9
 from . import live_value
+from . import merge
 from . import rpe
 from . import selection as sel
 from . import slider
@@ -30,10 +31,10 @@ from .states_and_flags import StatesAndFlags
 from .. import RequestModel
 from .. import ResponseModel
 from .. import Utilities
+from ..BoundaryOutput import PresentersABC
 from ..Entities import Entities
 from ..Entities import Observable
 from ..EntityGateway import GateWayABC
-from ..Presenter import PresentersABC
 from ..Utilities.Memento import Memento
 
 
@@ -1574,36 +1575,26 @@ class Interactor(BoundaryInABC):
         self._present_feedback_user(f'Loaded file: {file_name}', 'success')
 
     def merge_file(self, file_name: str):
+        worksheets = self._worksheets
+        selections = self._selections
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
+        initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
+        initial_worksheet_data = worksheets.sheet_name_to_sheet_contents
+        initial_shapes = set(self._shapes.shapes_ids)
+
         self.stop_canvas_refreshing()
         self.stop_highlighting()
-        initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
         self.scale_canvas(1 / initial_scale_x, 1 / initial_scale_y)
-        initial_shapes = set(self._shapes.shapes_ids)
-        initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         self._gateways.merge_state_from_file(file_name)
-
-        current_sheet = self.selected_sheet
-        get_sheet = self._worksheets.get_worksheet_of_an_account
-        existing_shapes = tuple(shape_id for shape_id in initial_shapes if get_sheet(shape_id) == current_sheet)
-        y_shift = self.get_y_shift_to_prevent_overlap(existing_shapes, self.selected_sheet)
+        self._place_newly_merged_shapes(initial_shapes)
         shapes_added = set(self._shapes.shapes_ids) - initial_shapes
-        for shape_id in shapes_added:
-            self._shapes.set_y(shape_id, self._shapes.get_y(shape_id) + y_shift)
-
         self._input_values.change_number_of_periods(self.number_of_periods)
         self.auto_connect()
+        # first create all worksheets, then add relays, scale, etc
         self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
         self.add_inter_sheets_relays(self._connections.new_merged_connections)
         self.scale_canvas(initial_scale_x, initial_scale_y)
-
-        # Properly select new shapes in each worksheet
-        for worksheet in self._worksheets.sheet_names:
-            sheet_selection = self._selections.get_selection(worksheet)
-            sheet_selection.clear_selection()
-            for shape_id in self._worksheets.get_sheet_contents(worksheet):
-                if shape_id in shapes_added:
-                    sheet_selection.add_selection(shape_id)
+        merge.property_select_new_shapes_in_each_worksheet(shapes_added, selections, worksheets)
 
         # Refresh all updated worksheets
         if not canvas_refresh_was_prevented_at_the_beginning:
@@ -1612,6 +1603,17 @@ class Interactor(BoundaryInABC):
             self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
 
         self._present_feedback_user(f'Merged file: {file_name}', 'success')
+
+    def _place_newly_merged_shapes(self, initial_shapes: set):
+        worksheets = self._worksheets
+        current_sheet = self.selected_sheet
+
+        get_sheet = worksheets.get_worksheet_of_an_account
+        existing_shapes = tuple(shape_id for shape_id in initial_shapes if get_sheet(shape_id) == current_sheet)
+        y_shift = self.get_y_shift_to_prevent_overlap(existing_shapes, self.selected_sheet)
+        shapes_added = set(self._shapes.shapes_ids) - initial_shapes
+        for shape_id in shapes_added:
+            self._shapes.set_y(shape_id, self._shapes.get_y(shape_id) + y_shift)
 
     def _add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(
             self, initial_sheet_name_to_sheet_contents: Dict[str, set]):

@@ -1227,7 +1227,7 @@ def test_cases_presenter_load_pickle_files_list():
          'tags': (), },
 
     ]
-    v = (50, 200), False, False
+    v = (50, 200), False, True
     expected_view_models = (
         {'tree_datas': values0, 'headings': ('No', 'Name'), 'widths': v[0], 'stretches': (False, True),
          'scroll_h': v[1], 'scroll_v': v[2], },

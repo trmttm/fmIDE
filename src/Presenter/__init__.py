@@ -1,7 +1,5 @@
 from typing import Callable
 
-from src.BoundaryOutput import PresentersABC
-
 from .AddShape import PresenterAddShape
 from .AddWorksheet import PresenterAddWorksheet
 from .ClearCanvas import PresenterClearCanvas
@@ -27,6 +25,7 @@ from .UpdateAccountsListWithDeltas import PresenterAccountsListWithDeltas
 from .UpdateConnectionIDs import PresenterUpdateConnectionIDs
 from .UpdateShapeProperties import PresenterUpdateShapeProperties
 from .Worksheets import PresenterWorksheets
+from ..BoundaryOutput import PresentersABC
 
 
 class Presenters(PresentersABC):
