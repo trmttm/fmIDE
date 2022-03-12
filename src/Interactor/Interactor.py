@@ -661,7 +661,8 @@ class Interactor(BoundaryInABC):
         self.move_contents_to_different_sheet(shape_ids_to_move, new_sheet_name)
         self.delete_selected_worksheet()
         self.select_worksheet(new_sheet_name)
-        self.present_refresh_canvas_minimum(shape_ids_to_move)
+        self._selection.select_shapes_by_shape_ids(shape_ids_to_move)
+        self.present_refresh_canvas()
 
     def _change_selected_sheet_name_to_a_new_sheet_name(self, new_sheet_name, old_sheet_name):
         self._sf.change_worksheet(old_sheet_name, new_sheet_name)
