@@ -89,6 +89,13 @@ def create_mouse_configuration(interactor: BoundaryInABC, view: ViewABC, mouse: 
         [45, interactor.connect_shapes_by_coordinates, mouse.is_right_release, {}],
         [46, interactor.exit_point, mouse.is_right_release, exit_by],
 
+        # Command Right
+        [70, interactor.do_nothing, mouse.is_command_right_click, request_save_click],
+        [71, interactor.set_entry_point, mouse.is_command_right_click, entry_by],
+        [72, lambda request: interactor.move_selections_to(request['x'], request['y']), mouse.is_command_right_click,
+         {}],
+        [76, interactor.exit_point, mouse.is_command_right_release, exit_by],
+
         # Mouse Wheel
         [70, lambda request: view.scroll_canvas(request['scroll_x'], request['scroll_y']),
          mouse.is_mouse_wheel, {}],

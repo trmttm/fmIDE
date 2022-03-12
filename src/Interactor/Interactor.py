@@ -441,7 +441,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -1992,7 +1992,7 @@ class Interactor(BoundaryInABC):
     def get_y_shift_to_prevent_overlap(self, shape_ids: tuple, sheet_to) -> float:
         if len(shape_ids) == 0:
             return 0
-        args = shape_ids, self._worksheets.get_sheet_contents(sheet_to), 40, self._shapes
+        args = shape_ids, self._worksheets.get_sheet_contents(sheet_to), 40 * self._configurations.scale_y, self._shapes
         return imp9.get_y_shift_to_prevent_overlap(*args)
 
     def get_shape_ids_followed_by_blank_in_account_order(self) -> tuple:
