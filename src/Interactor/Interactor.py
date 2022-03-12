@@ -1030,6 +1030,7 @@ class Interactor(BoundaryInABC):
     def add_new_shape(self, text: str = 'Text', tag: str = None):
         request_model = RequestModel.request_model_add_new_shape
         new_shape_ids = self.add_new_shapes([request_model(text, tag)])
+        self._selection.clear_selection()
         self.add_shapes_to_selection(new_shape_ids)
         new_shape_id = new_shape_ids.pop()
         return new_shape_id
