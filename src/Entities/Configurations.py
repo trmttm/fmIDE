@@ -39,6 +39,8 @@ class Configurations(Observable):
     _default_constant_width = 50
     _default_constant_height = 20
     _default_auto_fit_width_per_letter = 8
+    _default_relay_x = 'right most'
+    _relay_x_to_right = '_relay_x_to_right'
 
     _number_of_periods = 'nop'
     _bb_shift = 'bb_shift'
@@ -84,6 +86,7 @@ class Configurations(Observable):
     _graph_range_dx = '_graph_range_dx'
     _scale_x = '_scale_x'
     _scale_y = '_scale_y'
+    _relay_x = '_relay_x'
 
     def __init__(self):
         Observable.__init__(self)
@@ -130,6 +133,7 @@ class Configurations(Observable):
                       self._graph_range_dx: self._default_graph_range_dx,
                       self._scale_x: self._default_scale_x,
                       self._scale_y: self._default_scale_y,
+                      self._relay_x: self._default_relay_x,
 
                       }
 
@@ -514,3 +518,26 @@ class Configurations(Observable):
 
     def set_scale_y(self, value):
         self._data[self._scale_y] = value
+
+    @property
+    def relay_x_position(self) -> str:
+        return self._data.get(self._relay_x, self._default_relay_x)
+
+    def set_relay_x_to_right(self):
+        value = self._relay_x_to_right
+        self._set_relay_x(value)
+
+    def set_relay_x_to_right_end(self):
+        value = self._default_relay_x
+        self._set_relay_x(value)
+
+    def _set_relay_x(self, value):
+        self._data[self._relay_x] = value
+
+    @property
+    def relay_to_be_placed_at_right_end(self) -> bool:
+        return self.relay_x_position == self._default_relay_x
+
+    @property
+    def relay_to_be_placed_to_right(self) -> bool:
+        return self.relay_x_position == self._relay_x_to_right

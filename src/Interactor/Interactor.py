@@ -20,6 +20,7 @@ from . import implementation_5 as imp5
 from . import implementation_9 as imp9
 from . import live_value
 from . import merge
+from . import relay
 from . import rpe
 from . import selection as sel
 from . import slider
@@ -348,6 +349,16 @@ class Interactor(BoundaryInABC):
 
     def set_save_path(self, folder_path):
         self._load_config.set_opening_project(folder_path)
+
+    def set_relay_x_to_right(self):
+        self._configurations.set_relay_x_to_right()
+
+    def set_relay_x_to_right_end(self):
+        self._configurations.set_relay_x_to_right_end()
+
+    @property
+    def relay_to_be_placed_at_right_end(self) -> bool:
+        return self._configurations.relay_to_be_placed_at_right_end
 
     # Configuration - Export Excel Setting
     def turn_on_insert_sheet_names_in_input_sheet(self):
@@ -1109,13 +1120,16 @@ class Interactor(BoundaryInABC):
                 new_shape_ids = self.add_relay_by_shape_ids((connection_from,))
                 new_relay_id = new_shape_ids[0]
 
-                initial_relay_x = self._figure_out_x_where_to_place_new_relay(sheet_to, sheet_to_right_most_x)
-                initial_relay_y = self._shapes.get_y(connection_to)
                 self.fit_shapes_width((new_relay_id,))
-
                 self.move_contents_to_different_sheet((new_relay_id,), sheet_to)
+
+                args = connection_to, sheet_to, sheet_to_right_most_x, self._worksheets, self._shapes, self._configurations
+                initial_relay_x = relay.figure_out_x_where_to_place_new_relay(*args)
                 self._shapes.set_x(new_relay_id, initial_relay_x)
+
+                initial_relay_y = self._shapes.get_y(connection_to)
                 self._shapes.set_y(new_relay_id, initial_relay_y)
+
                 self._connections.remove_connection(connection_from, connection_to)
                 self._connections.add_connection(new_relay_id, connection_to)
 
@@ -1135,18 +1149,6 @@ class Interactor(BoundaryInABC):
         if self._shapes.get_tag_type(connection_from) != 'account':
             needs_inter_sheet_relay = False
         return needs_inter_sheet_relay
-
-    def _figure_out_x_where_to_place_new_relay(self, sheet_to, sheet_to_right_most_x) -> int:
-        external_relay_x = sheet_to_right_most_x.get(sheet_to, None)
-        if external_relay_x is None:
-            sheet_contents = self._worksheets.get_sheet_contents(sheet_to)
-            relay_removed = tuple(c for c in sheet_contents if self._shapes.get_tag_type(c) != 'relay')
-            right_most_shape_id = self._shapes.get_right_most_shape_id(relay_removed)
-            right_most_x = self._shapes.get_x(right_most_shape_id)
-            right_most_width = self._shapes.get_width(right_most_shape_id) + 25
-            external_relay_x = right_most_x + right_most_width
-        sheet_to_right_most_x[sheet_to] = external_relay_x
-        return external_relay_x
 
     def add_new_shapes(self, request_models: Iterable) -> set:
         all_shape_ids_before = set(self._shapes.shapes_ids)

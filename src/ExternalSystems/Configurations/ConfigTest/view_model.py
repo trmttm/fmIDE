@@ -64,6 +64,7 @@ check_btn_macro_mode = 'check_btn_macro_mode'
 check_btn = 'check button vertical'
 check_btn_cleaner = 'check_btn_cleaner'
 check_btn_live_calculation = 'check_btn_live_calc'
+check_btn_relay_right_end = 'check_btn_relay_right_end'
 
 btn_undo = 'undo'
 btn_redo = 'redo'
@@ -164,6 +165,7 @@ kw_setting = {
     'entry_nop': entry_nop,
     'check_btn_cleaner': check_btn_cleaner,
     'check_btn_live_calculation': check_btn_live_calculation,
+    'check_btn_relay_right_end': check_btn_relay_right_end,
     'account_w': entry_account_w,
     'account_h': entry_account_h,
     'account_font_size': entry_account_font_size,

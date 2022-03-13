@@ -146,6 +146,7 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
         w.entry_bb_w: lambda *_: sc(view, interactor.set_bb_width, w.entry_bb_w),
         w.entry_bb_h: lambda *_: sc(view, interactor.set_bb_height, w.entry_bb_h),
         w.entry_bb_font_size: lambda *_: sc(view, interactor.set_bb_font_size, w.entry_bb_font_size),
+        w.check_btn_relay_right_end: lambda: c.toggle_relay_x_position(view, interactor),
 
         # Excel Export
         w.btn_excel: lambda: c.popup_excel_export_entry(view, interactor, presenters, mouse),

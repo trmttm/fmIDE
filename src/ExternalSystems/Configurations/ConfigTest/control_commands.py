@@ -101,6 +101,8 @@ def upon_menu_button5(view: ViewABC, interactor: BoundaryInABC, presenters: Pres
     view.set_value(vm.entry_bb_h, interactor.bb_height)
     view.set_value(vm.entry_bb_font_size, interactor.bb_font_size)
 
+    view.set_value(vm.check_btn_relay_right_end, interactor.relay_to_be_placed_at_right_end)
+
     interactor.change_active_keymap(cns.keymap_setting)
     hide_canvas_commands_from_menubar(interactor, mouse, presenters, view)
 
@@ -1309,3 +1311,11 @@ def upon_delete_worksheet(view: ViewABC, view_model_: dict):
 
 def focus_on_canvas(view: ViewABC):
     view.focus(vm.button_1)
+
+
+def toggle_relay_x_position(view: ViewABC, interactor: BoundaryInABC):
+    value = view.get_value(vm.check_btn_relay_right_end)
+    if value:
+        interactor.set_relay_x_to_right_end()
+    else:
+        interactor.set_relay_x_to_right()
