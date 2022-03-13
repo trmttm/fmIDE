@@ -1255,13 +1255,15 @@ class Interactor(BoundaryInABC):
         canvas_tags = tuple(self._shapes.get_canvas_tag_from_shape_id(i) for i in shape_ids_to_delete)
         initial_selected_sheet = self.selected_sheet
 
-        # need to loop through worksheets as some of the shapes, such as relays, may be in different sheet,
-        # hence different canvas.
         for sheet_name in self._worksheets.sheet_names:
+            # need to loop through worksheets as some of the shapes, such as relays, may be in different sheet,
+            # hence different canvas.
             self._worksheets.select_sheet(sheet_name)
             self._presenter_select_sheet(sheet_name)
             self._presenters.remove_shape(canvas_tags)
             self._present_connect_shapes()
+            # Only accounts that have just become input accounts need highlighting, but highlighting all anyway...
+            self._present_highlight_automatic(self.sheet_contents)
 
         self._worksheets.select_sheet(initial_selected_sheet)
         self._presenter_select_sheet(initial_selected_sheet)
