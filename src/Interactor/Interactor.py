@@ -1108,12 +1108,12 @@ class Interactor(BoundaryInABC):
         self.fit_selected_shapes_width()
         self.present_refresh_canvas_minimum(new_shape_ids)
 
-    def add_inter_sheets_relays(self, connections_passed: set = None):
-        all_relays = self._shapes.get_shapes('relay')
+    def add_inter_sheets_relays(self, connections_passed: set = None) -> tuple:
+        initial_relays = self._shapes.get_shapes('relay')
         connections_to_evaluation = set(self._connections.data) if connections_passed is None else connections_passed
         sheet_to_right_most_x = {}
         for connection_from, connection_to in connections_to_evaluation:
-            if self._need_to_add_inter_sheet_relay(connection_from, connection_to, all_relays):
+            if self._need_to_add_inter_sheet_relay(connection_from, connection_to, initial_relays):
                 sheet_to = self._worksheets.get_worksheet_of_an_account(connection_to)
                 connection_from = self._shapes.get_shape_it_represents_or_self(connection_from)
                 new_shape_ids = self.add_relay_by_shape_ids((connection_from,))
@@ -1131,6 +1131,10 @@ class Interactor(BoundaryInABC):
 
                 self._connections.remove_connection(connection_from, connection_to)
                 self._connections.add_connection(new_relay_id, connection_to)
+
+        current_relays = self._shapes.get_shapes('relay')
+        new_relays = set(current_relays) - set(initial_relays)
+        return tuple(new_relays)
 
     def _need_to_add_inter_sheet_relay(self, connection_from, connection_to, all_relays) -> bool:
         needs_inter_sheet_relay = True
@@ -1596,7 +1600,7 @@ class Interactor(BoundaryInABC):
         self.auto_connect()
         # first create all worksheets, then add relays, scale, etc
         self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
-        self.add_inter_sheets_relays(self._connections.new_merged_connections)
+        new_relays = nr = self.add_inter_sheets_relays(self._connections.new_merged_connections)
         self.scale_canvas(initial_scale_x, initial_scale_y)
         shapes_added = set(self._shapes.shapes_ids) - initial_shapes
         merge.property_select_new_shapes_in_each_worksheet(shapes_added, selections, worksheets)
@@ -1605,7 +1609,7 @@ class Interactor(BoundaryInABC):
         if not canvas_refresh_was_prevented_at_the_beginning:
             self.start_canvas_refreshing()
             self.start_highlighting()
-            self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
+            self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data, nr)
 
         self._present_feedback_user(f'Merged file: {file_name}', 'success')
 
@@ -1626,9 +1630,15 @@ class Interactor(BoundaryInABC):
             self._shapes.set_y(shape_id, self._shapes.get_y(shape_id) + y_shift)
 
     def _add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(
-            self, initial_sheet_name_to_sheet_contents: Dict[str, set]):
+            self, initial_sheet_name_to_sheet_contents: Dict[str, set], new_relays: tuple = ()):
         worksheet_initially_selected = self.selected_sheet
         worksheets_to_update = self._get_updated_worksheets(initial_sheet_name_to_sheet_contents)
+
+        for new_relay in new_relays:  # source of new relay needs highlighting
+            original_account = self._shapes.get_shape_it_represents(new_relay)
+            sheet_from = self._worksheets.get_worksheet_of_an_account(original_account)
+            worksheets_to_update.add(sheet_from)
+
         for new_worksheet in worksheets_to_update:
             if new_worksheet is None:
                 continue
@@ -1972,9 +1982,9 @@ class Interactor(BoundaryInABC):
         initial_worksheet_data = self._worksheets.sheet_name_to_sheet_contents
         shape_ids = self.get_selection_sorted_by_account_order()
         self.move_contents_to_different_sheet(shape_ids, sheet_to)
-        self.add_inter_sheets_relays()
+        new_relays = self.add_inter_sheets_relays()
         self.select_worksheet(sheet_to)
-        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data, new_relays)
 
     def move_contents_to_different_sheet(self, shape_ids: tuple, sheet_to):
         y_shift_to_prevent_overlap = self.get_y_shift_to_prevent_overlap(shape_ids, sheet_to)
