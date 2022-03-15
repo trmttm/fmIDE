@@ -1,11 +1,12 @@
 from typing import Iterable
 from typing import Tuple
 
+import rpe_to_normal
+
 from . import implementation_9 as impl
 from .. import Utilities
 from ..Entities import Connections
 from ..Entities import Shapes
-import rpe_to_normal
 
 
 def get_arguments_to_vba_udf(account_used_in_udf, argument_converter, connections, shapes):
@@ -77,7 +78,7 @@ def create_gateway_model_for_vba_udf(arguments, direct_links, file_name, formula
         'arguments': arguments,
         'name': 'user_defined_function',
         'formulas': formulas,
-        'direct_links_mutable': direct_links,
+        'direct_links': direct_links,
         'variables': tuple(sorted(list(variables))),
         'target_value': shape_id_to_vba_variable_name(shape_id, shapes),
         'minimum_iteration': 10,

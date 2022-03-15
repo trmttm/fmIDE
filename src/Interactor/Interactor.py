@@ -452,7 +452,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -3024,7 +3024,7 @@ class Interactor(BoundaryInABC):
 
         gateway_model = {
             'workbook_name': workbook_name,
-            'shape_id_to_address': shape_id_to_text,
+            'shape_id_to_text': shape_id_to_text,
             'inputs': input_accounts,
             'input_values': input_values,
             'operators': operator_ids,
@@ -3032,7 +3032,7 @@ class Interactor(BoundaryInABC):
             'sheets_data': worksheets_data,
             'rpes': rpes,
             'nop': number_of_periods,
-            'direct_links_mutable': direct_links,
+            'direct_links': direct_links,
             'format_data': self._format.data,
             'number_format_data': self._number_format.data,
             'vertical_acs': self._vertical_accounts.data,

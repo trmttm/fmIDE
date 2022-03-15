@@ -1,6 +1,7 @@
 import subprocess
 
 from interface_udf_builder import UDFBuilderABC
+
 min_max = """
 Function Min(ParamArray values() As Variant) As Variant
    Dim minValue, Value As Variant
@@ -39,7 +40,7 @@ class UDFBuilder(UDFBuilderABC):
         formulas = kwargs['formulas']
         variables = kwargs['variables']
         target_value = kwargs['target_value']
-        direct_links = kwargs['direct_links_mutable']
+        direct_links = kwargs['direct_links']
         minimum_iteration = kwargs['minimum_iteration']
 
         self._declare_variables(variables, formulas)
