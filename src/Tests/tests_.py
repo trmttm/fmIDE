@@ -100,7 +100,7 @@ class TestInteractorAndEntity(unittest.TestCase):
 
         self._interactor.erase_shapes(tuple({'shape_id': shape_id} for shape_id in self._shapes_to_delete))
 
-        response_model_caught = self._response_model_catcher.response_models_caught[-3]
+        response_model_caught = self._response_model_catcher.response_models_caught[-4]
         expectation = tc.test_cases_erase_shapes_expected_response_model(self._shapes, self._shapes_to_delete)
         self.assertEqual(response_model_caught, expectation)
 
