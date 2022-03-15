@@ -118,6 +118,7 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
         w.entry_delta_y: lambda *_: c.upon_leaving_entry_delta(view, interactor),
         w.entry_shape_id: lambda *_: c.upon_leaving_entry(view, interactor, w.entry_shape_id, 'shape_id'),
         w.entry_uom: lambda *_: c.upon_leaving_entry(view, interactor, w.entry_uom, 'uom'),
+        w.check_btn_breakdown_account: lambda *_: c.set_breakdown_account(view, interactor),
 
         w.cb_format: lambda value: c.upon_format_selection(view, interactor),
         w.cb_num_format: lambda value: c.upon_number_format_selection(view, interactor),

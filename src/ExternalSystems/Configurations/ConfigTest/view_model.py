@@ -65,6 +65,7 @@ check_btn = 'check button vertical'
 check_btn_cleaner = 'check_btn_cleaner'
 check_btn_live_calculation = 'check_btn_live_calc'
 check_btn_relay_right_end = 'check_btn_relay_right_end'
+check_btn_breakdown_account = 'check_btn_breakdown_account'
 
 btn_undo = 'undo'
 btn_redo = 'redo'
@@ -391,6 +392,7 @@ def start_view_model_factory() -> list:
         f(fr_property, 'label num_format', 'label', 13, 13, 0, 0, 'nse', **{'text': '#'}),
         f(fr_property, 'label vertical', 'label', 14, 14, 0, 0, 'nse', **{'text': 'Vertical:'}),
         f(fr_property, 'label vertical', 'label', 15, 15, 0, 0, 'nse', **{'text': 'UOM:'}),
+        f(fr_property, 'label breakdown account', 'label', 16, 16, 0, 0, 'nse', **{'text': 'Breakdown:'}),
 
         f(fr_property, entry_text, 'entry', 3, 3, 1, 1, 'nswe'),
         f(fr_property, entry_x, 'entry', 4, 4, 1, 1, 'nswe'),
@@ -413,6 +415,7 @@ def start_view_model_factory() -> list:
         f(fr_vertical_ref, btn_remove_v_ref, 'button', 0, 0, 3, 3, 'nswe', **{'text': 'Rem', 'width': button_width}),
 
         f(fr_property, entry_uom, 'entry', 15, 15, 1, 1, 'nswe'),
+        f(fr_property, check_btn_breakdown_account, 'check_button', 16, 16, 1, 1, 'nswe'),
 
     ]
     align_btns = Vm.create_d_pad_model(fr_align, (button_13, button_14, button_15, button_16), button_width)

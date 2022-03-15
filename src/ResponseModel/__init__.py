@@ -1,8 +1,9 @@
 from typing import Callable
 from typing import Iterable
 
-from src import Utilities
 from src.Presenter.HighlightShape import highlight as h
+
+from src import Utilities
 
 
 def response_model_to_presenter_highlight_auto(audit_results: Iterable) -> dict:
@@ -138,10 +139,10 @@ def audit_shape(shape_id, is_selected: bool, tag_type, canvas_tag, connections_i
 
 
 def response_model_to_presenter_shape_properties(text, x, y, width, height, worksheet, shape_id, formats,
-                                                 number_formats, vertical_references, uoms) -> dict:
+                                                 number_formats, vertical_references, uoms, breakdowns) -> dict:
     return {'text': text, 'x': x, 'y': y, 'width': width, 'height': height, 'worksheet': worksheet, 'id': shape_id,
             'formats': formats, 'number_formats': number_formats, 'vertical_references': vertical_references,
-            'uoms': uoms}
+            'uoms': uoms, 'breakdowns': breakdowns}
 
 
 def response_model_to_presenter_states(shape_ids, shapes_positions, texts, connections, operators, rpes,

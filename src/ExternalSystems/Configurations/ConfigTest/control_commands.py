@@ -1319,3 +1319,10 @@ def toggle_relay_x_position(view: ViewABC, interactor: BoundaryInABC):
         interactor.set_relay_x_to_right_end()
     else:
         interactor.set_relay_x_to_right()
+
+def set_breakdown_account(view: ViewABC, interactor: BoundaryInABC):
+    value = view.get_value(vm.check_btn_breakdown_account)
+    if value:
+        interactor.add_selection_to_breakdown_accounts()
+    else:
+        interactor.remove_selection_from_breakdown_accounts()

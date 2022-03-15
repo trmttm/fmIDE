@@ -360,6 +360,28 @@ class Interactor(BoundaryInABC):
     def relay_to_be_placed_at_right_end(self) -> bool:
         return self._configurations.relay_to_be_placed_at_right_end
 
+    @property
+    def breakdown_accounts(self) -> tuple:
+        return self._configurations.breakdown_accounts
+
+    def add_selection_to_breakdown_accounts(self):
+        for shape_id in self._selection.data:
+            is_an_account = self._shapes.get_tag_type(shape_id) == 'account'
+            connections_into = tuple(self._connections.get_connections_into(shape_id))
+            has_one_connection_into = len(connections_into) == 1
+            if has_one_connection_into:
+                from_an_operator = self._shapes.get_tag_type(connections_into[0]) == 'operator'
+            else:
+                from_an_operator = False
+            if is_an_account and has_one_connection_into and from_an_operator:
+                self._configurations.add_breakdown_accounts(shape_id)
+        self._present_shape_properties()
+
+    def remove_selection_from_breakdown_accounts(self):
+        for shape_id in self._selection.data:
+            self._configurations.remove_breakdown_accounts(shape_id)
+        self._present_shape_properties()
+
     # Configuration - Export Excel Setting
     def turn_on_insert_sheet_names_in_input_sheet(self):
         self._configurations.turn_on_insert_sheet_names_in_input_sheet()
@@ -1961,6 +1983,7 @@ class Interactor(BoundaryInABC):
                  self._number_format,
                  self._vertical_accounts,
                  self._unit_of_measure,
+                 self.breakdown_accounts,
                  )
 
         response_model = ResponseModel.response_model_to_presenter_shape_properties
@@ -3067,6 +3090,10 @@ class Interactor(BoundaryInABC):
 
         if self._worksheet_relationship.has_data:
             gateway_model['modules_data'] = self.output_module_information
+
+        breakdown_accounts = self.breakdown_accounts
+        if breakdown_accounts:
+            gateway_model['breakdown_accounts'] = breakdown_accounts
 
         return gateway_model
 
