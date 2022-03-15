@@ -365,15 +365,21 @@ class Interactor(BoundaryInABC):
         return self._configurations.breakdown_accounts
 
     def add_selection_to_breakdown_accounts(self):
+        keys = tuple(rpe_[0] for rpe_ in self.rpe_raw_sorted)
+        values = tuple(rpe_[1] for rpe_ in self.rpe_raw_sorted)
+        rpe_dictionary = dict(zip(keys, values))
+        all_operators_set = set(self._shapes.get_shapes('operator'))
         for shape_id in self._selection.data:
             is_an_account = self._shapes.get_tag_type(shape_id) == 'account'
             connections_into = tuple(self._connections.get_connections_into(shape_id))
             has_one_connection_into = len(connections_into) == 1
+            operators_in_rpe = set(op for op in rpe_dictionary.get(shape_id, ()) if op in all_operators_set)
+            rpe_has_one_operator = len(operators_in_rpe) == 1
             if has_one_connection_into:
                 from_an_operator = self._shapes.get_tag_type(connections_into[0]) == 'operator'
             else:
                 from_an_operator = False
-            if is_an_account and has_one_connection_into and from_an_operator:
+            if is_an_account and has_one_connection_into and from_an_operator and rpe_has_one_operator:
                 self._configurations.add_breakdown_accounts(shape_id)
         self._present_shape_properties()
 
@@ -474,7 +480,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
