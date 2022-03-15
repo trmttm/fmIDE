@@ -1,11 +1,11 @@
 from typing import Type
 
 from interface_view import ViewABC
+from mouse import MouseController
 
 from . import implementation as impl
 from . import plug_in_views
 from .configuration_ABC import ConfigurationABC
-from mouse import MouseController
 from ..Entities import Entities
 from ..Entities import Observable
 from ..EntityGateway import GateWayABC
@@ -46,7 +46,7 @@ class Main:
         On the other hand, if interactor is passed to mouse_configurations, then it is much faster.
         But mouse actions are not recorded as macro.
         """
-        # impl.configure_mouse(mouse, config.mouse_configurations(wrapped_interactor, view, mouse))
+        # impl.configure_mouse(mouse, config.mouse_configurations(wrapped_interactor, view, mouse)) # this makes mouse really slow when there are many shapes
         impl.configure_mouse(mouse, config.mouse_configurations(interactor, view, mouse))
 
         plug_in_views.plug_views_to_presenters(presenters, view)
