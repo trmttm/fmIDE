@@ -1043,6 +1043,7 @@ class Interactor(BoundaryInABC):
         new_shape_ids = self.add_new_shapes([request_model(text, tag)])
         self._selection.clear_selection()
         self.add_shapes_to_selection(new_shape_ids)
+        self.present_refresh_canvas_minimum(new_shape_ids)
         new_shape_id = new_shape_ids.pop()
         return new_shape_id
 
