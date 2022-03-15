@@ -756,11 +756,10 @@ class Interactor(BoundaryInABC):
         self.add_shapes_to_selection(self.sheet_contents)
 
     def select_account_by_name(self, account_name, sheet_name: str = None, nth: int = 0):
-        initial_selections = tuple(self.selection.data)
         shape_id_to_select = self.get_shape_id_by_name(account_name, sheet_name, nth)
         if shape_id_to_select is not None:
             self._selection.select_shape(shape_id_to_select)
-            self._upon_selection((shape_id_to_select,) + initial_selections)
+            self._upon_selection((shape_id_to_select,))
 
     def get_shape_id_by_name(self, account_name, sheet_name, nth):
         args = account_name, sheet_name, self.sheet_contents, self._shapes, self._worksheets
@@ -1593,13 +1592,13 @@ class Interactor(BoundaryInABC):
         self.scale_canvas(1 / initial_scale_x, 1 / initial_scale_y)
         self._gateways.merge_state_from_file(file_name)
         self._place_newly_merged_shapes(initial_shapes)
-        shapes_added = set(self._shapes.shapes_ids) - initial_shapes
         self._input_values.change_number_of_periods(self.number_of_periods)
         self.auto_connect()
         # first create all worksheets, then add relays, scale, etc
         self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
         self.add_inter_sheets_relays(self._connections.new_merged_connections)
         self.scale_canvas(initial_scale_x, initial_scale_y)
+        shapes_added = set(self._shapes.shapes_ids) - initial_shapes
         merge.property_select_new_shapes_in_each_worksheet(shapes_added, selections, worksheets)
 
         # Refresh all updated worksheets
