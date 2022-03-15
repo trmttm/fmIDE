@@ -210,7 +210,7 @@ class Interactor(BoundaryInABC):
 
     @property
     def copied_account_names(self) -> tuple:
-        return self._get_texts_of_shapes(self._sf.copied_accounts)
+        return self._get_texts_of_shapes(self._configurations.copied_accounts)
 
     @property
     def input_accounts(self) -> tuple:
@@ -742,10 +742,10 @@ class Interactor(BoundaryInABC):
 
     # Copy / Paste Accounts
     def copy_accounts(self):
-        self._sf.set_copied_accounts(self.selected_accounts)
+        self._configurations.set_copied_accounts(self.selected_accounts)
 
     def paste_accounts(self):
-        self.add_relay_by_shape_ids(self._sf.copied_accounts)
+        self.add_relay_by_shape_ids(self._configurations.copied_accounts)
 
     # Selecting
     @property

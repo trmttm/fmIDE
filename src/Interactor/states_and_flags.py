@@ -1,7 +1,6 @@
 class StatesAndFlags:
     def __init__(self):
         self._entry_by = []
-        self._copied_accounts = tuple()
         self._initial_shape_position = None
         self._manually_highlighted = False
         self._input_being_modified = None
@@ -43,16 +42,6 @@ class StatesAndFlags:
 
     def set_entry_by(self, entry_by):
         self._entry_by.append(entry_by)
-
-    @property
-    def copied_accounts(self):
-        return self._copied_accounts
-
-    def set_copied_accounts(self, accounts):
-        self._copied_accounts = accounts
-
-    def clear_copied_accounts(self):
-        self._copied_accounts = tuple()
 
     @property
     def initial_shape_position(self):

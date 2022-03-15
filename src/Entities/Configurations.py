@@ -88,6 +88,8 @@ class Configurations(Observable):
     _scale_y = '_scale_y'
     _relay_x = '_relay_x'
 
+    _copied_accounts = '_copied_accounts'
+
     def __init__(self):
         Observable.__init__(self)
         self._data = {self._number_of_periods: self._default_nop,
@@ -135,6 +137,7 @@ class Configurations(Observable):
                       self._scale_y: self._default_scale_y,
                       self._relay_x: self._relay_x_to_right,
 
+                      self._copied_accounts: tuple(),
                       }
 
     @property
@@ -541,3 +544,13 @@ class Configurations(Observable):
     @property
     def relay_to_be_placed_to_right(self) -> bool:
         return self.relay_x_position == self._relay_x_to_right
+
+    @property
+    def copied_accounts(self) -> tuple:
+        return self._data.get(self._copied_accounts, ())
+
+    def set_copied_accounts(self, accounts: tuple):
+        self._data[self._copied_accounts] = accounts
+
+    def clear_copied_accounts(self):
+        self.data[self._copied_accounts] = tuple()
