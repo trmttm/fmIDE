@@ -2624,6 +2624,10 @@ class Interactor(BoundaryInABC):
         select = (index_,)
         self.present_commands(select)
 
+    def delete_commands_up_to(self, n):
+        # 'up to this point' from user's point of view (looking at the GUI).
+        self.delete_commands(tuple(range(n + 1)))
+
     def delete_commands(self, indexes: tuple):
         self._commands.delete_commands(indexes)
         select = indexes

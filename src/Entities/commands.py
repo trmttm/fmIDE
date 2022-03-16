@@ -145,7 +145,7 @@ class Commands(Observable):
             for observer in observers:
                 observer(n, total_n, key)
             command = getattr(obj, key)
-            if command != self.set_magic_arg:
+            if command.__name__ != self.set_magic_arg.__name__:
                 args = self._apply_magic_arg(args)
             try:
                 return_value = command(*args, **kwargs)
@@ -155,8 +155,7 @@ class Commands(Observable):
         return True, tuple(return_values)
 
     def set_magic_arg(self, arg, replace_with):
-        if not self._magic_arg:
-            self._magic_arg = arg
+        self._magic_arg = arg
         self._magic_arg_replacement = replace_with
 
     def _apply_magic_arg(self, args: tuple):
