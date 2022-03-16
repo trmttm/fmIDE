@@ -16,6 +16,9 @@ class Commands(Observable):
         self._turned_on_macro_recording = False
         self._turned_off_macro_recording = False
 
+        self._magic_arg = ''
+        self._magic_arg_replacement = ''
+
     @property
     def data(self) -> tuple:
         return self._data
@@ -139,6 +142,7 @@ class Commands(Observable):
         return_values = []
         total_n = len(self._data)
         for n, (key, args, kwargs) in enumerate(self._data):
+            args = self._apply_magic_arg(args)
             for observer in observers:
                 observer(n, total_n, key)
             command = getattr(obj, key)
@@ -148,3 +152,16 @@ class Commands(Observable):
                 return False, (n, key, args, kwargs, e)
             return_values.append(return_value)
         return True, tuple(return_values)
+
+    def set_magic_arg(self, arg, replace_with):
+        self._magic_arg = arg
+        self._magic_arg_replacement = replace_with
+
+    def _apply_magic_arg(self, args: tuple):
+        new_args = []
+        for arg in args:
+            if arg.__class__ == str:
+                new_args.append(str(arg).replace(self._magic_arg, self._magic_arg_replacement))
+            else:
+                new_args.append(arg)
+        return tuple(new_args)

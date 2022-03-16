@@ -2648,6 +2648,9 @@ class Interactor(BoundaryInABC):
             self._present_feedback_user(feedback, feedback)
             self.present_macros(next_position)
 
+    def set_magic_arg(self, arg, replace_with):
+        self._commands.set_magic_arg(arg, replace_with)
+
     def run_macro(self, observer_passed: Callable = None) -> tuple:
         self.stop_canvas_refreshing()
         self.stop_highlighting()
