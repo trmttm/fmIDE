@@ -480,7 +480,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -2165,7 +2165,7 @@ class Interactor(BoundaryInABC):
             self._shapes.set_y(shape_id, scaled_y)
             self._shapes.set_width(shape_id, scaled_width)
             self._shapes.set_height(shape_id, scaled_height)
-        self.present_refresh_canvas()
+        self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes({})
 
     def present_insert_worksheet_in_input_sheet_mode(self):
         response_model = self._configurations.insert_sheet_name_in_input_sheet
