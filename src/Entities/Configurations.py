@@ -87,7 +87,6 @@ class Configurations(Observable):
     _scale_x = '_scale_x'
     _scale_y = '_scale_y'
     _relay_x = '_relay_x'
-    _breakdown_accounts = '_breakdown_accounts'
 
     _copied_accounts = '_copied_accounts'
 
@@ -139,7 +138,6 @@ class Configurations(Observable):
                       self._relay_x: self._relay_x_to_right,
 
                       self._copied_accounts: tuple(),
-                      self._breakdown_accounts: set(),
                       }
 
     @property
@@ -556,17 +554,3 @@ class Configurations(Observable):
 
     def clear_copied_accounts(self):
         self.data[self._copied_accounts] = tuple()
-
-    @property
-    def breakdown_accounts(self) -> tuple:
-        return tuple(self._data.get(self._breakdown_accounts, set()))
-
-    def add_breakdown_accounts(self, account_id):
-        if self._breakdown_accounts in self._data:
-            self._data[self._breakdown_accounts].add(account_id)
-        else:
-            self._data[self._breakdown_accounts] = {account_id}
-
-    def remove_breakdown_accounts(self, account_id):
-        if account_id in self.breakdown_accounts:
-            self._data[self._breakdown_accounts].remove(account_id)

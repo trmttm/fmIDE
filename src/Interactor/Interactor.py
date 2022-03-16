@@ -362,7 +362,7 @@ class Interactor(BoundaryInABC):
 
     @property
     def breakdown_accounts(self) -> tuple:
-        return self._configurations.breakdown_accounts
+        return self._breakdown_accounts.breakdown_accounts
 
     def add_selection_to_breakdown_accounts(self):
         keys = tuple(rpe_[0] for rpe_ in self.rpe_raw_sorted)
@@ -380,12 +380,12 @@ class Interactor(BoundaryInABC):
             else:
                 from_an_operator = False
             if is_an_account and has_one_connection_into and from_an_operator and rpe_has_one_operator:
-                self._configurations.add_breakdown_accounts(shape_id)
+                self._breakdown_accounts.add_breakdown_accounts(shape_id)
         self._present_shape_properties()
 
     def remove_selection_from_breakdown_accounts(self):
         for shape_id in self._selection.data:
-            self._configurations.remove_breakdown_accounts(shape_id)
+            self._breakdown_accounts.remove_breakdown_account(shape_id)
         self._present_shape_properties()
 
     # Configuration - Export Excel Setting
@@ -1096,6 +1096,7 @@ class Interactor(BoundaryInABC):
             self._number_format.copy(shape_id, copy_id)
             self._vertical_accounts.copy(shape_id, copy_id)
             self._unit_of_measure.copy(shape_id, copy_id, account_ids)
+            self._breakdown_accounts.copy(shape_id, copy_id)
 
         self._connections.copy(original_to_copies)
 
@@ -1259,6 +1260,7 @@ class Interactor(BoundaryInABC):
         self.remove_number_format(all_shapes_ids_to_be_deleted)
         self.remove_fills(all_shapes_ids_to_be_deleted)
         self._unit_of_measure.remove_uoms(all_shapes_ids_to_be_deleted)
+        self._breakdown_accounts.remove_breakdown_accounts(all_shapes_ids_to_be_deleted)
 
         self._present_update_account_order()
         self._present_remove_shape(all_shapes_ids_to_be_deleted)
@@ -2754,6 +2756,7 @@ class Interactor(BoundaryInABC):
         self._shape_format = entities.shape_format
         self._unit_of_measure = entities.unit_of_measure
         self._worksheet_relationship = entities.worksheet_relationship
+        self._breakdown_accounts = entities.breakdown_accounts
 
     # Graph & Slider
     def _extract_account_or_relays_from_selection(self) -> tuple:

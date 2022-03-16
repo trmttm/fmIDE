@@ -34,6 +34,7 @@ class SystemState(Mm.OriginatorABC):
                                entities.shape_format.data,  # 19
                                entities.unit_of_measure.data,  # 20
                                entities.worksheet_relationship.data,  # 21
+                               entities.breakdown_accounts.data,  # 22
                                ])
         return state
 
@@ -54,8 +55,8 @@ class SystemState(Mm.OriginatorABC):
         entities.selections.set_data(state[7])
         entities.worksheets.set_data(state[8])
 
-        # 9 configuration should not be loaded. => WHY?
-        restore_if_state_exists_otherwise_initialize(entities.configurations, 9, state)
+        # 9 configuration should not be loaded. => WHY? => because NOP should be consistent across templates.
+        # restore_if_state_exists_otherwise_initialize(entities.configurations, 9, state)
         restore_if_state_exists_otherwise_initialize(entities.input_values, 10, state)
         restore_if_state_exists_otherwise_initialize(entities.input_ranges, 11, state)
         restore_if_state_exists_otherwise_initialize(entities.connection_ids, 12, state)
@@ -67,6 +68,7 @@ class SystemState(Mm.OriginatorABC):
         restore_if_state_exists_otherwise_initialize(entities.shape_format, 19, state)
         restore_if_state_exists_otherwise_initialize(entities.unit_of_measure, 20, state)
         restore_if_state_exists_otherwise_initialize(entities.worksheet_relationship, 21, state)
+        restore_if_state_exists_otherwise_initialize(entities.breakdown_accounts, 22, state)
 
     def restore_merge(self, memento: Mm.MementoABC, *args, **kwargs):
         entities = self._entities
@@ -89,6 +91,7 @@ class SystemState(Mm.OriginatorABC):
         merge_state_if_available(entities.shape_format, 19, shape_id_converter, state)
         merge_state_if_available(entities.unit_of_measure, 20, shape_id_converter, state)
         merge_state_if_available(entities.worksheet_relationship, 21, shape_id_converter, state)
+        merge_state_if_available(entities.breakdown_accounts, 22, shape_id_converter, state)
 
     def set_last_state(self, state):
         self._last_state = state

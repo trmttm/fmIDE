@@ -4,6 +4,7 @@ from . import RPE
 from .AccountOrder import AccountOrder
 from .AccountOrder import Blank
 from .AccountOrders import AccountOrders
+from .BreakdownAccounts import BreakdownAccounts
 from .Configurations import Configurations
 from .Connection import Connections
 from .ConnectionIDs import ConnectionIDs
@@ -49,6 +50,7 @@ class Entities:
         self._copied_commands = CopiedCommands()
         self._shape_format = ShapeFormat()
         self._worksheet_relationship = WorksheetRelationship()
+        self._breakdown_accounts = BreakdownAccounts()
 
         self._unit_of_measure = UnitOfMeasure()
         self._blank = Blank()
@@ -136,6 +138,10 @@ class Entities:
     @property
     def worksheet_relationship(self) -> WorksheetRelationship:
         return self._worksheet_relationship
+
+    @property
+    def breakdown_accounts(self) -> BreakdownAccounts:
+        return self._breakdown_accounts
 
     @property
     def unit_of_measure(self) -> UnitOfMeasure:
