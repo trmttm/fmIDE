@@ -142,10 +142,11 @@ class Commands(Observable):
         return_values = []
         total_n = len(self._data)
         for n, (key, args, kwargs) in enumerate(self._data):
-            args = self._apply_magic_arg(args)
             for observer in observers:
                 observer(n, total_n, key)
             command = getattr(obj, key)
+            if command != self.set_magic_arg:
+                args = self._apply_magic_arg(args)
             try:
                 return_value = command(*args, **kwargs)
             except Exception as e:
@@ -154,7 +155,8 @@ class Commands(Observable):
         return True, tuple(return_values)
 
     def set_magic_arg(self, arg, replace_with):
-        self._magic_arg = arg
+        if not self._magic_arg:
+            self._magic_arg = arg
         self._magic_arg_replacement = replace_with
 
     def _apply_magic_arg(self, args: tuple):
