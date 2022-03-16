@@ -40,7 +40,7 @@ def main_specific_add_shape(interactor: BoundaryInABC, view: ViewABC, value: str
 
 
 def get_current_design_canvas(interactor: BoundaryInABC):
-    return f'canvas_{interactor.selected_sheet}'
+    return f'canvas_{interactor.sheet_name_to_pass_to_presenter}'
 
 
 def focus_on_account_entry(view: ViewABC):

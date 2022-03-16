@@ -480,7 +480,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -3150,6 +3150,10 @@ class Interactor(BoundaryInABC):
     def calculate(self):
         data_table = self.create_data_table()
         self._update_graph_bars_and_live_values(data_table)
+
+    @property
+    def sheet_name_to_pass_to_presenter(self):
+        return self._sf.get_sheet_name_to_pass_to_presenter(self.selected_sheet)
 
     def update_canvas(self):
         self.start_highlighting()
