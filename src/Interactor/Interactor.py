@@ -1892,7 +1892,7 @@ class Interactor(BoundaryInABC):
         self._selected_account_iterator(self.add_vertical_account)
 
     def remove_selection_from_vertical_accounts(self):
-        self._selected_account_iterator(self.add_vertical_account)
+        self._selected_account_iterator(self.remove_vertical_account)
 
     def _selected_account_iterator(self, command: Callable):
         accounts = self._shapes.get_shapes('account')
