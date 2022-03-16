@@ -2568,6 +2568,12 @@ class Interactor(BoundaryInABC):
         self._gateways.merge_macro_file(file_name)
         self.present_commands()
 
+    def merge_macro_with_magic(self, file_name: str, magic_args: str, replace_with: str):
+        command = 'set_magic_arg', (magic_args, replace_with), {}
+        last = len(self._commands.data)
+        self._commands.insert_commands(last, (command,))
+        self.merge_macro(file_name)
+
     def save_macro(self, file_name: str):
         feedback = self._gateways.save_commands_to_file(file_name)
         self.clear_commands()
