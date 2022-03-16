@@ -2117,6 +2117,7 @@ class Interactor(BoundaryInABC):
             self._vertical_accounts.change_shape_id(old_shape_id, new_shape_id)
             self._shape_format.change_shape_id(old_shape_id, new_shape_id)
             self._unit_of_measure.change_shape_id(old_shape_id, new_shape_id)
+            self._breakdown_accounts.change_shape_id(old_shape_id, new_shape_id)
 
         else:
             self.feedback_user(f'{new_shape_id} already exists!', 'error')
