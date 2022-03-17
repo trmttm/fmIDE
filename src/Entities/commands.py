@@ -16,8 +16,7 @@ class Commands(Observable):
         self._turned_on_macro_recording = False
         self._turned_off_macro_recording = False
 
-        self._magic_arg = ''
-        self._magic_arg_replacement = ''
+        self._magic_args = {}
 
     @property
     def data(self) -> tuple:
@@ -155,14 +154,15 @@ class Commands(Observable):
         return True, tuple(return_values)
 
     def set_magic_arg(self, arg, replace_with):
-        self._magic_arg = arg
-        self._magic_arg_replacement = replace_with
+        self._magic_args[arg] = replace_with
 
     def _apply_magic_arg(self, args: tuple):
         new_args = []
         for arg in args:
             if arg.__class__ == str:
-                new_args.append(str(arg).replace(self._magic_arg, self._magic_arg_replacement))
+                for key, value in self._magic_args.items():
+                    arg = str(arg).replace(key, value)
+                new_args.append(arg)
             else:
                 new_args.append(arg)
         return tuple(new_args)
