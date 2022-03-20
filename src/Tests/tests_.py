@@ -10,12 +10,14 @@ def no_need_to_test_vba_file(gateway_model):
 
 class TestInteractorAndEntity(unittest.TestCase):
     def setUp(self) -> None:
+        self.skip_expensive_tests = False
         import os
         from src.Entities import Entities
         from src.Presenter import Presenters
         from src.Interactor.Interactor import Interactor
         from src.EntityGateway import GateWays
         from .catchers import NotificationCatcher, ResponseModelCatcher, ViewResponseModelCatcher
+
 
         cwd = os.getcwd().replace('fmide/src', 'fmide')
         self._path_test_pickles = f'{cwd}/{"src/Tests"}/{"pickles"}'
@@ -1078,7 +1080,9 @@ class TestInteractorAndEntity(unittest.TestCase):
         self.assertEqual(self._shapes.shapes_ids, expectation['shape_ids'])
         self.assertEqual(self._connection_ids.data, expectation['sockets'])
 
-    def ztest_save_as_module(self):
+    def test_save_as_module(self):
+        if self.skip_expensive_tests:
+            return
         path_test_pickles = self._path_test_pickles
         pickle_name = 'test_module'
         module_name = f'{pickle_name}_saved_as_a_module'
@@ -1174,7 +1178,9 @@ class TestInteractorAndEntity(unittest.TestCase):
         self._interactor.load_file(pickle_name)
         self.assertEqual(self._interactor.get_circular_connections(), ())
 
-    def ztest_vba_user_defined_function(self):
+    def test_vba_user_defined_function(self):
+        if self.skip_expensive_tests:
+            return
         path_test_pickles = self._path_test_pickles
         pickle_name = 'test_circular_reference'
         self._interactor.change_path_pickles(path_test_pickles)
@@ -1352,7 +1358,9 @@ class TestInteractorAndEntity(unittest.TestCase):
         for key, value in gateway_model.items():
             self.assertEqual(value, expectation[key])
 
-    def ztest_spreadsheet_with_udf(self):
+    def test_spreadsheet_with_udf(self):
+        if self.skip_expensive_tests:
+            return
         path_test_pickles = self._path_test_pickles
         from src.Entities.AccountOrder import Blank
         blank = Blank()
