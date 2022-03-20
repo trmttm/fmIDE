@@ -106,6 +106,7 @@ class StatesAndFlags:
     def set_prevent_recording_previous_command(self, value: bool):
         self._prevent_recording_previous_command = value
 
+    @property
     def prevent_recording_previous_command(self) -> bool:
         return self._prevent_recording_previous_command
 
