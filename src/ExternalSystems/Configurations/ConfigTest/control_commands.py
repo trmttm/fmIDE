@@ -75,6 +75,7 @@ def upon_menu_button3(view: ViewABC, interactor: BoundaryInABC, presenters: Pres
 def upon_menu_button4(view: ViewABC, interactor: BoundaryInABC, presenters: PresentersABC, mouse: MouseControllerABC):
     position_before_refresh = _get_currently_selected_tree_position(view, vm.tree_macros)
     view.switch_frame(vm.fr_macro)
+    view.bind_tree_right_click(lambda values: upon_commands_right_click(view, values), vm.tree_commands)
     interactor.present_commands()
     interactor.present_macros()
     focus_on_tree(view, vm.tree_macros, (position_before_refresh or 0))
@@ -1328,3 +1329,22 @@ def set_breakdown_account(view: ViewABC, interactor: BoundaryInABC):
         interactor.add_selection_to_breakdown_accounts()
     else:
         interactor.remove_selection_from_breakdown_accounts()
+
+
+def upon_commands_right_click(view: ViewABC, values):
+    row, col, value = values
+    if value is None:
+        return  # Do nothing
+
+    parsed_value = ''
+    for element in value.split('{'):
+        if element in ['']:
+            pass
+        elif '}' in element:
+            element = f"{element.replace('} ', '').replace('}', '')},"
+        else:
+            element = f"{element.replace(' ', ',')},"
+        parsed_value += element
+    if parsed_value[-1] == ',':
+        parsed_value = parsed_value[:-1]
+    view.set_value(vm.entry_macro_name, parsed_value)
