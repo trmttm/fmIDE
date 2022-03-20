@@ -56,6 +56,12 @@ class Worksheets(Observable):
         except IndexError:
             return None
 
+    def get_sheet_index(self, sheet_name):
+        try:
+            return self.sheet_names.index(sheet_name)
+        except ValueError:
+            return None
+
     def get_valid_sheet_name(self, sheet_name) -> str:
         if sheet_name is None:
             n = 1

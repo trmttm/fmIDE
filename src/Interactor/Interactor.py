@@ -787,6 +787,12 @@ class Interactor(BoundaryInABC):
     def add_worksheet_parent(self, parent_sheet, child_sheet):
         # Exposed for Macro
         if not self._worksheet_relationship.has_a_parent(child_sheet):
+            child_sheet_index = self._worksheets.get_sheet_index(child_sheet)
+            parent_sheet_index = self._worksheets.get_sheet_index(parent_sheet)
+            shift = parent_sheet_index - child_sheet_index
+            if shift < 0:
+                shift += 1
+            self._worksheets.change_sheet_order((child_sheet_index,), shift)
             self._worksheet_relationship.add_worksheet_parent_child_relationship(parent_sheet, child_sheet)
         self.present_update_worksheets()
 
