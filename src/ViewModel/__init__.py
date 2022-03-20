@@ -1,33 +1,14 @@
 from typing import Any
 from typing import Dict
-from typing import Iterable
 from typing import List
 
 import Utilities
+from Utilities import create_tree_data
+from Utilities import create_view_model_tree
 
 
 def create_view_model_add_shape(response_model: dict) -> List[dict]:
     return list(response_model.values())
-
-
-def create_tree_data(parent: str, index: str, text: str, values: tuple, tags: tuple, select: bool, id_=None) -> dict:
-    tree_data = {
-        'parent': parent,
-        'index': index,
-        'text': text,
-        'values': values,
-        'tags': tags,
-        'select_this_item': select
-    }
-    if id_ is not None:
-        tree_data['id'] = id_
-    return tree_data
-
-
-def create_view_model_tree(headings: tuple, widths: tuple, tree_datas: Iterable, stretches: tuple, scroll_v: bool,
-                           scroll_h: bool) -> dict:
-    return {'tree_datas': tree_datas, 'headings': headings, 'widths': widths, 'stretches': stretches,
-            'scroll_v': scroll_v, 'scroll_h': scroll_h, }
 
 
 def create_view_model_pickle_loader_list(response_model: dict) -> dict:
