@@ -109,6 +109,10 @@ def decorate_with_user_action_catcher(f, wrapped_object: Interactor):
 def decorate_with_set_previous_command_for_repeat(f, wrapped_object: Interactor):
     def wrapper(*args, **kwargs):
         local_f = f
+
+        if wrapped_object.prevent_recording_previous_command:
+            return local_f(*args, **kwargs)
+
         state_before = wrapped_object.current_state
         returned_item = local_f(*args, **kwargs)
         state_after = wrapped_object.current_state

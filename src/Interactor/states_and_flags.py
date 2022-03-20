@@ -7,6 +7,7 @@ class StatesAndFlags:
         self._cache_circular_connections = None
         self._prevent_auto_highlight = False
         self._prevent_refresh_canvas = False
+        self._prevent_recording_previous_command = False
         self._previous_previous_commands = []
         self._previous_commands = []
         self._sheet_name_dictionary = {}
@@ -101,6 +102,12 @@ class StatesAndFlags:
 
     def set_prevent_refresh_canvas(self, value):
         self._prevent_refresh_canvas = value
+
+    def set_prevent_recording_previous_command(self, value: bool):
+        self._prevent_recording_previous_command = value
+
+    def prevent_recording_previous_command(self) -> bool:
+        return self._prevent_recording_previous_command
 
     @property
     def previous_previous_commands(self):

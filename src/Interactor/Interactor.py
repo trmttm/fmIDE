@@ -306,6 +306,16 @@ class Interactor(BoundaryInABC):
     def prevent_refresh_canvas(self) -> bool:
         return self._sf.prevent_refresh_canvas
 
+    def stop_recording_previous_command(self):
+        self._sf.set_prevent_recording_previous_command(True)
+
+    def start_recording_previous_command(self):
+        self._sf.set_prevent_recording_previous_command(False)
+
+    @property
+    def prevent_recording_previous_command(self) -> bool:
+        return self._sf.prevent_recording_previous_command
+
     @property
     def _increment_x_y(self) -> tuple:
         return self._configurations.default_shape_position_increment
@@ -2674,6 +2684,7 @@ class Interactor(BoundaryInABC):
     def run_macro(self, observer_passed: Callable = None) -> tuple:
         self.stop_canvas_refreshing()
         self.stop_highlighting()
+        self.stop_recording_previous_command()
 
         def observer(no: int, total_n: int, command_name: str):
             self._present_feedback_user(f'{no}/{total_n} running {command_name}...', is_incremental_progress=True)
