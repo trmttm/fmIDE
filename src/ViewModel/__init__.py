@@ -273,7 +273,7 @@ def create_view_model_update_commands(response_model: dict):
 
 def create_view_model_update_macros(response_model: dict):
     headings = ('No', 'Macro Name')
-    widths = (30, 250)
+    widths = (50, 250)
     stretches = (False, True)
     scroll_v, scroll_h = True, False
     c = response_model['macros']

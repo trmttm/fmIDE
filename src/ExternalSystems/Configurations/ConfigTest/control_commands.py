@@ -1016,8 +1016,9 @@ def close_search_window_properly(interactor: BoundaryInABC, view: ViewABC):
     interactor.change_active_keymap(cns.keymap_design)  # closing toplevel is responsible for changing keymap
 
 
-def upon_search_entry_update(view, entry, all_groups_and_names):
-    view.switch_tree(vm.tree_search)
+def upon_search_entry_update(view, entry, all_groups_and_names: tuple):
+    tree_id = vm.tree_search
+    view.switch_tree(tree_id)
     search_words = view.get_value(entry)
     if search_words == '':
         view.update_tree({'tree_datas': {}})  # erase all data
@@ -1319,6 +1320,7 @@ def toggle_relay_x_position(view: ViewABC, interactor: BoundaryInABC):
         interactor.set_relay_x_to_right_end()
     else:
         interactor.set_relay_x_to_right()
+
 
 def set_breakdown_account(view: ViewABC, interactor: BoundaryInABC):
     value = view.get_value(vm.check_btn_breakdown_account)
