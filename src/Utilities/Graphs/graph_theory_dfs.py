@@ -1,7 +1,7 @@
 from typing import Any
 from typing import Dict
 
-from ...Utilities.Graphs.johnson_algorithm import simple_cycles
+from Utilities.Graphs.johnson_algorithm import simple_cycles
 
 
 class Graph:
