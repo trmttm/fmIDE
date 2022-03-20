@@ -1,6 +1,6 @@
 import os
 
-from .. import Utilities
+import Utilities
 
 
 class LoadConfiguration:

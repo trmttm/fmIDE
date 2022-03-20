@@ -2,9 +2,10 @@ import copy
 from typing import Dict
 from typing import Iterable
 
+import Utilities
+
 from ..Observable import Observable
 from ..Observable import notify
-from ... import Utilities
 
 
 class Worksheets(Observable):

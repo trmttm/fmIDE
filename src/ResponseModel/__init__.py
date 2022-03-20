@@ -1,9 +1,8 @@
 from typing import Callable
 from typing import Iterable
 
+import Utilities
 from src.Presenter.HighlightShape import highlight as h
-
-from src import Utilities
 
 
 def response_model_to_presenter_highlight_auto(audit_results: Iterable) -> dict:

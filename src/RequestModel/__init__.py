@@ -1,4 +1,4 @@
-from .. import Utilities
+import Utilities
 
 
 def request_model_add_new_shape(text: str, tag: str = None) -> dict:

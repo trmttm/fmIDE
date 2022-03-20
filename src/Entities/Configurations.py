@@ -1,8 +1,8 @@
+import Utilities
 import os_identifier
 
 from .Observable import Observable
 from .Observable import notify
-from .. import Utilities
 
 
 class Configurations(Observable):

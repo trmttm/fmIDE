@@ -1,6 +1,6 @@
 from typing import Tuple
 
-from src import Utilities
+import Utilities
 
 
 def get_rpes(connections: tuple, positions: dict, operators: tuple) -> tuple:

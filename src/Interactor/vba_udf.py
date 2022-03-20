@@ -1,10 +1,10 @@
 from typing import Iterable
 from typing import Tuple
 
+import Utilities
 import rpe_to_normal
 
 from . import implementation_9 as impl
-from .. import Utilities
 from ..Entities import Connections
 from ..Entities import Shapes
 

@@ -1,7 +1,7 @@
 from typing import Iterable
 from typing import Tuple
 
-from src import Utilities
+import Utilities
 
 from ..Shape import constants as cns
 

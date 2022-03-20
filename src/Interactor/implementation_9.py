@@ -1,10 +1,11 @@
 import typing as tp
 
+import Utilities
+from Utilities.Graphs.graph_theory_dfs import Graph
+
 from .. import Entities as Et
 from .. import RequestModel
-from .. import Utilities
 from ..EntityGateway import GateWayABC
-from ..Utilities.Graphs.graph_theory_dfs import Graph
 
 cns_x = 'x'
 cns_y = 'y'

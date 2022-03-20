@@ -7,6 +7,8 @@ from typing import Iterable
 from typing import Type
 from typing import Union
 
+import Utilities
+from Utilities.Memento import Memento
 from interface_fm import BoundaryInABC
 from interface_fm_calculator import CalculatorABC
 from interface_keymaps import KeyMapABC
@@ -31,12 +33,10 @@ from .load_config import LoadConfiguration
 from .states_and_flags import StatesAndFlags
 from .. import RequestModel
 from .. import ResponseModel
-from .. import Utilities
 from ..BoundaryOutput import PresentersABC
 from ..Entities import Entities
 from ..Entities import Observable
 from ..EntityGateway import GateWayABC
-from ..Utilities.Memento import Memento
 
 
 class Interactor(BoundaryInABC):

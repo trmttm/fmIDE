@@ -1,7 +1,7 @@
 import copy
 
+from Utilities import Memento as Mm
 from src.Entities import Entities
-from src.Utilities import Memento as Mm
 
 
 class CommandState(Mm.OriginatorABC):

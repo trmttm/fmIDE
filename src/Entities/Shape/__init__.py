@@ -2,11 +2,12 @@ from typing import Iterable
 from typing import Tuple
 from typing import Union
 
+import Utilities
+
 from . import constants
 from . import implementation as impl
 from ..Observable import Observable
 from ..Observable import notify
-from ... import Utilities
 
 
 class Shapes(Observable):

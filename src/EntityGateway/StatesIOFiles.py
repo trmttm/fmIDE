@@ -2,8 +2,9 @@ import importlib.resources
 import io
 import pickle
 
+from Utilities.Memento import Caretaker
+
 from .SaveState import SaveStateABC
-from ..Utilities.Memento import Caretaker
 
 
 class StateIOFile(SaveStateABC):

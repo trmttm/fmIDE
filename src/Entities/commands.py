@@ -1,6 +1,7 @@
 from typing import Iterable
 
-from src import Utilities
+import Utilities
+
 from .Observable import Observable
 from .Observable import notify
 

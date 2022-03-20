@@ -3,7 +3,7 @@ from typing import Dict
 from typing import Iterable
 from typing import List
 
-from src import Utilities
+import Utilities
 
 
 def create_view_model_add_shape(response_model: dict) -> List[dict]:

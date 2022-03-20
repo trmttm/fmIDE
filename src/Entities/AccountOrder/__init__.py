@@ -1,9 +1,10 @@
 from typing import Union
 
+import Utilities
+
 from . import implementation as impl
 from ..Observable import Observable
 from ..Observable import notify
-from ... import Utilities
 
 
 class AccountOrder(Observable):

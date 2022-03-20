@@ -1,7 +1,8 @@
 import copy
 
+from Utilities import Memento as Mm
+
 from ..Entities import Entities
-from ..Utilities import Memento as Mm
 
 
 class SystemState(Mm.OriginatorABC):

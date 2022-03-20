@@ -4,9 +4,10 @@ import pickle
 import subprocess
 from distutils.dir_util import copy_tree
 
+import Utilities
 import os_identifier
+from Utilities.Memento import Memento
 from interface_gateway_fm import GateWayABC
-from src.Utilities import Memento
 
 from . import Paths
 from .CommandState import CommandState
@@ -14,7 +15,6 @@ from .FilesSystemIO import FileSystemIO
 from .StatesIOFiles import StateIOFile
 from .StatesIOMemory import StatesIOMemory
 from .SystemState import SystemState
-from .. import Utilities
 from ..Entities import Entities
 
 
