@@ -162,7 +162,11 @@ class Commands(Observable):
         for arg in args:
             if arg.__class__ == str:
                 for key, value in self._magic_args.items():
-                    arg = str(arg).replace(key, value)
+                    try:
+                        arg = str(arg).replace(key, value)
+                    except TypeError:  # value is not string, input_values, for example
+                        if arg == key:
+                            arg = value
                 new_args.append(arg)
             else:
                 new_args.append(arg)

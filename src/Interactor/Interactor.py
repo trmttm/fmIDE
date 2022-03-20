@@ -562,6 +562,13 @@ class Interactor(BoundaryInABC):
         if input_account is not None:
             self.set_input_values(input_account, values)
 
+    def set_values_to_input_selected(self, values: tuple):
+        input_accounts = self.input_accounts
+        selected_shapes = tuple(self._selection.data)
+        if len(selected_shapes) > 0 and selected_shapes[0] in input_accounts:
+            input_account = selected_shapes[0]
+            self.set_input_values(input_account, values)
+
     def set_decimals_to_input_being_modified(self, decimals: int):
         input_account = self._sf.input_being_modified
         if input_account is not None:

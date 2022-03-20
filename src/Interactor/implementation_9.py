@@ -637,9 +637,18 @@ def get_cycle_breakers(connections: Et.Connections, shapes: Et.Shapes) -> dict:
 def parse_arg_str(args_str: str):
     if ',' in args_str:
         if '(' in args_str and ')' in args_str:
-            args_str = args_str.replace('(', '').replace(')', '')
-            args_str = comma_separated_string_to_tuple(args_str)
-            args = (tuple(Utilities.convert_to_number_if_possible(i) for i in args_str),)
+            args = []
+            segregated_by_parentheses = segregate_by_parentheses(args_str)
+            for each_arg_str in segregated_by_parentheses:
+                each_arg_str = each_arg_str.strip(',')
+                if ',' in each_arg_str:
+                    arg_tuple = comma_separated_string_to_tuple(each_arg_str)
+                    arg_tuple_converted = tuple(Utilities.convert_to_number_if_possible(i) for i in arg_tuple)
+                    args.append(arg_tuple_converted)
+                else:
+                    args.append(Utilities.convert_to_number_if_possible(each_arg_str))
+
+            args = tuple(args)
         else:
             args = comma_separated_string_to_tuple(args_str)
             args = tuple(Utilities.convert_to_number_if_possible(a) for a in args)
@@ -647,6 +656,17 @@ def parse_arg_str(args_str: str):
         args_str = Utilities.convert_to_number_if_possible(args_str)
         args = (args_str,)
     return args
+
+
+def segregate_by_parentheses(args_str):
+    args_str = args_str.split('(')
+    result = []
+    for element in args_str:
+        element = element.strip(' ')
+        element = element.replace(')', '')
+        if element not in ('', ','):
+            result.append(element)
+    return result
 
 
 def comma_separated_string_to_tuple(args_str: str) -> tuple:
