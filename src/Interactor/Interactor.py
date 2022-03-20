@@ -769,11 +769,10 @@ class Interactor(BoundaryInABC):
 
     # Worksheet Relationship
     def add_worksheet_parent_child_relationships(self, above_sheet_names: Iterable, child_sheet_names: Iterable):
-        ws_relationship = self._worksheet_relationship
         for above_sheet_name, child_name in zip(above_sheet_names, child_sheet_names):
-            parent_sheet_name = ws_relationship.get_parent_worksheet(above_sheet_name) or above_sheet_name
-            if not ws_relationship.has_a_parent(child_name):
-                ws_relationship.add_worksheet_parent_child_relationship(parent_sheet_name, child_name)
+            parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(above_sheet_name) or above_sheet_name
+            if not self._worksheet_relationship.has_a_parent(child_name):
+                self._worksheet_relationship.add_worksheet_parent_child_relationship(parent_sheet_name, child_name)
 
     def remove_worksheet_parent_child_relationships(self, child_sheet_names: Iterable):
         for child_sheet_name in child_sheet_names:
@@ -784,6 +783,23 @@ class Interactor(BoundaryInABC):
                 location = max(children_indexes)
                 self._worksheet_relationship.remove_parent_worksheet(child_sheet_name)
                 self._worksheets.insert_sheets((child_sheet_name,), location)
+
+    def add_worksheet_parent(self, parent_sheet, child_sheet):
+        # Exposed for Macro
+        if not self._worksheet_relationship.has_a_parent(child_sheet):
+            self._worksheet_relationship.add_worksheet_parent_child_relationship(parent_sheet, child_sheet)
+        self.present_update_worksheets()
+
+    def remove_worksheet_parent(self, child_sheet):
+        # Exposed for Macro
+        if self._worksheet_relationship.has_a_parent(child_sheet):
+            parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(child_sheet)
+            children_indexes = tuple(self._worksheets.sheet_names.index(name) for name in
+                                     self._worksheet_relationship.get_children_sheet_names(parent_sheet_name))
+            location = max(children_indexes)
+            self._worksheet_relationship.remove_parent_worksheet(child_sheet)
+            self._worksheets.insert_sheets((child_sheet,), location)
+        self.present_update_worksheets()
 
     # Copy / Paste Accounts
     def copy_accounts(self):
@@ -2566,6 +2582,10 @@ class Interactor(BoundaryInABC):
             self._number_format.delete_format(shape_id)
 
     # Macro
+    @property
+    def macro_commands(self) -> tuple:
+        return self._commands.data
+
     def set_command_name(self, index_: int, command_name: str, selected_: tuple = ()):
         self.save_state_to_memory()
         if hasattr(self, command_name):
@@ -2586,8 +2606,16 @@ class Interactor(BoundaryInABC):
         self._gateways.merge_macro_file(file_name)
         self.present_commands()
 
+    def merge_macro_with_multiple_magic_args(self, file_name: str, magic_args: tuple, replace_with: tuple):
+        method_name = self.set_multiple_magic_args.__name__
+        self._merge_with_magic_args(file_name, magic_args, method_name, replace_with)
+
     def merge_macro_with_magic(self, file_name: str, magic_args: str, replace_with: str):
-        command = 'set_magic_arg', (magic_args, replace_with), {}
+        method_name = self.set_magic_arg.__name__
+        self._merge_with_magic_args(file_name, magic_args, method_name, replace_with)
+
+    def _merge_with_magic_args(self, file_name, magic_args, method_name, replace_with):
+        command = method_name, (magic_args, replace_with), {}
         last = len(self._commands.data)
         self._commands.insert_commands(last, (command,))
         self.merge_macro(file_name)
@@ -2680,6 +2708,10 @@ class Interactor(BoundaryInABC):
 
     def set_magic_arg(self, arg, replace_with):
         self._commands.set_magic_arg(arg, replace_with)
+
+    def set_multiple_magic_args(self, args: tuple, replace_withs: tuple):
+        for arg, replace_with in zip(args, replace_withs):
+            self.set_magic_arg(arg, replace_with)
 
     def run_macro(self, observer_passed: Callable = None) -> tuple:
         self.stop_canvas_refreshing()
