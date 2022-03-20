@@ -131,7 +131,8 @@ if __name__ == '__main__':
             from src.Entities import Observable
             Observable.is_debug_mode = False
             app = instantiate_app()
-            app.interactor.load_file('00 Tutorial 00 Revenue')
+            app.interactor.merge_macro('test2')
+            app.interactor.run_macro()
 
             app.quit()
 
