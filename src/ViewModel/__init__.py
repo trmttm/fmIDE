@@ -242,8 +242,8 @@ def create_view_model_display_states(response_model: dict) -> str:
 
 def create_view_model_update_commands(response_model: dict):
     headings = ('No', 'Command Name', 'args', 'kwargs')
-    widths = (40, 100, 130, 130)
-    stretches = (False, True, True, True)
+    widths = (40, 300, 500, 40)
+    stretches = (False, False, True, False)
     scroll_v, scroll_h = True, False
     c = response_model['commands']
     select = response_model['select_flags']
