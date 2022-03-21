@@ -1,3 +1,4 @@
+import subprocess
 from typing import Callable
 from typing import Tuple
 from typing import Type
@@ -964,14 +965,24 @@ def popup_search_window(view: ViewABC, interactor: BoundaryInABC, presenters: Pr
 
 def execute_searched_command(view: ViewABC, interactor: BoundaryInABC):
     merge_method = interactor.merge_file
-    merge_macro_method = _execute_macro
+    merge_macro_method = _merge_macro
     _execute_searched_command(view, interactor, merge_method, merge_macro_method)
 
 
 def execute_searched_command_alternative(view: ViewABC, interactor: BoundaryInABC):
     merge_method = interactor.merge_file_to_selected_sheet
-    merge_macro_method = _merge_macro
+    merge_macro_method = _execute_macro
     _execute_searched_command(view, interactor, merge_method, merge_macro_method)
+
+
+def copy_searched_item_to_clip_board(view: ViewABC, interactor: BoundaryInABC):
+    group, name = view.tree_selected_values(vm.tree_search)[0]
+    try:
+        subprocess.run("pbcopy", universal_newlines=True, input=name)
+    except FileNotFoundError:
+        subprocess.run("pbcopy", universal_newlines=True, input=name, shell=True)
+    interactor.feedback_user(f'Clipboard = {name}', 'success')
+    close_search_window_properly(interactor, view)
 
 
 def _execute_searched_command(view: ViewABC, interactor: BoundaryInABC, merge_transaction_method: Callable,

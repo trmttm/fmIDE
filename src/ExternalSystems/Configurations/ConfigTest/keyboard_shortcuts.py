@@ -327,6 +327,7 @@ def create_search_window_key_combos(interactor: BoundaryInABC, view: ViewABC, pr
         (k.none, k.down): (lambda: c.search_tree_focus_down(v, vm.tree_search), 'Select tree down'),
         (k.none, k.return_): (lambda: c.execute_searched_command(v, i), 'Execute selected command.'),
         (k.shift, k.return_): (lambda: c.execute_searched_command_alternative(v, i), 'Execute command.'),
+        (main_modifier, k.return_): (lambda: c.copy_searched_item_to_clip_board(v, i), 'Execute command.'),
         (k.none, k.escape): (lambda: c.close_search_window_properly(i, v), 'Closed Search Window Properly.'),
         (main_modifier, k.w): (lambda: c.close_search_window_properly(i, v), 'Closed Search Window Properly.'),
     }
