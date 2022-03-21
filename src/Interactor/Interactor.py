@@ -316,6 +316,16 @@ class Interactor(BoundaryInABC):
     def prevent_recording_previous_command(self) -> bool:
         return self._sf.prevent_recording_previous_command
 
+    def stop_worksheet_change_by_tree(self):
+        self._sf.set_prevent_worksheet_change_by_tree(True)
+
+    def start_worksheet_change_by_tree(self):
+        self._sf.set_prevent_worksheet_change_by_tree(False)
+
+    @property
+    def prevent_worksheet_change_by_tree(self) -> bool:
+        return self._sf.prevent_worksheet_change_by_tree
+
     @property
     def _increment_x_y(self) -> tuple:
         return self._configurations.default_shape_position_increment
@@ -490,7 +500,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -2137,6 +2147,7 @@ class Interactor(BoundaryInABC):
             all_accounts = self._shapes.get_shapes('account')
 
             # Clean other entities
+            self._connections.clean_data(self._shapes.shapes_ids)
             self._unit_of_measure.clean_data(all_accounts)
             self._worksheet_relationship.clean_data()
 
@@ -2727,6 +2738,7 @@ class Interactor(BoundaryInABC):
         self.stop_canvas_refreshing()
         self.stop_highlighting()
         self.stop_recording_previous_command()
+        self.stop_worksheet_change_by_tree()  # Prevent Unintended Macro error (account selection, copy/paste)
 
         def observer(no: int, total_n: int, command_name: str):
             self._present_feedback_user(f'{no}/{total_n} running {command_name}...', is_incremental_progress=True)
@@ -2736,6 +2748,8 @@ class Interactor(BoundaryInABC):
 
         self.start_canvas_refreshing()
         self.start_highlighting()
+        self.start_recording_previous_command()
+        self.start_worksheet_change_by_tree()
         self.update_canvas()
         if succeeded:
             return_values = return_values_or_error
@@ -3363,11 +3377,17 @@ class Interactor(BoundaryInABC):
     # Caching
     def clear_all_cache(self):
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
+        prevent_recording_previous_command_was_prevented_at_the_beginning = self.prevent_recording_previous_command
+        worksheet_change_by_tree_was_prevented_at_the_beginning = self.prevent_worksheet_change_by_tree
         self.clear_cache_audit_results()
         self.clear_cache_slider()
         self._sf.__init__()
         if canvas_refresh_was_prevented_at_the_beginning:
             self.stop_canvas_refreshing()
+        if prevent_recording_previous_command_was_prevented_at_the_beginning:
+            self.stop_recording_previous_command()
+        if worksheet_change_by_tree_was_prevented_at_the_beginning:
+            self.stop_worksheet_change_by_tree()
 
     def cache_audit_results(self):
         self._cache.set_cache_audit_results(self._get_audit_results(self._get_minimum_shape_ids_to_update()))

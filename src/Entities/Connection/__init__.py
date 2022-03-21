@@ -12,6 +12,12 @@ class Connections(Observable):
         self._new_merged_connections = set()
 
     @notify
+    def clean_data(self, all_shape_ids: tuple):
+        for shape_from, shape_to in tuple(self._data):
+            if (shape_from not in all_shape_ids) or (shape_to not in all_shape_ids):
+                self._data.remove((shape_from, shape_to))
+
+    @notify
     def add_connection(self, id_from, id_to):
         if (id_from != id_to) and (id_from is not None) and (id_to is not None):
             self._data.add((id_from, id_to))

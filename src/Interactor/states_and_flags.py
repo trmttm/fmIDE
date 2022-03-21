@@ -8,6 +8,7 @@ class StatesAndFlags:
         self._prevent_auto_highlight = False
         self._prevent_refresh_canvas = False
         self._prevent_recording_previous_command = False
+        self._prevent_worksheet_change_by_tree = False
         self._previous_previous_commands = []
         self._previous_commands = []
         self._sheet_name_dictionary = {}
@@ -109,6 +110,13 @@ class StatesAndFlags:
     @property
     def prevent_recording_previous_command(self) -> bool:
         return self._prevent_recording_previous_command
+
+    def set_prevent_worksheet_change_by_tree(self, value: bool):
+        self._prevent_worksheet_change_by_tree = value
+
+    @property
+    def prevent_worksheet_change_by_tree(self) -> bool:
+        return self._prevent_worksheet_change_by_tree
 
     @property
     def previous_previous_commands(self):

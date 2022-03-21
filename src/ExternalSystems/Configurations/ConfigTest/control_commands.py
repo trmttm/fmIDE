@@ -217,7 +217,8 @@ def upon_tree_worksheets_click(interactor: BoundaryInABC, view: ViewABC):
         sheet_name = view.tree_focused_values(vm.tree_worksheets)[1]
     except IndexError:
         return
-    interactor.select_worksheet(sheet_name, update=True)
+    if not interactor.prevent_worksheet_change_by_tree:
+        interactor.select_worksheet(sheet_name, update=True)
 
 
 def upon_delete_template(view: ViewABC, interactor: BoundaryInABC, negative_list):
