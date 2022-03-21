@@ -968,7 +968,7 @@ def execute_searched_command(view: ViewABC, interactor: BoundaryInABC):
     _execute_searched_command(view, interactor, merge_method, merge_macro_method)
 
 
-def execute_searched_command_merge_to_current_sheet(view: ViewABC, interactor: BoundaryInABC):
+def execute_searched_command_alternative(view: ViewABC, interactor: BoundaryInABC):
     merge_method = interactor.merge_file_to_selected_sheet
     merge_macro_method = _merge_macro
     _execute_searched_command(view, interactor, merge_method, merge_macro_method)
