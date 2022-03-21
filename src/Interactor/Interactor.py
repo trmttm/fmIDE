@@ -2010,6 +2010,10 @@ class Interactor(BoundaryInABC):
         for shape_id in self.selected_accounts:
             self.add_unit_of_measure(shape_id, unit_of_measure)
 
+    def replace_uom(self, replace_this: str, with_this: str):
+        self._unit_of_measure.replace_uom(replace_this, with_this)
+        self._present_shape_properties()
+
     # Properties
     @property
     def selection_contains_constant(self) -> bool:

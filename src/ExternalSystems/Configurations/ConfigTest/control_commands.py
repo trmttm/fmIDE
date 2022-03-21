@@ -964,53 +964,61 @@ def popup_search_window(view: ViewABC, interactor: BoundaryInABC, presenters: Pr
 
 def execute_searched_command(view: ViewABC, interactor: BoundaryInABC):
     merge_method = interactor.merge_file
-    _execute_searched_command(view, interactor, merge_method)
+    merge_macro_method = _execute_macro
+    _execute_searched_command(view, interactor, merge_method, merge_macro_method)
 
 
 def execute_searched_command_merge_to_current_sheet(view: ViewABC, interactor: BoundaryInABC):
     merge_method = interactor.merge_file_to_selected_sheet
-    _execute_searched_command(view, interactor, merge_method)
+    merge_macro_method = _merge_macro
+    _execute_searched_command(view, interactor, merge_method, merge_macro_method)
 
 
-def _execute_searched_command(view: ViewABC, interactor: BoundaryInABC, merge_method: Callable):
-    i = interactor
+def _execute_searched_command(view: ViewABC, interactor: BoundaryInABC, merge_transaction_method: Callable,
+                              merge_macro_method: Callable):
     try:
         group, name = view.tree_selected_values(vm.tree_search)[0]
     except IndexError:
         return
     if group == 'Transaction':
-        merge_method(name)
+        merge_transaction_method(name)
     elif group == 'Macro':
-        initial_commands = i.commands
-        recording_mode = i.turned_on_macro_recording
+        merge_macro_method(interactor, name)
+    close_search_window_properly(interactor, view)
 
-        if recording_mode:
-            i.stop_macro_recording()
+
+def _merge_macro(interactor: BoundaryInABC, name: str):
+    interactor.merge_macro(name)
+    interactor.feedback_user(f'Macro {name} merged.')
+
+
+def _execute_macro(interactor: BoundaryInABC, name: str):
+    i = interactor
+    initial_commands = i.commands
+    recording_mode = i.turned_on_macro_recording
+    if recording_mode:
+        i.stop_macro_recording()
+    #################################
+    # Below Overhead Command(s) not to be recorded
+    i.clear_commands()
+    i.merge_macro(name)
+    #################################
+    if recording_mode:
+        i.start_macro_recording()
+    if i.commands[0][0] == i.run_macro.__name__:
+        i.set_commands(initial_commands)
+    i.run_macro()
+    if i.cleared_commands:
+        i.clear_commands()  # Pattern 2 Clear Commands
+    elif i.turned_on_macro_recording:
+        i.stop_macro_recording()
         #################################
         # Below Overhead Command(s) not to be recorded
         i.clear_commands()
-        i.merge_macro(name)
         #################################
-        if recording_mode:
-            i.start_macro_recording()
-
-        if i.commands[0][0] == i.run_macro.__name__:
-            i.set_commands(initial_commands)
-
-        i.run_macro()
-
-        if i.cleared_commands:
-            i.clear_commands()  # Pattern 2 Clear Commands
-        elif i.turned_on_macro_recording:
-            i.stop_macro_recording()
-            #################################
-            # Below Overhead Command(s) not to be recorded
-            i.clear_commands()
-            #################################
-            i.start_macro_recording()
-        else:
-            i.set_commands(initial_commands)  # Pattern 1 (base case, add transaction, etc)
-    close_search_window_properly(interactor, view)
+        i.start_macro_recording()
+    else:
+        i.set_commands(initial_commands)  # Pattern 1 (base case, add transaction, etc)
 
 
 def close_search_window_properly(interactor: BoundaryInABC, view: ViewABC):
