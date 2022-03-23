@@ -30,6 +30,16 @@ class UnitOfMeasure(Observable):
         self._data = new_data
 
     @notify
+    def replace_uom_of_specified_shape_ids(self, replace_this: str, with_this: str, shape_ids: tuple):
+        new_data = {}
+        for shape_id, uom in self._data.items():
+            if shape_id in shape_ids:
+                new_data[shape_id] = uom.replace(replace_this, with_this)
+            else:
+                new_data[shape_id] = uom
+        self._data = new_data
+
+    @notify
     def merge_data(self, data: Dict[Any, str], shape_id_converter: dict):
         new_data = {}
         for shape_id, unit_of_measure in data.items():

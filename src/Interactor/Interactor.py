@@ -500,7 +500,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -2022,6 +2022,19 @@ class Interactor(BoundaryInABC):
 
     def replace_uom(self, replace_this: str, with_this: str):
         self._unit_of_measure.replace_uom(replace_this, with_this)
+        self._present_shape_properties()
+
+    def replace_uom_of_selection(self, replace_this: str, with_this: str):
+        shape_ids = tuple(self._selection.data)
+        self._unit_of_measure.replace_uom_of_specified_shape_ids(replace_this, with_this, shape_ids)
+        self._present_shape_properties()
+
+    def replace_uom_of_selected_sheet(self, replace_this: str, with_this: str):
+        self.replace_uom_within_specified_sheet(replace_this, with_this, self.selected_sheet)
+
+    def replace_uom_within_specified_sheet(self, replace_this: str, with_this: str, sheet_name):
+        shape_ids = self._worksheets.get_sheet_contents(sheet_name)
+        self._unit_of_measure.replace_uom_of_specified_shape_ids(replace_this, with_this, shape_ids)
         self._present_shape_properties()
 
     # Properties
