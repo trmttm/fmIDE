@@ -131,8 +131,11 @@ if __name__ == '__main__':
             from src.Entities import Observable
             Observable.is_debug_mode = False
             app = instantiate_app()
-            app.interactor.merge_macro('test2')
-            app.interactor.run_macro()
+
+            app.interactor.clear_commands()
+            for file_name in app.interactor.pickle_commands_file_names:
+                app.interactor.merge_macro(file_name)
+                app.interactor.save_macro(file_name)
 
             app.quit()
 
