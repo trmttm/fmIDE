@@ -128,6 +128,7 @@ btn_del_macro = 'btn_del_macro'
 btn_merge_macro = 'btn_merge_macro'
 btn_save_macro = 'btn_save_macro'
 btn_run_commands = 'btn_run_commands'
+btn_run_commands_fast = 'btn_run_commands_fast'
 btn_clear_commands = 'btn_clear_commands'
 btn_del_commands = 'btn_del_commands'
 btn_copy_commands = 'btn_copy_commands'
@@ -145,6 +146,7 @@ kw_macro_buttons = {'btn_del_macro': btn_del_macro,
                     'btn_merge_macro': btn_merge_macro,
                     'btn_save_macro': btn_save_macro,
                     'btn_run_commands': btn_run_commands,
+                    'btn_run_commands_fast': btn_run_commands_fast,
                     'btn_clear_commands': btn_clear_commands,
                     'btn_del_commands': btn_del_commands,
                     'btn_copy_commands': btn_copy_commands,

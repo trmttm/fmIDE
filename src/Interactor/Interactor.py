@@ -1,5 +1,6 @@
 import copy
 import os
+import time
 from typing import Any
 from typing import Callable
 from typing import Dict
@@ -2747,9 +2748,14 @@ class Interactor(BoundaryInABC):
         for arg, replace_with in zip(args, replace_withs):
             self.set_magic_arg(arg, replace_with)
 
-    def run_macro(self, observer_passed: Callable = None) -> tuple:
-        self._present_feedback_user('Running macro...')
+    def run_macro_fast(self, observer_passed: Callable = None) -> tuple:
+        self._present_feedback_user('Running macro...', is_incremental_progress=True)
         self.turn_off_presenters()
+
+        return self.run_macro(observer_passed)
+
+    def run_macro(self, observer_passed: Callable = None) -> tuple:
+        start = time.time()
         self.stop_canvas_refreshing()
         self.stop_highlighting()
         self.stop_recording_previous_command()
@@ -2765,16 +2771,21 @@ class Interactor(BoundaryInABC):
         self.start_highlighting()
         self.start_recording_previous_command()
         self.start_worksheet_change_by_tree()
+
+        # In case Presenters is turned off
         self.turn_on_presenters()
         self.present_commands()
+
+        end = time.time()
+        execution_time = round(end - start, 2)
         if succeeded:
             return_values = return_values_or_error
-            self._present_feedback_user('Macro completed!', 'success')
+            self._present_feedback_user(f'Macro completed! {execution_time} sec', 'success')
             return return_values
         else:
             n, key, args, kwargs, e = return_values_or_error
             message = f'Macro stopped due to error. No.:{n}, command:{key}, args:{args}, kwargs:{kwargs}, exception{e}'
-            self._present_feedback_user(message, 'error')
+            self._present_feedback_user(f'{message} {execution_time} sec', 'error')
             return ()
 
     def turn_on_presenters(self):

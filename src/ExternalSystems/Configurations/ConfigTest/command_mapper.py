@@ -93,6 +93,7 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
         w.btn_merge_macro: lambda: c.btn_merge_macro(view, interactor),
         w.btn_save_macro: lambda: c.btn_save_macro(view, interactor),
         w.btn_run_commands: lambda: c.btn_run_commands(view, interactor),
+        w.btn_run_commands_fast: lambda: c.btn_run_commands_fast(interactor),
         w.btn_clear_commands: lambda: c.btn_clear_commands(interactor),
         w.btn_del_commands: lambda: c.btn_del_commands(view, interactor),
         w.btn_copy_commands: lambda: c.btn_copy_commands(view, interactor),

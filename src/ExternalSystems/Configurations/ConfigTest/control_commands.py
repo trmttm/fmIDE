@@ -811,6 +811,10 @@ def btn_run_commands(view: ViewABC, interactor: BoundaryInABC):
     interactor.run_macro(observer)
 
 
+def btn_run_commands_fast(interactor: BoundaryInABC):
+    interactor.run_macro_fast()
+
+
 def btn_clear_commands(interactor: BoundaryInABC):
     interactor.clear_commands()
 
