@@ -2748,6 +2748,8 @@ class Interactor(BoundaryInABC):
             self.set_magic_arg(arg, replace_with)
 
     def run_macro(self, observer_passed: Callable = None) -> tuple:
+        self._present_feedback_user('Running macro...')
+        self.turn_off_presenters()
         self.stop_canvas_refreshing()
         self.stop_highlighting()
         self.stop_recording_previous_command()
@@ -2763,6 +2765,8 @@ class Interactor(BoundaryInABC):
         self.start_highlighting()
         self.start_recording_previous_command()
         self.start_worksheet_change_by_tree()
+        self.turn_on_presenters()
+        self.present_commands()
         if succeeded:
             return_values = return_values_or_error
             self._present_feedback_user('Macro completed!', 'success')
@@ -2772,6 +2776,12 @@ class Interactor(BoundaryInABC):
             message = f'Macro stopped due to error. No.:{n}, command:{key}, args:{args}, kwargs:{kwargs}, exception{e}'
             self._present_feedback_user(message, 'error')
             return ()
+
+    def turn_on_presenters(self):
+        self._presenters.turn_on()
+
+    def turn_off_presenters(self):
+        self._presenters.turn_off()
 
     @property
     def cleared_commands(self) -> bool:
@@ -3259,9 +3269,15 @@ class Interactor(BoundaryInABC):
         return self._sf.get_sheet_name_to_pass_to_presenter(self.selected_sheet)
 
     def update_canvas(self):
+        presenters_was_initially_off = not self._presenters.is_on
+        self.turn_on_presenters()
         self.start_highlighting()
         self.start_canvas_refreshing()
         self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes({})
+
+        if presenters_was_initially_off:
+            self.turn_off_presenters()
+        self.feedback_user(f'All sheets canvas updated.')
 
     def create_data_table(self):
         gateway_model = self.create_calculation_gateway_model()

@@ -31,6 +31,8 @@ from ..BoundaryOutput import PresentersABC
 class Presenters(PresentersABC):
 
     def __init__(self):
+        self._is_on = True
+
         self._add_shape = PresenterAddShape()
         self._connect_shapes = PresenterConnectShape()
         self._highlight_shape = PresenterHighlightShape()
@@ -158,108 +160,134 @@ class Presenters(PresentersABC):
         self._present_delete_worksheet.attach(observer)
 
     def add_shape(self, response_model):
-        self._notify(response_model)
-        self._add_shape.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._add_shape.present(response_model)
 
     def connect_shapes(self, response_model):
-        self._notify(response_model)
-        self._connect_shapes.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._connect_shapes.present(response_model)
 
     def highlight_shape(self, response_model):
-        self._notify(response_model)
-        self._highlight_shape.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._highlight_shape.present(response_model)
 
     def move_shapes(self, response_model):
-        self._notify(response_model)
-        self._move_shapes.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._move_shapes.present(response_model)
 
     def draw_rectangle(self, response_model):
-        self._notify(response_model)
-        self._draw_rectangle.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._draw_rectangle.present(response_model)
 
     def remove_shape(self, response_model):
-        self._notify(response_model)
-        self._remove_shape.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._remove_shape.present(response_model)
 
     def draw_line(self, response_model):
-        self._notify(response_model)
-        self._draw_line.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._draw_line.present(response_model)
 
     def feedback_user(self, response_model):
-        self._notify(response_model)
-        self._feedback_user.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._feedback_user.present(response_model)
 
     def clear_canvas(self, response_model=None):
-        self._notify(response_model)
-        self._clear_canvas.present()
+        if self._is_on:
+            self._notify(response_model)
+            self._clear_canvas.present()
 
     def load_pickle_files_list(self, response_model):
-        self._notify(response_model)
-        self._load_pickle_files_list.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._load_pickle_files_list.present(response_model)
 
     def update_account_order(self, response_model):
-        self._notify(response_model)
-        self._update_account_order.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._update_account_order.present(response_model)
 
     def update_shape_properties(self, response_model):
-        self._notify(response_model)
-        self._update_shape_properties.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._update_shape_properties.present(response_model)
 
     def present_states(self, response_model):
-        self._notify(response_model)
-        self._present_states.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_states.present(response_model)
 
     def update_worksheets(self, response_model):
-        self._notify(response_model)
-        self._present_worksheets.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_worksheets.present(response_model)
 
     def show_input_entry(self, response_model):
-        self._notify(response_model)
-        self._present_input_entry.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_input_entry.present(response_model)
 
     def update_connection_ids(self, response_model):
-        self._notify(response_model)
-        self._present_connection_ids.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_connection_ids.present(response_model)
 
     def update_commands(self, response_model):
-        self._notify(response_model)
-        self._present_commands.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_commands.present(response_model)
 
     def update_macros(self, response_model):
-        self._notify(response_model)
-        self._present_macros.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_macros.present(response_model)
 
     def update_sensitivity_input_list(self, response_model):
-        self._notify(response_model)
-        self._present_sensitivity_input_accounts.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_sensitivity_input_accounts.present(response_model)
 
     def update_sensitivity_account_list(self, response_model):
-        self._notify(response_model)
-        self._present_sensitivity_accounts.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_sensitivity_accounts.present(response_model)
 
     def update_data_table_account_list(self, response_model):
-        self._notify(response_model)
-        self._present_data_table_accounts.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_data_table_accounts.present(response_model)
 
     def update_sensitivity_target_accounts(self, response_model):
-        self._notify(response_model)
-        self._present_sensitivity_target_accounts.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_sensitivity_target_accounts.present(response_model)
 
     def update_data_table_target_accounts(self, response_model):
-        self._notify(response_model)
-        self._present_data_table_target_accounts.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_data_table_target_accounts.present(response_model)
 
     def update_sensitivity_variable_accounts(self, response_model):
-        self._notify(response_model)
-        self._present_sensitivity_variable_accounts.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_sensitivity_variable_accounts.present(response_model)
 
     def update_data_table_variable_accounts(self, response_model):
-        self._notify(response_model)
-        self._present_data_table_variable_accounts.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_data_table_variable_accounts.present(response_model)
 
     def insert_sheet_name_in_input_sheet(self, response_model):
-        self._notify(response_model)
-        self._present_insert_sheet_name_in_input_sheet.present(response_model)
+        if self._is_on:
+            self._notify(response_model)
+            self._present_insert_sheet_name_in_input_sheet.present(response_model)
 
     def add_worksheet(self, response_model):
         self._notify(response_model)
@@ -272,3 +300,13 @@ class Presenters(PresentersABC):
     def delete_work_sheet(self, response_model):
         self._notify(response_model)
         self._present_delete_worksheet.present(response_model)
+
+    def turn_off(self):
+        self._is_on = False
+
+    def turn_on(self):
+        self._is_on = True
+
+    @property
+    def is_on(self) -> bool:
+        return self._is_on

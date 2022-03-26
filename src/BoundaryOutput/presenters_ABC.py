@@ -4,6 +4,19 @@ from typing import Callable
 
 
 class PresentersABC(ABC):
+    @property
+    @abstractmethod
+    def is_on(self) -> bool:
+        pass
+
+    @abstractmethod
+    def turn_on(self):
+        pass
+
+    @abstractmethod
+    def turn_off(self):
+        pass
+
     @abstractmethod
     def attach_to_response_model_receiver(self, observer: Callable):
         pass
