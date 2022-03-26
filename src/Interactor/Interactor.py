@@ -2763,7 +2763,6 @@ class Interactor(BoundaryInABC):
         self.start_highlighting()
         self.start_recording_previous_command()
         self.start_worksheet_change_by_tree()
-        self.update_canvas()
         if succeeded:
             return_values = return_values_or_error
             self._present_feedback_user('Macro completed!', 'success')
