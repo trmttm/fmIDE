@@ -2617,6 +2617,20 @@ class Interactor(BoundaryInABC):
             self._number_format.delete_format(shape_id)
 
     # Macro
+    def parse_commands(self, file_name: str):
+        commands = self._commands.__class__()  # new instance
+        for method_name, args, kwargs in commands.data:
+            specified_methods = [
+                'merge_file',
+                'change_selected_sheet_name',
+                'select_account_by_name',
+                'set_property_to_selection',
+            ]
+            if method_name in specified_methods:
+                magic_args = ()
+                user_entries = ()
+        # Then present
+
     @property
     def macro_commands(self) -> tuple:
         return self._commands.data
@@ -2749,7 +2763,7 @@ class Interactor(BoundaryInABC):
 
     def set_multiple_magic_args(self, args: tuple, replace_withs: tuple):
         for arg, replace_with in zip(args, replace_withs):
-            self.set_magic_arg(arg, replace_with)
+            self.set_magic_arg_by_magic_arg(arg, replace_with)
 
     def run_macro_fast(self, observer_passed: Callable = None) -> tuple:
         self._present_feedback_user('Running macro...', is_incremental_progress=True)
