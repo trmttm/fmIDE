@@ -2741,6 +2741,9 @@ class Interactor(BoundaryInABC):
             self._present_feedback_user(feedback, feedback)
             self.present_macros(next_position)
 
+    def set_magic_arg_by_magic_arg(self, arg, replace_with):
+        self._commands.set_magic_arg_with_magic_arg(arg, replace_with)
+
     def set_magic_arg(self, arg, replace_with):
         self._commands.set_magic_arg(arg, replace_with)
 

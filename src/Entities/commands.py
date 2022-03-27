@@ -154,6 +154,9 @@ class Commands(Observable):
             return_values.append(return_value)
         return True, tuple(return_values)
 
+    def set_magic_arg_with_magic_arg(self, arg, replace_with):
+        self.set_magic_arg(arg, replace_with)
+
     def set_magic_arg(self, arg, replace_with):
         self._magic_args[arg] = replace_with
 
