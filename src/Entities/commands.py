@@ -145,7 +145,7 @@ class Commands(Observable):
             for observer in observers:
                 observer(n, total_n, key)
             command = getattr(obj, key)
-            if command.__name__ != self.set_magic_arg.__name__:
+            if command.__name__ not in ('set_magic_arg', 'set_multiple_magic_args'):
                 args = self._apply_magic_arg(args)
             try:
                 return_value = command(*args, **kwargs)
@@ -174,3 +174,12 @@ class Commands(Observable):
             else:
                 new_args.append(arg)
         return tuple(new_args)
+
+    def _replace_text_with_magic_arg(self, new_args, text):
+        for key, value in self._magic_args.items():
+            try:
+                text = str(text).replace(key, value)
+            except TypeError:  # value is not string, input_values, for example
+                if text == key:
+                    text = value
+        new_args.append(text)
