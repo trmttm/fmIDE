@@ -164,13 +164,14 @@ class Commands(Observable):
         new_args = []
         for arg in args:
             if arg.__class__ == str:
-                for key, value in self._magic_args.items():
-                    try:
-                        arg = str(arg).replace(key, value)
-                    except TypeError:  # value is not string, input_values, for example
-                        if arg == key:
-                            arg = value
-                new_args.append(arg)
+                text = arg
+                self._replace_text_with_magic_arg(new_args, text)
+            elif arg.__class__ == tuple:
+                tuple_arg_replaced = []
+                for each_arg in arg:
+                    text = each_arg
+                    self._replace_text_with_magic_arg(tuple_arg_replaced, text)
+                new_args.append(tuple(tuple_arg_replaced))
             else:
                 new_args.append(arg)
         return tuple(new_args)
