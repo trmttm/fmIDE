@@ -717,10 +717,11 @@ class Interactor(BoundaryInABC):
     def change_selected_sheet_name(self, sheet_name: str):
         old_sheet_name = self.selected_sheet
         new_sheet_name = sheet_name
-        if new_sheet_name in self._worksheets.sheet_names:
-            self._change_selected_sheet_name_to_existing_sheet_name(new_sheet_name)
-        else:
-            self._change_selected_sheet_name_to_a_new_sheet_name(new_sheet_name, old_sheet_name)
+        if old_sheet_name != new_sheet_name:
+            if new_sheet_name in self._worksheets.sheet_names:
+                self._change_selected_sheet_name_to_existing_sheet_name(new_sheet_name)
+            else:
+                self._change_selected_sheet_name_to_a_new_sheet_name(new_sheet_name, old_sheet_name)
 
     def _change_selected_sheet_name_to_existing_sheet_name(self, new_sheet_name):
         shape_ids_to_move = self.sheet_contents
