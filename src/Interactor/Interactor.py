@@ -1679,7 +1679,7 @@ class Interactor(BoundaryInABC):
         self._gateways.merge_state_from_file(file_name)
         self._place_newly_merged_shapes(initial_shapes)
         self._input_values.change_number_of_periods(self.number_of_periods)
-        self.auto_connect()
+        self.auto_connect(initial_shapes)
         # first create all worksheets, then add relays, scale, etc
         self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes(initial_worksheet_data)
         new_relays = nr = self.add_inter_sheets_relays(self._connections.new_merged_connections)
@@ -2443,16 +2443,17 @@ class Interactor(BoundaryInABC):
             self._connection_ids.remove_socket_id(shape_id, socket_id)
         self._present_connection_ids()
 
-    def auto_connect(self, shape_ids_to_search_from: Iterable = None):
-        shape_ids = shape_ids_to_search_from or self._shapes.shapes_ids
+    def auto_connect(self, initial_shapes: set):
+        shape_ids = self._shapes.shapes_ids
+        shapes_added = set(shape_ids) - initial_shapes
         for shape_id in shape_ids:
             plugs_that_i_want = self._connection_ids.get_plugs_that_i_want(shape_id)
-            self.accept_plugs(plugs_that_i_want, shape_id)
+            self.accept_plugs(plugs_that_i_want, shape_id, shapes_added)
             sockets_that_i_want = self._connection_ids.get_sockets_that_i_want(shape_id)
-            self.plug_into_sockets(sockets_that_i_want, shape_id)
+            self.plug_into_sockets(sockets_that_i_want, shape_id, shapes_added)
 
-    def accept_plugs(self, connection_ids: tuple, shape_id):
-        candidates = self._get_candidates(connection_ids)
+    def accept_plugs(self, connection_ids: tuple, shape_id, shapes_added: set):
+        candidates = self._get_candidates(connection_ids, shapes_added)
         if self._shapes.get_tag_type(shape_id) in ('account', 'bb'):
             if len(self._connections.get_connections_into(shape_id)) > 0:
                 pass
@@ -2472,8 +2473,8 @@ class Interactor(BoundaryInABC):
                     self._connections.add_connection(candidate, shape_id)
                     self._connections.add_new_merged_connections(candidate, shape_id)
 
-    def plug_into_sockets(self, connection_ids: tuple, shape_id):
-        for candidate in self._get_candidates(connection_ids):
+    def plug_into_sockets(self, connection_ids: tuple, shape_id, shapes_added: set):
+        for candidate in self._get_candidates(connection_ids, shapes_added):
             if self._shapes.get_tag_type(candidate) in ('account', 'bb'):
                 if len(self._connections.get_connections_into(candidate)) == 0:
                     self._connections.add_connection(shape_id, candidate)
@@ -2482,13 +2483,13 @@ class Interactor(BoundaryInABC):
                 self._connections.add_connection(shape_id, candidate)
                 self._connections.add_new_merged_connections(shape_id, candidate)
 
-    def _get_candidates(self, connection_ids) -> list:
+    def _get_candidates(self, connection_ids: tuple, negative_list: set) -> list:
         candidates = []
         for connection_id in connection_ids:
             shape_ids_with_target_connection_id = self._connection_ids.get_shape_ids_connection_id(connection_id)
             candidates += list(shape_ids_with_target_connection_id)
-        candidates = list(set(candidates))  # remove duplicate
-        return candidates
+        candidates = set(candidates)  # remove duplicate
+        return [c for c in candidates if c not in negative_list]
 
     def _present_connection_ids(self, select_index=0):
         if len(self._selection.data) == 0:
