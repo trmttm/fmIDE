@@ -2453,19 +2453,24 @@ class Interactor(BoundaryInABC):
             self.plug_into_sockets(sockets_that_i_want, shape_id, shapes_added)
 
     def accept_plugs(self, connection_ids: tuple, shape_id, shapes_added: set):
-        candidates = self._get_candidates(connection_ids, shapes_added)
+        candidates = self._get_candidates(connection_ids)
         if self._shapes.get_tag_type(shape_id) in ('account', 'bb'):
             if len(self._connections.get_connections_into(shape_id)) > 0:
                 pass
             else:
                 if len(candidates) == 1:
                     shape_id_decided = candidates[0]
-                    self._connections.add_connection(shape_id_decided, shape_id)
-                    self._connections.add_new_merged_connections(shape_id_decided, shape_id)
+                    if (shape_id not in shapes_added) or (shape_id_decided not in shapes_added):
+                        # No Auto Connect if both shapes are from the same module
+                        self._connections.add_connection(shape_id_decided, shape_id)
+                        self._connections.add_new_merged_connections(shape_id_decided, shape_id)
                 elif len(candidates) > 1:
-                    shape_id_decided = max(candidates)  # This line decides priority.
-                    self._connections.add_connection(shape_id_decided, shape_id)
-                    self._connections.add_new_merged_connections(shape_id_decided, shape_id)
+                    for candidate in sorted(candidates, reverse=True):  # This line decides priority.
+                        if (shape_id not in shapes_added) or (candidate not in shapes_added):
+                            # No Auto Connect if both shapes are from the same module
+                            self._connections.add_connection(candidate, shape_id)
+                            self._connections.add_new_merged_connections(candidate, shape_id)
+                            break
 
         elif self._shapes.get_tag_type(shape_id) == 'operator':
             for candidate in candidates:
@@ -2474,7 +2479,9 @@ class Interactor(BoundaryInABC):
                     self._connections.add_new_merged_connections(candidate, shape_id)
 
     def plug_into_sockets(self, connection_ids: tuple, shape_id, shapes_added: set):
-        for candidate in self._get_candidates(connection_ids, shapes_added):
+        for candidate in self._get_candidates(connection_ids):
+            if (candidate in shapes_added) and (shape_id in shapes_added):
+                continue  # No Auto Connect if both shapes are from the same module
             if self._shapes.get_tag_type(candidate) in ('account', 'bb'):
                 if len(self._connections.get_connections_into(candidate)) == 0:
                     self._connections.add_connection(shape_id, candidate)
@@ -2483,13 +2490,13 @@ class Interactor(BoundaryInABC):
                 self._connections.add_connection(shape_id, candidate)
                 self._connections.add_new_merged_connections(shape_id, candidate)
 
-    def _get_candidates(self, connection_ids: tuple, negative_list: set) -> list:
+    def _get_candidates(self, connection_ids: tuple) -> list:
         candidates = []
         for connection_id in connection_ids:
             shape_ids_with_target_connection_id = self._connection_ids.get_shape_ids_connection_id(connection_id)
             candidates += list(shape_ids_with_target_connection_id)
-        candidates = set(candidates)  # remove duplicate
-        return [c for c in candidates if c not in negative_list]
+        candidates = list(set(candidates))  # remove duplicate
+        return candidates
 
     def _present_connection_ids(self, select_index=0):
         if len(self._selection.data) == 0:
