@@ -807,12 +807,13 @@ def btn_save_macro(view: ViewABC, interactor: BoundaryInABC):
 def btn_run_commands(view: ViewABC, interactor: BoundaryInABC):
     def observer(no: int, *_, **__):
         view.focus(vm.tree_commands, tree_item_position=no)
-
     interactor.run_macro(observer)
+    view.focus(vm.tree_commands, tree_item_position=(0,))
 
 
-def btn_run_commands_fast(interactor: BoundaryInABC):
+def btn_run_commands_fast(view: ViewABC, interactor: BoundaryInABC):
     interactor.run_macro_fast()
+    view.focus(vm.tree_commands, tree_item_position=(0,))
 
 
 def btn_clear_commands(interactor: BoundaryInABC):
