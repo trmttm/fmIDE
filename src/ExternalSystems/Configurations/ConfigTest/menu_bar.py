@@ -55,6 +55,7 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
             'Repeat Previous': cmd_repeat,
         },
         'Canvas': {
+            'Update': interactor.update_canvas,
             'Add': {
                 'New Shape': lambda: c.main_specific_add_shape(interactor, view, ),
                 'Live Value': lambda: interactor.add_live_values_of_selected_accounts(),
