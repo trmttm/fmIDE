@@ -132,9 +132,7 @@ if __name__ == '__main__':
             Observable.is_debug_mode = False
             app = instantiate_app()
 
-            app.interactor.reset()
-            for i in range(20):
-                app.interactor.merge_file('Tr Income Tax')
+            app.interactor.save_state_to_file('delete')
 
             app.quit()
 
