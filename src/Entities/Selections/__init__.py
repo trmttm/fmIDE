@@ -1,4 +1,5 @@
 from typing import Dict
+from typing import Tuple
 
 from .. import Selection
 from ..Observable import Observable
@@ -31,9 +32,13 @@ class Selections(Observable):
         value = {}
         for sheet_name, selection_data in data.items():
             selection = Selection()
-            selection.set_data(selection_data.data)  # remove data after clearning
+            selection.set_data(selection_data.data)  # remove data after clearing
             value[sheet_name] = selection
         self._data = value
+
+    @property
+    def all_selections(self) -> Tuple[Selection]:
+        return tuple(self._data.values())
 
     @notify
     def merge_data(self, data: Dict[str, Selection], shape_id_converter: dict):

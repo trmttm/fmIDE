@@ -501,7 +501,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -827,6 +827,11 @@ class Interactor(BoundaryInABC):
         self.add_relay_by_shape_ids(self._configurations.copied_accounts)
 
     # Selecting
+    def unselect_all(self):
+        for selection in self._selections.all_selections:
+            selection.clear_selection()
+        self.update_canvas()
+
     @property
     def selected_accounts(self) -> tuple:
         return sel.get_selected_accounts(self._selection.data, self._shapes)

@@ -101,6 +101,7 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
                 'Set Color': lambda: interactor.set_fill_to_selection(view.ask_color()),
                 'Remove Color': lambda: interactor.remove_fill_of_selection(),
             },
+            'Unselect All': lambda: interactor.unselect_all(),
             'Erase Selected': lambda: interactor.erase_selected_shapes(),
             'Calculate': lambda: interactor.calculate(),
             'Update Canvas': lambda: interactor.update_canvas(),
