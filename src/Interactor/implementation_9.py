@@ -795,11 +795,6 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
                     prevent_the_child_from_shifting(new_indexes, sheet_index)
         elif shifting_into_other_parent_range:
             if len(ws_relationship.get_children_sheet_names(sheet_name)) == 0:
-                if is_a_parent:
-                    other_parent_name = other_sheet_name
-                else:
-                    other_parent_name = ws_relationship.get_parent_worksheet(other_sheet_name)
-                add_the_parent_as_the_child_s_parent(other_parent_name, sheet_name, ws_relationship)
                 if shifting_up:
                     new_indexes.remove(sheet_index)
 
