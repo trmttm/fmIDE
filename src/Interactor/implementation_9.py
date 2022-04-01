@@ -855,7 +855,7 @@ def get_adjusted_shift(adjacent_sheet_name: str, filtered_indexes: tuple, shift:
     elif adjacent_is_my_parent:
         n_adjacent_shapes_children = len(ws_relationship.get_children_sheet_names(adjacent_sheet_name))
         sign = shift
-        adjusted_shift = sign * (n_adjacent_shapes_children)
+        adjusted_shift = sign * n_adjacent_shapes_children
     else:
         adjusted_shift = shift
     return adjusted_shift
