@@ -765,17 +765,6 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
     for sheet_index in tuple(new_indexes):
         sheet_name = all_worksheet_names[sheet_index]
 
-        other_id = sheet_index + shift
-        try:
-            other_sheet_name = all_worksheet_names[other_id]
-        except IndexError:
-            other_sheet_name = None
-        is_a_parent = ws_relationship.is_a_parent(other_sheet_name)
-        has_a_parent = ws_relationship.has_a_parent(other_sheet_name)
-        not_shifting = other_id not in new_indexes
-        other_sheet_exists = other_sheet_name is not None
-        shifting_into_other_parent_range = other_sheet_exists and (is_a_parent or has_a_parent) and not_shifting
-
         if ws_relationship.has_a_parent(sheet_name):
             parent_sheet_name = ws_relationship.get_parent_worksheet(sheet_name)
             all_siblings_names = ws_relationship.get_children_sheet_names(parent_sheet_name)
@@ -793,10 +782,6 @@ def consider_parent_child_level_and_identify_which_sheets_to_shift(indexes: tupl
             elif shifting_up:
                 if the_sheet_is_the_child_at_the_top_of_siblings and its_parent_is_not_shifting_up:
                     prevent_the_child_from_shifting(new_indexes, sheet_index)
-        elif shifting_into_other_parent_range:
-            if len(ws_relationship.get_children_sheet_names(sheet_name)) == 0:
-                if shifting_up:
-                    new_indexes.remove(sheet_index)
 
     return tuple(sorted(new_indexes))
 
