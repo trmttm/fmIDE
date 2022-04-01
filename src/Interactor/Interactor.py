@@ -1592,8 +1592,7 @@ class Interactor(BoundaryInABC):
     def save_state_to_file(self, file_name: str):
         self._selection.clear_selection()
         initial_scale_x, initial_scale_y = self._configurations.scale_x, self._configurations.scale_y
-        if (initial_scale_x != 1) or (initial_scale_y != 1):
-            self.scale_canvas(1 / initial_scale_x, 1 / initial_scale_y)  # very expensive
+        self.scale_canvas(1 / initial_scale_x, 1 / initial_scale_y)  # very expensive
         feedback = self._clean_data_and_save_as_template_file(file_name)
         if feedback == 'success':
             self.feedback_user(f'{file_name} saved.', 'success')
@@ -2200,6 +2199,8 @@ class Interactor(BoundaryInABC):
 
     # Presenters
     def scale_canvas(self, x_times, y_times):
+        if (x_times == 1) and (y_times == 1):
+            return
         self._configurations.set_scale_x(self._configurations.scale_x * x_times)
         self._configurations.set_scale_y(self._configurations.scale_y * y_times)
         self.set_account_width(int(self.account_width * x_times))
