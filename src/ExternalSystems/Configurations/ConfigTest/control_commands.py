@@ -828,13 +828,13 @@ def btn_del_commands(view: ViewABC, interactor: BoundaryInABC):
 
 def btn_copy_commands(view: ViewABC, interactor: BoundaryInABC):
     tree = vm.tree_commands
-    last_index = len(interactor.commands)
 
     indexes = view.get_selected_tree_item_indexes(tree)
     interactor.copy_commands(indexes)
-    interactor.paste_command(last_index)
+    immediate_after = max(indexes) + 1
+    interactor.paste_command(immediate_after)
 
-    copied_items_indexes = tuple(last_index + i for i in range(len(indexes)))
+    copied_items_indexes = tuple(range(immediate_after, immediate_after + len(indexes)))
     view.select_multiple_tree_items(tree, copied_items_indexes)
 
 
