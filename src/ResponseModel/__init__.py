@@ -101,9 +101,12 @@ def response_model_to_presenter_update_account_order(account_names: Iterable, se
     return response_model
 
 
-def response_model_to_presenter_update_commands(commands: Iterable, select_flags: Iterable[bool] = None) -> dict:
+def response_model_to_presenter_update_commands(commands: Iterable, select_flags: Iterable[bool] = None,
+                                                highlight_flags=None) -> dict:
     select_flags = select_flags or tuple(False for _ in commands)
     response_model = {'commands': commands, 'select_flags': select_flags}
+    if highlight_flags:
+        response_model.update({'highlight_flags': highlight_flags})
     return response_model
 
 

@@ -2854,7 +2854,11 @@ class Interactor(BoundaryInABC):
         if select != ():
             select_flags = tuple(i in select for i in range(len(self.commands)))
         response_model = ResponseModel.response_model_to_presenter_update_commands
-        self._presenters.update_commands(response_model(self._commands.data, select_flags))
+
+        commands_to_highlight = ('set_magic_arg', 'set_magic_arg_by_magic_arg', 'set_multiple_magic_args')
+        highlight_flags = tuple(name in commands_to_highlight for (name, *_) in self.commands)
+
+        self._presenters.update_commands(response_model(self._commands.data, select_flags, highlight_flags))
 
     # Spotlight
     @property

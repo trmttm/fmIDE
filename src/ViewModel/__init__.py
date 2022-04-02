@@ -247,7 +247,21 @@ def create_view_model_update_commands(response_model: dict):
     scroll_v, scroll_h = True, False
     c = response_model['commands']
     select = response_model['select_flags']
-    tree_datas = [create_tree_data('', f'{n}', '', (n, key, a, k), (), select[n]) for (n, (key, a, k)) in enumerate(c)]
+
+    highlight = response_model.get('highlight_flags', None)
+    if highlight is not None:
+        foregrounds = tuple('red' if hl else 'black' for hl in highlight)
+        backgrounds = tuple('light yellow' if hl else 'white' for hl in highlight)
+    else:
+        foregrounds = tuple(None for hl in select)
+        backgrounds = tuple(None for hl in select)
+
+    tree_datas = [create_tree_data(
+        '', f'{n}', '', (n, key, a, k), (), select[n],
+        foreground=foregrounds[n],
+        background=backgrounds[n]
+    ) for (n, (key, a, k)) in enumerate(c)]
+
     view_model = create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
     return view_model
 
