@@ -2778,6 +2778,9 @@ class Interactor(BoundaryInABC):
     def set_magic_arg(self, arg, replace_with):
         self._commands.set_magic_arg(arg, replace_with)
 
+    def set_multiple_magic_args_by_matic_args(self, args: tuple, replace_withs: tuple):
+        self.set_multiple_magic_args(args, replace_withs)
+
     def set_multiple_magic_args(self, args: tuple, replace_withs: tuple):
         for arg, replace_with in zip(args, replace_withs):
             self.set_magic_arg_by_magic_arg(arg, replace_with)
