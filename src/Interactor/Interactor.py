@@ -2858,8 +2858,19 @@ class Interactor(BoundaryInABC):
             select_flags = tuple(i in select for i in range(len(self.commands)))
         response_model = ResponseModel.response_model_to_presenter_update_commands
 
-        commands_to_highlight = ('set_magic_arg', 'set_magic_arg_by_magic_arg', 'set_multiple_magic_args')
-        highlight_flags = tuple(name in commands_to_highlight for (name, *_) in self.commands)
+        commands_to_highlight = ('set_magic_arg', 'set_magic_arg_by_magic_arg', 'set_multiple_magic_args',)
+
+        args_to_highlight = ('BankName', 'InventoryName', 'VariableCostName', 'FixedCostName')
+
+        def arg_to_be_highlighted(args_: tuple) -> bool:
+            for a in args_:
+                if a in args_to_highlight:
+                    return True
+            return False
+
+        highlight_commands = tuple(name in commands_to_highlight for (name, *_) in self.commands)
+        highlight_args = tuple(arg_to_be_highlighted(args) for (_, args, _) in self.commands)
+        highlight_flags = tuple(True in c_a for c_a in zip(highlight_commands, highlight_args))
 
         self._presenters.update_commands(response_model(self._commands.data, select_flags, highlight_flags))
 

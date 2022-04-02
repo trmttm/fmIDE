@@ -139,6 +139,7 @@ class Commands(Observable):
         self._turned_on_macro_recording = False
         self._turned_off_macro_recording = False
 
+        initial_number_of_commands = len(self._data)
         return_values = []
         total_n = len(self._data)
         for n, (key, args, kwargs) in enumerate(self._data):
@@ -147,6 +148,8 @@ class Commands(Observable):
             command = getattr(obj, key)
             if command.__name__ not in ('set_magic_arg', 'set_multiple_magic_args'):
                 args = self._apply_magic_arg(args)
+            if command.__name__ == 'delete_commands_up_to':
+                args = (initial_number_of_commands - 1,)
             try:
                 return_value = command(*args, **kwargs)
             except Exception as e:
