@@ -2862,12 +2862,18 @@ class Interactor(BoundaryInABC):
 
         commands_to_highlight = ('set_magic_arg', 'set_magic_arg_by_magic_arg', 'set_multiple_magic_args',)
 
-        args_to_highlight = ('BankName', 'InventoryName', 'VariableCostName', 'FixedCostName')
+        args_to_highlight = ('BankName', 'InventoryName', 'VariableCostName', 'FixedCostName', 'SGAName',
+                             'OtherExpenseName', 'OtherIncomeName')
 
         def arg_to_be_highlighted(args_: tuple) -> bool:
             for a in args_:
-                if a in args_to_highlight:
-                    return True
+                if type(a) == str:
+                    if a in args_to_highlight:
+                        return True
+                elif type(a) == tuple:
+                    for element_a in a:
+                        if element_a in args_to_highlight:
+                            return True
             return False
 
         highlight_commands = tuple(name in commands_to_highlight for (name, *_) in self.commands)
