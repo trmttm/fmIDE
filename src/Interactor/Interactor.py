@@ -2781,7 +2781,7 @@ class Interactor(BoundaryInABC):
     def set_magic_arg(self, arg, replace_with):
         self._commands.set_magic_arg(arg, replace_with)
 
-    def set_multiple_magic_args_by_matic_args(self, args: tuple, replace_withs: tuple):
+    def set_multiple_magic_args_by_magic_args(self, args: tuple, replace_withs: tuple):
         self.set_multiple_magic_args(args, replace_withs)
 
     def set_multiple_magic_args(self, args: tuple, replace_withs: tuple):
@@ -2863,8 +2863,8 @@ class Interactor(BoundaryInABC):
 
         commands_to_highlight = ('set_magic_arg', 'set_magic_arg_by_magic_arg', 'set_multiple_magic_args',)
 
-        args_to_highlight = ('BankName', 'InventoryName', 'VariableCostName', 'FixedCostName', 'SGAName',
-                             'OtherExpenseName', 'OtherIncomeName')
+        args_to_highlight = ('BankName', 'CAPEX product_name', 'InventoryName', 'VariableCostName', 'FixedCostName',
+                             'SGAName', 'OtherExpenseName', 'OtherIncomeName')
 
         def arg_to_be_highlighted(args_: tuple) -> bool:
             for a in args_:
