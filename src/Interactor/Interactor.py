@@ -3527,3 +3527,69 @@ class Interactor(BoundaryInABC):
 
     def clear_cache_slider(self):
         self._cache.clear_cache_data_table()
+
+    # Load Inputs from CSV
+    def export_input_setter_csv(self, file_name: str = 'Input Setter'):
+        import csv
+        input_accounts = self.input_accounts
+        with open(f"{file_name.replace('.csv', '')}.csv", 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            nop = list(range(self.number_of_periods))
+            header = ['ID', 'Worksheet', 'Header', 'Name', 'UOM', 'Min', 'Max', 'Format', 'Decimals', ''] + nop
+            writer.writerow(header)
+            current_heading = ''
+            for worksheet_name in self._worksheets.sheet_names:
+                if not self._worksheet_relationship.has_a_parent(worksheet_name):
+                    current_parent_sheet_name = worksheet_name
+                account_order = self._account_orders.get_account_order(worksheet_name)
+                for account in account_order.data:
+                    if account in self._format.headings:
+                        current_heading = self._shapes.get_text(account)
+                    if account in input_accounts:
+                        text = self._shapes.get_text(account)
+                        input_id = account
+                        input_values = self._input_values.get_values(input_id)
+                        if self._input_ranges.get_ranges(input_id) is not None:
+                            min_, max_ = self._input_ranges.get_ranges(input_id)
+                        elif input_values != ():
+                            min_, max_ = min(input_values), max(input_values)
+                        values = [
+                            input_id,
+                            current_parent_sheet_name,
+                            current_heading,
+                            text,
+                            self._unit_of_measure.get_unit_of_measure(input_id),
+                            min_,
+                            max_,
+                            self._number_format.get_format(input_id),
+                            self._input_decimals.get_decimals(input_id),
+                            '',
+                        ]
+                        values += list(input_values)
+                        writer.writerow(values)
+
+    def load_inputs_from_csv(self, file_name: str = 'Input Setter.csv'):
+        import csv
+        input_ids = self.input_accounts
+        with open(file_name, 'r') as file:
+            csvreader = csv.reader(file)
+            header = next(csvreader)
+            for row in csvreader:
+                if not Utilities.is_number(row[0]):
+                    continue
+                input_id = int(row[0])
+                input_name = row[3]
+                uom = row[4]
+                min_ = float(row[5]) if Utilities.is_number(row[5]) else 0
+                max_ = float(row[6]) if Utilities.is_number(row[6]) else 0
+                number_format = row[7] if row[7] in self._number_format.all_number_format_keys else ''
+                decimals = int(row[8]) if Utilities.is_number(row[8]) else 1
+                values = tuple(float(v) if Utilities.is_number(v) else 0 for v in row[10:])
+
+                # First validate ddta
+                if input_id in input_ids:
+                    self._input_ranges.set_range(input_id, (min_, max_))
+                    self._input_values.set_values(input_id, values)
+                    self._unit_of_measure.add_unit_of_measure(input_id, uom)
+                    self._number_format.set_number_format(input_id, number_format)
+                    self._input_decimals.set_decimals(input_id, decimals)
