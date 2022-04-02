@@ -801,7 +801,8 @@ class Interactor(BoundaryInABC):
         if not self._worksheet_relationship.has_a_parent(child_sheet):
             child_sheet_index = self._worksheets.get_sheet_index(child_sheet)
             parent_sheet_index = self._worksheets.get_sheet_index(parent_sheet)
-            shift = parent_sheet_index - child_sheet_index
+            number_of_existing_children = len(self._worksheet_relationship.get_children_sheet_names(parent_sheet))
+            shift = parent_sheet_index + number_of_existing_children - child_sheet_index
             if shift < 0:
                 shift += 1
             self._worksheets.change_sheet_order((child_sheet_index,), shift)
