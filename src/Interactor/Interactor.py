@@ -501,7 +501,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -2451,8 +2451,10 @@ class Interactor(BoundaryInABC):
             self._connection_ids.remove_socket_id(shape_id, socket_id)
         self._present_connection_ids()
 
-    def auto_connect(self, initial_shapes: set):
+    def auto_connect(self, initial_shapes: set = None):
         shape_ids = self._shapes.shapes_ids
+        if initial_shapes is None:
+            initial_shapes = set(shape_ids)
         shapes_added = set(shape_ids) - initial_shapes
         for shape_id in shape_ids:
             plugs_that_i_want = self._connection_ids.get_plugs_that_i_want(shape_id)
@@ -3336,6 +3338,8 @@ class Interactor(BoundaryInABC):
         self.turn_on_presenters()
         self.start_highlighting()
         self.start_canvas_refreshing()
+        self.auto_connect()
+        self.add_inter_sheets_relays()
         self._add_necessary_worksheets_upon_loading_or_merging_files_and_draw_shapes({})
 
         if presenters_was_initially_off:
