@@ -145,7 +145,10 @@ class Commands(Observable):
         for n, (key, args, kwargs) in enumerate(self._data):
             for observer in observers:
                 observer(n, total_n, key)
-            command = getattr(obj, key)
+            try:
+                command = getattr(obj, key)
+            except Exception as e:
+                return False, (n, key, args, kwargs, e)
             if command.__name__ not in ('set_magic_arg', 'set_multiple_magic_args'):
                 args = self._apply_magic_arg(args)
             if command.__name__ == 'delete_commands_up_to':
