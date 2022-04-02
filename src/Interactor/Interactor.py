@@ -1,4 +1,5 @@
 import copy
+import csv
 import os
 import time
 from typing import Any
@@ -3529,9 +3530,10 @@ class Interactor(BoundaryInABC):
         self._cache.clear_cache_data_table()
 
     # Load Inputs from CSV
-    def export_input_setter_csv(self, file_name: str = 'Input Setter'):
-        import csv
+    def export_input_setter_csv(self, file_name: str = None):
         input_accounts = self.input_accounts
+        if file_name is None:
+            file_name = f'{self.project_folder}/Input Setter.csv'
         with open(f"{file_name.replace('.csv', '')}.csv", 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             nop = list(range(self.number_of_periods))
@@ -3568,9 +3570,10 @@ class Interactor(BoundaryInABC):
                         values += list(input_values)
                         writer.writerow(values)
 
-    def load_inputs_from_csv(self, file_name: str = 'Input Setter.csv'):
-        import csv
+    def load_inputs_from_csv(self, file_name: str = None):
         input_ids = self.input_accounts
+        if file_name is None:
+            file_name = f'{self.project_folder}/Input Setter.csv'
         with open(file_name, 'r') as file:
             csvreader = csv.reader(file)
             header = next(csvreader)

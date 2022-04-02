@@ -21,6 +21,7 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
         'File': {
             'Create New Project': lambda: c.create_project_folder(view, interactor, presenters, mouse),
             'Load Project': lambda: c.create_project_folder(view, interactor, presenters, mouse),
+            'Load Inputs from Input Setter.csv': lambda: interactor.load_inputs_from_csv(),
             'Recent Projects': {},
             'Clear Project History': lambda: interactor.clear_project_history(),
             'Save as Template': lambda: c.popup_f2_entry(view, interactor, presenters, mouse),
@@ -32,6 +33,7 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
             'Export as DataTable': lambda: save_data_table(interactor),
             'Save Canvas as PS Image': lambda: interactor.save_canvas_as_image('Canvas Caption.ps'),
             'Save Canvas Images': lambda: c.popup_canvas_save(view, interactor, presenters, mouse),
+            'Input Setter.csv': lambda: interactor.export_input_setter_csv(),
         },
         'Caching': {
             'Cache Audit': lambda: interactor.cache_audit_results(),
