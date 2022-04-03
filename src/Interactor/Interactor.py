@@ -864,7 +864,7 @@ class Interactor(BoundaryInABC):
         return tuple(s for s in self._selection.data if str(s) != 'blank')
 
     def get_shape_at_coordinate(self, x, y):
-        return imp9.get_shape_id_at_mouse_point(self._shapes, {'x': x, 'y': y}, self.sheet_contents)
+        return self._shapes.get_shape_id_at_the_coordinate(x, y, self.sheet_contents)
 
     def select_shape_at_x_y(self, request: dict):
         initial_selections = tuple(self._selection.data)
@@ -951,7 +951,7 @@ class Interactor(BoundaryInABC):
 
     def unselect_shape_at_x_y(self, request: dict):
         x, y = request['x'], request['y']
-        shape_id_under_mouse = self._shapes.get_shape_id_at_the_coordinate(x, y, self.sheet_contents)
+        shape_id_under_mouse = self.get_shape_at_coordinate(x, y)
         if shape_id_under_mouse is not None:
             self._selection.unselect_shape(shape_id_under_mouse)
         self._upon_selection((shape_id_under_mouse,))
@@ -1003,7 +1003,7 @@ class Interactor(BoundaryInABC):
             return
 
         delta_x, delta_y = imp9.move_shapes_to_one_direction_algorithm(initial_x, initial_y, request, shape_x, shape_y)
-        shape_id = self._shapes.get_shape_id_at_the_coordinate(request['x'], request['y'], tuple(self._selection.data))
+        shape_id = imp9.get_shape_id_at_mouse_point(self._shapes, request, tuple(self._selection.data))
         if shape_id is not None:
             self._move_shapes_by_delta_xy(delta_x, delta_y, (shape_id,))
         if delta_x not in (0, None):
@@ -1435,7 +1435,7 @@ class Interactor(BoundaryInABC):
 
     def show_connectable_shapes(self, id_from=None, request: dict = None):
         if request is not None:
-            id_from = self._shapes.get_shape_id_at_the_coordinate(request['x'], request['y'], self.sheet_contents)
+            id_from = imp9.get_shape_id_at_mouse_point(self._shapes, request, self.sheet_contents)
         if id_from is not None:
             if not self._sf.manually_highlighted:
                 args = id_from, self._shapes, self.sheet_contents, self._connections, self._present_highlight_manual
@@ -1557,8 +1557,8 @@ class Interactor(BoundaryInABC):
             coordinate_from, coordinate_to = request['coordinates']
             width = request['line_width']
             color = request['line_color']
-        id_from = self._shapes.get_shape_id_at_the_coordinate(*coordinate_from, self.sheet_contents)
-        id_to = self._shapes.get_shape_id_at_the_coordinate(*coordinate_to, self.sheet_contents)
+        id_from = self.get_shape_at_coordinate(*coordinate_from)
+        id_to = self.get_shape_at_coordinate(*coordinate_to)
         if id_from is None:
             return
 
@@ -1889,8 +1889,9 @@ class Interactor(BoundaryInABC):
         self._account_order.change_account_order(index_, destination)
 
     def move_account_after_another_by_coordinates(self, coord1: tuple, coord2: tuple):
-        moving_account_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': coord1[0], 'y': coord1[1]})
-        after_this_account_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': coord2[0], 'y': coord2[1]})
+        moving_account_id = self.get_shape_at_coordinate(*coord1)
+        after_this_account_id = self.get_shape_at_coordinate(*coord2)
+
         if moving_account_id is not None and after_this_account_id is not None:
             self.move_account_after(moving_account_id, after_this_account_id)
 
@@ -1904,7 +1905,7 @@ class Interactor(BoundaryInABC):
         self._account_order.add_blank_at_the_end()
 
     def add_blank_after_the_shape_at_x_y(self, x, y):
-        shape_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': x, 'y': y})
+        shape_id = self.get_shape_at_coordinate(x, y)
         if shape_id is not None:
             index_ = self._account_order.get_order(shape_id)
             if index_ is not None:
@@ -2581,7 +2582,7 @@ class Interactor(BoundaryInABC):
         self.set_format_heading(self.selected_accounts)
 
     def set_account_at_x_y_as_heading(self, x, y):
-        shape_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': x, 'y': y})
+        shape_id = self.get_shape_at_coordinate(x, y)
         if shape_id in self._shapes.get_shapes('account'):
             self.set_format_heading((shape_id,))
 
@@ -2589,7 +2590,7 @@ class Interactor(BoundaryInABC):
         self.set_format_sub_total(self.selected_accounts)
 
     def set_account_at_x_y_as_sub_total(self, x, y):
-        shape_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': x, 'y': y})
+        shape_id = self.get_shape_at_coordinate(x, y)
         if shape_id in self._shapes.get_shapes('account'):
             self.set_format_sub_total((shape_id,))
 
