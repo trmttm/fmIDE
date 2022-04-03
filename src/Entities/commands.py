@@ -171,6 +171,10 @@ class Commands(Observable):
                 args = self._apply_magic_arg(args)
             if command.__name__ == 'delete_commands_up_to':
                 args = (initial_number_of_commands - 1,)
+            if command.__name__ == 'merge_and_execute_macro_at_run_time':
+                return_value = command(*args, **kwargs)
+                return_values.append(return_value)
+                return True, tuple(return_values)
             try:
                 return_value = command(*args, **kwargs)
             except Exception as e:
