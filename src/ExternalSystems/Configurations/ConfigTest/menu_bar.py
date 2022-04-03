@@ -57,7 +57,8 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
             'Repeat Previous': cmd_repeat,
         },
         'Canvas': {
-            'Update': interactor.update_canvas,
+            'Update All': interactor.update_canvas,
+            'Update Current Sheet': interactor.update_canvas_of_specified_sheet,
             'Add': {
                 'New Shape': lambda: c.main_specific_add_shape(interactor, view, ),
                 'Live Value': lambda: interactor.add_live_values_of_selected_accounts(),
@@ -106,7 +107,6 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
             'Unselect All': lambda: interactor.unselect_all(),
             'Erase Selected': lambda: interactor.erase_selected_shapes(),
             'Calculate': lambda: interactor.calculate(),
-            'Update Canvas': lambda: interactor.update_canvas(),
         },
         'Analyze': {
             'Add Graph': {

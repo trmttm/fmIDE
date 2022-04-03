@@ -3391,6 +3391,23 @@ class Interactor(BoundaryInABC):
             self.turn_off_presenters()
         self.feedback_user(f'All sheets canvas updated.')
 
+    def update_canvas_of_specified_sheet(self, sheet_name):
+        presenters_was_initially_off = not self._presenters.is_on
+        self.turn_on_presenters()
+        self.start_highlighting()
+        self.start_canvas_refreshing()
+        self.auto_connect()
+        self.add_inter_sheets_relays()
+
+        self._upon_add_new_sheet(sheet_name)
+        self._worksheets.select_sheet(sheet_name)
+        self._presenter_select_sheet(self.selected_sheet, False)
+        self.present_refresh_canvas()
+
+        if presenters_was_initially_off:
+            self.turn_off_presenters()
+        self.feedback_user(f'All sheets canvas updated.')
+
     def create_data_table(self):
         gateway_model = self.create_calculation_gateway_model()
         data_table = self._calculator.create_data_table(gateway_model)
