@@ -60,6 +60,17 @@ class AccountOrder(Observable):
     def change_account_order(self, index_, destination):
         self._data = Utilities.swap_tuple_data(destination, index_, self._data)
 
+    @notify
+    def move_account_after(self, moving_account_id, after_this_account_id):
+        new_account_order = []
+        for account_id in self._data:
+            if account_id != moving_account_id:
+                new_account_order.append(account_id)
+            if account_id == after_this_account_id:
+                new_account_order.append(moving_account_id)
+
+        self._data = tuple(new_account_order)
+
     @property
     def data(self) -> tuple:
         return self._data

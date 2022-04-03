@@ -502,7 +502,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        # raise exception
+        raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
@@ -1887,6 +1887,15 @@ class Interactor(BoundaryInABC):
 
     def change_account_order(self, index_: int, destination: int):
         self._account_order.change_account_order(index_, destination)
+
+    def move_account_after_another_by_coordinates(self, coord1: tuple, coord2: tuple):
+        moving_account_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': coord1[0], 'y': coord1[1]})
+        after_this_account_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': coord2[0], 'y': coord2[1]})
+        if moving_account_id is not None and after_this_account_id is not None:
+            self.move_account_after(moving_account_id, after_this_account_id)
+
+    def move_account_after(self, moving_account_id, after_this_account_id):
+        self._account_order.move_account_after(moving_account_id, after_this_account_id)
 
     def add_blank_row(self, index_: int):
         self._account_order.add_blank(index_)
