@@ -111,7 +111,7 @@ class Commands(Observable):
 
     @notify
     def only_keep_the_remaining_commands(self):
-        self._data = self._data[self._macro_exited_at + 2:]
+        self._data = self._data[self._macro_exited_at + 1:]
         self._macro_exited_at = 0
 
     @notify
