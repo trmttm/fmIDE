@@ -1900,6 +1900,9 @@ class Interactor(BoundaryInABC):
     def add_blank_row(self, index_: int):
         self._account_order.add_blank(index_)
 
+    def add_blank_at_the_end_last(self):
+        self._account_order.add_blank_at_the_end()
+
     def is_blank(self, value) -> bool:
         return value.__class__ == self._entities.blank.__class__
 
@@ -2120,7 +2123,7 @@ class Interactor(BoundaryInABC):
             self._entities.add_sheet_content(sheet_to, shape_id, self._get_account_order_negative_list())
             self._shapes.set_y(shape_id, self._shapes.get_y(shape_id) + y_shift_to_prevent_overlap)
             if shape_id in accounts_before_blank:
-                account_order_of_sheet_to.add_blank_to_last()
+                account_order_of_sheet_to.add_blank_at_the_end()
 
         texts = self._get_texts_of_shapes(shape_ids)
         self.feedback_user(f'Items moved to {sheet_to}: {texts}', 'success')
@@ -2570,8 +2573,18 @@ class Interactor(BoundaryInABC):
     def set_selection_as_heading(self):
         self.set_format_heading(self.selected_accounts)
 
+    def set_account_at_x_y_as_heading(self, x, y):
+        shape_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': x, 'y': y})
+        if shape_id in self._shapes.get_shapes('account'):
+            self.set_format_heading((shape_id,))
+
     def set_selection_as_sub_total(self):
         self.set_format_sub_total(self.selected_accounts)
+
+    def set_account_at_x_y_as_sub_total(self, x, y):
+        shape_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': x, 'y': y})
+        if shape_id in self._shapes.get_shapes('account'):
+            self.set_format_sub_total((shape_id,))
 
     def toggle_number_format(self):
         selected_ = tuple(self._selection.data)

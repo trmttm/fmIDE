@@ -84,7 +84,7 @@ class AccountOrder(Observable):
             return self._data.index(element) if element in self._data else None
 
     @notify
-    def add_blank_to_last(self):
+    def add_blank_at_the_end(self):
         self.add_blank(len(self._data))
 
     @notify
