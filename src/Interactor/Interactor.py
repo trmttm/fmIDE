@@ -1900,8 +1900,15 @@ class Interactor(BoundaryInABC):
     def add_blank_row(self, index_: int):
         self._account_order.add_blank(index_)
 
-    def add_blank_at_the_end_last(self):
+    def add_blank_at_the_end(self):
         self._account_order.add_blank_at_the_end()
+
+    def add_blank_after_the_shape_at_x_y(self, x, y):
+        shape_id = imp9.get_shape_id_at_mouse_point(self._shapes, {'x': x, 'y': y})
+        if shape_id is not None:
+            index_ = self._account_order.get_order(shape_id)
+            if index_ is not None:
+                self._account_order.add_blank(index_ + 1)
 
     def is_blank(self, value) -> bool:
         return value.__class__ == self._entities.blank.__class__
