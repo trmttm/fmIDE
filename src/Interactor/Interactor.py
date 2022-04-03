@@ -2671,20 +2671,6 @@ class Interactor(BoundaryInABC):
             self._number_format.delete_format(shape_id)
 
     # Macro
-    def parse_commands(self, file_name: str):
-        commands = self._commands.__class__()  # new instance
-        for method_name, args, kwargs in commands.data:
-            specified_methods = [
-                'merge_file',
-                'change_selected_sheet_name',
-                'select_account_by_name',
-                'set_property_to_selection',
-            ]
-            if method_name in specified_methods:
-                magic_args = ()
-                user_entries = ()
-        # Then present
-
     @property
     def macro_commands(self) -> tuple:
         return self._commands.data
@@ -2808,6 +2794,17 @@ class Interactor(BoundaryInABC):
         if feedback != 'success':
             self._present_feedback_user(feedback, feedback)
             self.present_macros(next_position)
+
+    def update_state_magic_args(self):
+        # State Magic Args dynamically stores states so flexible Macro can easily be built.
+        self.set_magic_arg('current_sheet_name', self.selected_sheet)
+        for shape_id in self.sheet_contents:
+            x = self._shapes.get_x(shape_id)
+            y = self._shapes.get_y(shape_id)
+            width = self._shapes.get_width(shape_id)
+            text = self._shapes.get_text(shape_id)
+            self.set_magic_arg(f'{x}_{y}_width', width)
+            self.set_magic_arg(f'{x}_{y}_text', text)
 
     def set_magic_arg_by_magic_arg(self, arg, replace_with):
         self._commands.set_magic_arg_with_magic_arg(arg, replace_with)
