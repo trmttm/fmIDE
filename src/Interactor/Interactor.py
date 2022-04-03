@@ -2788,6 +2788,12 @@ class Interactor(BoundaryInABC):
         for arg, replace_with in zip(args, replace_withs):
             self.set_magic_arg_by_magic_arg(arg, replace_with)
 
+    def merge_and_execute_macro_at_run_time(self, file_name: str):
+        self._commands.exit_macro()
+        self._commands.only_keep_the_remaining_commands()
+        self._gateways.merge_insert_macro_file(file_name)
+        self.run_macro(self._commands.observers[1:])
+
     def run_macro_fast(self, observer_passed: Callable = None) -> tuple:
         self._present_feedback_user('Running macro...', is_incremental_progress=True)
         self.turn_off_presenters()
@@ -2804,7 +2810,7 @@ class Interactor(BoundaryInABC):
         def observer(no: int, total_n: int, command_name: str):
             self._present_feedback_user(f'{no}/{total_n} running {command_name}...', is_incremental_progress=True)
 
-        observers = (observer, observer_passed) if observer_passed is not None else (observer,)
+        observers = (observer, observer_passed) if observer_passed not in ((), None) else (observer,)
         succeeded, return_values_or_error = self._commands.run_macro(self, observers)
 
         self.start_canvas_refreshing()

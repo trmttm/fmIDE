@@ -156,6 +156,11 @@ class GateWays(GateWayABC):
         merge_from_package = self._states_io_file_system.merge_state_from_package
         self._do_the_right_thing_to_handle_template(file_name, merge_from_file_system, merge_from_package)
 
+    def merge_insert_state_from_file(self, file_name: str):
+        merge_insert_from_file_system = self._states_io_file_system.merge_insert_state_from_file_system
+        merge_insert_from_package = self._states_io_file_system.merge_insert_state_from_package
+        self._do_the_right_thing_to_handle_template(file_name, merge_insert_from_file_system, merge_insert_from_package)
+
     def _do_the_right_thing_to_handle_template(self, file_name, method_file_system, method_package):
         if self._test_path_pickles is not None:
             file_path = Paths.get_path(self._test_path_pickles, file_name)
@@ -183,6 +188,14 @@ class GateWays(GateWayABC):
             self._command_io_file_system.merge_state_from_file_system(file_path)
         except AttributeError:
             self._command_io_file_system.merge_state_from_package(file_name, self._package_pickles_commands)
+
+    def merge_insert_macro_file(self, file_name: str):
+        default_path, project_path = self._relative_path_to_commands, self.path_commands_pickles
+        file_path = self.get_default_path_or_project_path(file_name, default_path, project_path)
+        try:
+            self._command_io_file_system.merge_insert_state_from_file_system(file_path)
+        except AttributeError:
+            self._command_io_file_system.merge_insert_state_from_package(file_name, self._package_pickles_commands)
 
     def remove_template(self, file_name) -> str:
         return self._remove_pickle(self.path_pickles, file_name)

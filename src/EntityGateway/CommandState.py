@@ -34,6 +34,12 @@ class CommandState(Mm.OriginatorABC):
 
         entities.commands.merge_data(state[0])
 
+    def restore_merge_insert(self, memento: Mm.MementoABC, *args, **kwargs):
+        entities = self._entities
+        state = memento.get_state()
+
+        entities.commands.merge_data_insert(state[0])
+
     def set_last_state(self, state):
         self._last_state = state
 

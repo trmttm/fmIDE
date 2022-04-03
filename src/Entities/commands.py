@@ -18,6 +18,9 @@ class Commands(Observable):
         self._turned_off_macro_recording = False
 
         self._magic_args = {}
+        self._current_n = 0
+        self._macro_exited_at = 0
+        self._observers = ()
 
     @property
     def data(self) -> tuple:
@@ -103,6 +106,15 @@ class Commands(Observable):
         self._data += data
 
     @notify
+    def merge_data_insert(self, data: tuple, *_, **__):
+        self.insert_commands(0, data)
+
+    @notify
+    def only_keep_the_remaining_commands(self):
+        self._data = self._data[self._macro_exited_at + 2:]
+        self._macro_exited_at = 0
+
+    @notify
     def clear_commands(self):
         self.__init__()
         self._cleared_commands = True
@@ -131,6 +143,10 @@ class Commands(Observable):
         self._turned_off_macro_recording = True
 
     @property
+    def observers(self):
+        return self._observers
+
+    @property
     def is_macro_recording_mode(self) -> bool:
         return self._macro_recording_mode
 
@@ -139,11 +155,13 @@ class Commands(Observable):
         self._turned_on_macro_recording = False
         self._turned_off_macro_recording = False
 
+        self._observers = observers
         initial_number_of_commands = len(self._data)
         return_values = []
         total_n = len(self._data)
         for n, (key, args, kwargs) in enumerate(self._data):
-            for observer in observers:
+            self._current_n = n
+            for observer in self._observers:
                 observer(n, total_n, key)
             try:
                 command = getattr(obj, key)
@@ -159,6 +177,9 @@ class Commands(Observable):
                 return False, (n, key, args, kwargs, e)
             return_values.append(return_value)
         return True, tuple(return_values)
+
+    def exit_macro(self):
+        self._macro_exited_at = self._current_n
 
     def set_magic_arg_with_magic_arg(self, arg, replace_with):
         self.set_magic_arg(arg, replace_with)

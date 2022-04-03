@@ -24,17 +24,25 @@ class StateIOFile(SaveStateABC):
         memento = self.get_pickle_from_package(package, file_name)
         self._caretaker.restore(memento)
 
-    def merge_state_from_package(self, file_name, package):
-        memento = self.get_pickle_from_package(package, file_name)
-        self._caretaker.restore_merge(memento)
-
     def load_state_from_file_system(self, file_path):
         memento = self.get_pickle_from_file_system(file_path)
         self._caretaker.restore(memento)
 
+    def merge_state_from_package(self, file_name, package):
+        memento = self.get_pickle_from_package(package, file_name)
+        self._caretaker.restore_merge(memento)
+
     def merge_state_from_file_system(self, file_path):
         memento = self.get_pickle_from_file_system(file_path)
         self._caretaker.restore_merge(memento)
+
+    def merge_insert_state_from_package(self, file_name, package):
+        memento = self.get_pickle_from_package(package, file_name)
+        self._caretaker.restore_merge_insert(memento)
+
+    def merge_insert_state_from_file_system(self, file_path):
+        memento = self.get_pickle_from_file_system(file_path)
+        self._caretaker.restore_merge_insert(memento)
 
     @staticmethod
     def get_pickle_from_package(package, file_name):
