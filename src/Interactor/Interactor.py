@@ -3391,7 +3391,8 @@ class Interactor(BoundaryInABC):
             self.turn_off_presenters()
         self.feedback_user(f'All sheets canvas updated.')
 
-    def update_canvas_of_specified_sheet(self, sheet_name):
+    def update_canvas_of_specified_sheet(self):
+        sheet_name = self.selected_sheet
         presenters_was_initially_off = not self._presenters.is_on
         self.turn_on_presenters()
         self.start_highlighting()
