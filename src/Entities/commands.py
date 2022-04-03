@@ -197,7 +197,10 @@ class Commands(Observable):
                 tuple_arg_replaced = []
                 for each_arg in arg:
                     text = each_arg
-                    self._replace_text_with_magic_arg(tuple_arg_replaced, text)
+                    if type(text) not in (int, float):
+                        self._replace_text_with_magic_arg(tuple_arg_replaced, text)
+                    else:
+                        tuple_arg_replaced.append(text)
                 new_args.append(tuple(tuple_arg_replaced))
             else:
                 new_args.append(arg)
