@@ -1172,6 +1172,11 @@ class Interactor(BoundaryInABC):
     def add_relay(self):
         self.add_relay_by_shape_ids(self._selection.data)
 
+    def add_relay_by_coordinate(self, x, y):
+        self.clear_selection()
+        self.select_shape_at_x_y({'x': x, 'y': y})
+        self.add_relay()
+
     def add_relay_by_shape_ids(self, shape_ids: Iterable) -> tuple:
         shapes = self._shapes
         accounts_or_relay = self._extract_account_or_relays_from_shape_ids(shape_ids)
