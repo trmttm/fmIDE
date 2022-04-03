@@ -46,10 +46,6 @@ def get_rectangle_coordinates_from_request(request) -> tp.Tuple[float, float, fl
     return coordinates
 
 
-def add_new_shapes_per_request_models(request_models, shapes: Et.Shapes):
-    shapes.add_new_shapes(request_models)
-
-
 def interactor_is_responsible_for_setting_default_sizes_and_positions(new_shape_ids, shapes: Et.Shapes,
                                                                       whs: tuple = None):
     for shape_id, (w, h) in zip(new_shape_ids, whs):
