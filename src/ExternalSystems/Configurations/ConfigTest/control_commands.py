@@ -807,6 +807,7 @@ def btn_save_macro(view: ViewABC, interactor: BoundaryInABC):
 def btn_run_commands(view: ViewABC, interactor: BoundaryInABC):
     def observer(no: int, *_, **__):
         view.focus(vm.tree_commands, tree_item_position=no)
+
     interactor.run_macro(observer)
     view.focus(vm.tree_commands, tree_item_position=(0,))
 
@@ -1376,7 +1377,7 @@ def upon_commands_right_click(interactor: BoundaryInABC, view: ViewABC, values):
                 arg_str += f'{arg},'
         value_str = arg_str
 
-    if value_str[-1] == ',':
+    if (len(value_str) > 0) and (value_str[-1] == ','):
         value_str = value_str[:-1]
     view.set_value(vm.entry_macro_name, value_str)
     view.focus(vm.entry_macro_name)
