@@ -25,7 +25,7 @@ class Shapes(Observable):
     def add_new_shape(self, text: str = 'Text', tags: tuple = None):
         while self._id in self._data:
             self._id += 1
-        new_shape_data = impl.create_shape_dict_data(self._id, text=text, tags=tags)
+        new_shape_data = impl.create_shape_dict_data(self._id, text=str(text), tags=tags)
         self._data.update(new_shape_data)
         self._id += 1
 
