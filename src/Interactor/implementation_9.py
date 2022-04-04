@@ -656,6 +656,10 @@ def parse_arg_str(args_str: str):
 
 def segregate_by_parentheses(args_str):
     args_str = args_str.split('(')
+    new = []
+    for element in args_str:
+        new += element.split(')')
+    args_str = new
     result = []
     for element in args_str:
         element = element.strip(' ')
