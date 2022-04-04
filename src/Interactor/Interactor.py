@@ -1445,6 +1445,20 @@ class Interactor(BoundaryInABC):
         self._connections.remove_connections(request_models)
         self._present_connect_shapes()
 
+    def remove_all_connections_out_of(self, shape_id):
+        self._connections.remove_all_connections_out_of(shape_id)
+
+    def remove_all_connections_into(self, shape_id):
+        self._connections.remove_all_connections_into(shape_id)
+
+    def remove_all_connections_out_of_selected_shapes(self):
+        for shape_id in tuple(self._selection.data):
+            self.remove_all_connections_out_of(shape_id)
+
+    def remove_all_connections_into_selected_shapes(self):
+        for shape_id in tuple(self._selection.data):
+            self.remove_all_connections_into(shape_id)
+
     def add_connections(self, request_models: Iterable):
         self._connections.add_connections(request_models)
         self._present_connect_shapes()

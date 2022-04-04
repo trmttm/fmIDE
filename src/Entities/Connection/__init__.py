@@ -49,6 +49,18 @@ class Connections(Observable):
             self.remove_all_connections_of_a_shape(**request_model)
 
     @notify
+    def remove_all_connections_out_of(self, shape_id):
+        connections_to = tuple(self.get_connections_out_of(shape_id))
+        for connection_to in connections_to:
+            self.remove_connection(shape_id, connection_to)
+
+    @notify
+    def remove_all_connections_into(self, shape_id):
+        connections_into = tuple(self.get_connections_into(shape_id))
+        for connection_into in connections_into:
+            self.remove_connection(connection_into, shape_id)
+
+    @notify
     def clear_all_connections(self):
         self._data = set()
 

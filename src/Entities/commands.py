@@ -191,6 +191,9 @@ class Commands(Observable):
     def set_magic_arg(self, arg, replace_with):
         self._magic_args[arg] = replace_with
 
+    def get_magic_arg_value(self, key, default=None):
+        return self._magic_args.get(key, default)
+
     def _apply_magic_arg(self, args: tuple):
         new_args = []
         for arg in args:
@@ -217,4 +220,5 @@ class Commands(Observable):
             except TypeError:  # value is not string, input_values, for example
                 if text == key:
                     text = value
+                    break
         new_args.append(text)
