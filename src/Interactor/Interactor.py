@@ -1172,6 +1172,10 @@ class Interactor(BoundaryInABC):
     def add_relay(self):
         self.add_relay_by_shape_ids(self._selection.data)
 
+    def add_relay_by_coordinate_relative_to_home_position(self, x, y, home_position: tuple):
+        xh, yh = home_position
+        self.add_relay_by_coordinate(xh + x, yh + y)
+
     def add_relay_by_coordinate(self, x, y):
         self.clear_selection()
         self.select_shape_at_x_y({'x': x, 'y': y})
@@ -1402,6 +1406,11 @@ class Interactor(BoundaryInABC):
             self._present_feedback_user(f'{name_from} does not exist.')
         elif shape_id_to is None:
             self._present_feedback_user(f'{name_to} does not exist.')
+
+    def connect_shapes_by_relative_coordinates(self, coord1, home_position1, coord2, home_position2):
+        x1, y1 = coord1[0] + home_position1[0], coord1[1] + home_position1[1]
+        x2, y2 = coord2[0] + home_position2[0], coord2[1] + home_position2[1]
+        self.connect_shapes_by_coordinates((x1, y1), (x2, y2))
 
     def connect_shapes_by_coordinates(self, coordinate_from=None, coordinate_to=None, request: dict = None):
         if request:
@@ -2111,6 +2120,14 @@ class Interactor(BoundaryInABC):
         response_model = ResponseModel.response_model_to_presenter_shape_properties
         self._presenters.update_shape_properties(response_model(*imp9.get_common_properties(*args1)))
 
+    def set_x_to_selection_relative_to_home_position(self, x: int, home_position: str):
+        xh, yh = home_position
+        self.set_property_to_selection('x', xh + x)
+
+    def set_y_to_selection_relative_to_home_position(self, y: int, home_position: str):
+        xh, yh = home_position
+        self.set_property_to_selection('y', yh + y)
+
     def set_property_to_selection(self, key: str, value):
         shape_ids = self._selection.data
         self.set_properties(key, shape_ids, value)
@@ -2809,6 +2826,16 @@ class Interactor(BoundaryInABC):
         if feedback != 'success':
             self._present_feedback_user(feedback, feedback)
             self.present_macros(next_position)
+
+    def set_home_position(self, home_position_key: str):
+        candidates = []
+        for sheet_content in self.sheet_contents:
+            connection_ids = self._connection_ids.get_plugs_that_i_want(sheet_content)
+            if 'period' in connection_ids:
+                candidates.append(sheet_content)
+        home_account = max(candidates)
+        home_position = self._shapes.get_x(home_account), self._shapes.get_y(home_account)
+        self.set_magic_arg(home_position_key, home_position)
 
     def update_state_magic_args(self):
         # State Magic Args dynamically stores states so flexible Macro can easily be built.
