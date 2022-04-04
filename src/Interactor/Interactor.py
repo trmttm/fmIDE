@@ -3391,7 +3391,7 @@ class Interactor(BoundaryInABC):
             self.turn_off_presenters()
         self.feedback_user(f'All sheets canvas updated.')
 
-    def update_canvas_of_specified_sheet(self):
+    def update_canvas_of_current_sheet(self):
         sheet_name = self.selected_sheet
         presenters_was_initially_off = not self._presenters.is_on
         self.turn_on_presenters()
@@ -3407,7 +3407,7 @@ class Interactor(BoundaryInABC):
 
         if presenters_was_initially_off:
             self.turn_off_presenters()
-        self.feedback_user(f'All sheets canvas updated.')
+        self.feedback_user(f'Current sheets canvas updated.')
 
     def create_data_table(self):
         gateway_model = self.create_calculation_gateway_model()
