@@ -483,7 +483,7 @@ class Interactor(BoundaryInABC):
         if self._sf.previous_commands_are_not_set:
             self._sf.set_previous_commands(self._sf.previous_previous_commands)
         if exit_by == 'mouse':
-            self._upon_selection(self._selection.data)
+            self._upon_selection_actions()
 
     def set_previous_command(self, f: Callable, args: tuple, kwargs: dict):
         self._sf.append_previous_commands((f, args, kwargs))
@@ -917,11 +917,14 @@ class Interactor(BoundaryInABC):
         self._present_highlight_automatic(shape_ids)
         if not self.entry_by_mouse:
             # Do this just once at the end when click is released
-            self._present_update_account_order()
-            self._present_shape_properties()
-            self._present_connection_ids()
-            self.feedback_selection()
-            self._present_connect_shapes()
+            self._upon_selection_actions()
+
+    def _upon_selection_actions(self):
+        self._present_update_account_order()
+        self._present_shape_properties()
+        self._present_connection_ids()
+        self.feedback_selection()
+        self._present_connect_shapes()
 
     def remove_selections_by_shape_ids(self, shape_ids):
         request_model = RequestModel.request_model_select_shape
