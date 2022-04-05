@@ -115,7 +115,7 @@ class StatesAndFlags:
         self._prevent_worksheet_change_by_tree = value
 
     @property
-    def prevent_worksheet_change_by_tree(self) -> bool:
+    def prevent_user_input_by_tree(self) -> bool:
         return self._prevent_worksheet_change_by_tree
 
     @property

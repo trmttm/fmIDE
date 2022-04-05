@@ -217,7 +217,7 @@ def upon_tree_worksheets_click(interactor: BoundaryInABC, view: ViewABC):
         sheet_name = view.tree_focused_values(vm.tree_worksheets)[1]
     except IndexError:
         return
-    if not interactor.prevent_worksheet_change_by_tree:
+    if not interactor.prevent_user_input_by_tree:
         interactor.select_worksheet(sheet_name, update=True)
 
 

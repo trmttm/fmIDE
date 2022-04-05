@@ -318,15 +318,15 @@ class Interactor(BoundaryInABC):
     def prevent_recording_previous_command(self) -> bool:
         return self._sf.prevent_recording_previous_command
 
-    def stop_worksheet_change_by_tree(self):
+    def stop_user_input_by_tree(self):
         self._sf.set_prevent_worksheet_change_by_tree(True)
 
-    def start_worksheet_change_by_tree(self):
+    def start_user_input_by_tree(self):
         self._sf.set_prevent_worksheet_change_by_tree(False)
 
     @property
-    def prevent_worksheet_change_by_tree(self) -> bool:
-        return self._sf.prevent_worksheet_change_by_tree
+    def prevent_user_input_by_tree(self) -> bool:
+        return self._sf.prevent_user_input_by_tree
 
     @property
     def _increment_x_y(self) -> tuple:
@@ -893,6 +893,8 @@ class Interactor(BoundaryInABC):
         self._upon_selection(shape_ids_with_blank + initial_selections)
 
     def select_shape_by_account_order(self, account_order):
+        if self.prevent_user_input_by_tree:
+            return
         initial_selections = tuple(self._selection.data)
         shape_id = self._account_order.get_element(account_order)
         if str(shape_id) == 'blank':
@@ -1911,6 +1913,12 @@ class Interactor(BoundaryInABC):
     def change_account_order(self, index_: int, destination: int):
         self._account_order.change_account_order(index_, destination)
 
+    def move_account_after_another_by_coordinates_relative_to_home_position(self, coord1: tuple, coord2: tuple,
+                                                                            home_position: tuple):
+        x1, y1 = coord1[0] + home_position[0], coord1[1] + home_position[1]
+        x2, y2 = coord2[0] + home_position[0], coord2[1] + home_position[1]
+        self.move_account_after_another_by_coordinates((x1, y1), (x2, y2))
+
     def move_account_after_another_by_coordinates(self, coord1: tuple, coord2: tuple):
         moving_account_id = self.get_shape_at_coordinate(*coord1)
         after_this_account_id = self.get_shape_at_coordinate(*coord2)
@@ -1927,7 +1935,8 @@ class Interactor(BoundaryInABC):
     def add_blank_at_the_end(self):
         self._account_order.add_blank_at_the_end()
 
-    def add_blank_after_the_shape_at_x_y(self, x, y):
+    def add_blank_after_the_shape_at_x_y(self, x, y, home_position: tuple = (0, 0)):
+        x, y = x + home_position[0], y + home_position[1]
         shape_id = self.get_shape_at_coordinate(x, y)
         if shape_id is not None:
             index_ = self._account_order.get_order(shape_id)
@@ -2878,7 +2887,7 @@ class Interactor(BoundaryInABC):
         self.stop_canvas_refreshing()
         self.stop_highlighting()
         self.stop_recording_previous_command()
-        self.stop_worksheet_change_by_tree()  # Prevent Unintended Macro error (account selection, copy/paste)
+        self.stop_user_input_by_tree()  # Prevent Unintended Macro error (account selection, copy/paste)
 
         def observer(no: int, total_n: int, command_name: str):
             self._present_feedback_user(f'{no}/{total_n} running {command_name}...', is_incremental_progress=True)
@@ -2889,7 +2898,7 @@ class Interactor(BoundaryInABC):
         self.start_canvas_refreshing()
         self.start_highlighting()
         self.start_recording_previous_command()
-        self.start_worksheet_change_by_tree()
+        self.start_user_input_by_tree()
 
         # In case Presenters is turned off
         self.turn_on_presenters()
@@ -3577,7 +3586,7 @@ class Interactor(BoundaryInABC):
     def clear_all_cache(self):
         canvas_refresh_was_prevented_at_the_beginning = self.prevent_refresh_canvas
         prevent_recording_previous_command_was_prevented_at_the_beginning = self.prevent_recording_previous_command
-        worksheet_change_by_tree_was_prevented_at_the_beginning = self.prevent_worksheet_change_by_tree
+        worksheet_change_by_tree_was_prevented_at_the_beginning = self.prevent_user_input_by_tree
         self.clear_cache_audit_results()
         self.clear_cache_slider()
         self._sf.__init__()
@@ -3586,7 +3595,7 @@ class Interactor(BoundaryInABC):
         if prevent_recording_previous_command_was_prevented_at_the_beginning:
             self.stop_recording_previous_command()
         if worksheet_change_by_tree_was_prevented_at_the_beginning:
-            self.stop_worksheet_change_by_tree()
+            self.stop_user_input_by_tree()
 
     def cache_audit_results(self):
         self._cache.set_cache_audit_results(self._get_audit_results(self._get_minimum_shape_ids_to_update()))
