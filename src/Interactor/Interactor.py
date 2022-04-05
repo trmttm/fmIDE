@@ -2621,7 +2621,8 @@ class Interactor(BoundaryInABC):
     def set_selection_as_heading(self):
         self.set_format_heading(self.selected_accounts)
 
-    def set_account_at_x_y_as_heading(self, x, y):
+    def set_account_at_x_y_as_heading(self, x, y, home_position: tuple = (0, 0)):
+        x, y = x + home_position[0], y + home_position[1]
         shape_id = self.get_shape_at_coordinate(x, y)
         if shape_id in self._shapes.get_shapes('account'):
             self.set_format_heading((shape_id,))
@@ -2629,7 +2630,8 @@ class Interactor(BoundaryInABC):
     def set_selection_as_sub_total(self):
         self.set_format_sub_total(self.selected_accounts)
 
-    def set_account_at_x_y_as_sub_total(self, x, y):
+    def set_account_at_x_y_as_sub_total(self, x, y, home_position: tuple = (0, 0)):
+        x, y = x + home_position[0], y + home_position[1]
         shape_id = self.get_shape_at_coordinate(x, y)
         if shape_id in self._shapes.get_shapes('account'):
             self.set_format_sub_total((shape_id,))
