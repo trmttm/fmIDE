@@ -2851,16 +2851,18 @@ class Interactor(BoundaryInABC):
         home_position = self._shapes.get_x(home_account), self._shapes.get_y(home_account)
         self.set_magic_arg(home_position_key, home_position)
 
-    def update_state_magic_args(self):
+    def update_state_magic_args(self, home_position: tuple = (0, 0)):
         # State Magic Args dynamically stores states so flexible Macro can easily be built.
         self.set_magic_arg('current_sheet_name', self.selected_sheet)
         for shape_id in self.sheet_contents:
             x = self._shapes.get_x(shape_id)
             y = self._shapes.get_y(shape_id)
+            xr = int(x - home_position[0])
+            yr = int(y - home_position[1])
             width = self._shapes.get_width(shape_id)
             text = self._shapes.get_text(shape_id)
-            self.set_magic_arg(f'{x}_{y}_width', width)
-            self.set_magic_arg(f'{x}_{y}_text', text)
+            self.set_magic_arg(f'{xr}_{yr}_width', width)
+            self.set_magic_arg(f'{xr}_{yr}_text', text)
 
     def set_magic_arg_by_magic_arg(self, arg, replace_with):
         self._commands.set_magic_arg_with_magic_arg(arg, replace_with)
