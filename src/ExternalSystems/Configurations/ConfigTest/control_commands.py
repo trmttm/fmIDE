@@ -190,7 +190,8 @@ def upon_tree_account_order_click(interactor: BoundaryInABC, view: ViewABC):
         interactor.select_shape_by_account_order(selected_tree_item_numbers[0])
     else:
         interactor.select_shape_by_account_orders(selected_tree_item_numbers)
-    view.focus(vm.tree_account_order, tree_item_position=selected_tree_item_numbers)
+    if not interactor.prevent_user_input_by_tree:
+        view.focus(vm.tree_account_order, tree_item_position=selected_tree_item_numbers)
 
 
 def _need_to_escape_from_infinity_loop(interactor: BoundaryInABC, view: ViewABC) -> bool:
