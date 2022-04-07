@@ -2958,8 +2958,9 @@ class Interactor(BoundaryInABC):
 
         commands_to_highlight = ('set_magic_arg', 'set_magic_arg_by_magic_arg', 'set_multiple_magic_args',)
 
-        args_to_highlight = ('BankName', 'CAPEX product_name', 'InventoryName', 'VariableCostName', 'FixedCostName',
-                             'SGAName', 'OtherExpenseName', 'OtherIncomeName')
+        args_to_highlight = ('BankName', 'CAPEX product_name', 'InventoryName product_name',
+                             'VariableCostName product_name', 'FixedCostName product_name', 'SGAName',
+                             'OtherExpenseName', 'OtherIncomeName')
 
         def arg_to_be_highlighted(args_: tuple) -> bool:
             for a in args_:
