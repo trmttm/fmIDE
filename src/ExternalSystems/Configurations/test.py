@@ -18,8 +18,8 @@ class MyTestCase(unittest.TestCase):
 
         config = ConfigurationTest()
         view = View()
-        cls_gatewats = GateWays
-        app = Main(config, view, cls_gatewats)
+        cls_gateways = GateWays
+        app = Main(config, view, cls_gateways)
         # app.run()
 
 
