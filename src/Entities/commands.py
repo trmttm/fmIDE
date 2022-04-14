@@ -143,7 +143,7 @@ class Commands(Observable):
         self._turned_off_macro_recording = True
 
     @property
-    def observers(self):
+    def observers(self) -> tuple:
         return self._observers
 
     @property
