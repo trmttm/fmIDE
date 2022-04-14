@@ -2881,7 +2881,10 @@ class Interactor(BoundaryInABC):
         self._commands.exit_macro()
         self._commands.only_keep_the_remaining_commands()
         self._gateways.merge_insert_macro_file(file_name)
-        self.run_macro(self._commands.observers[1:])
+        observers = self._commands.observers
+
+        observer = observers[1] if len(observers) > 1 else None
+        self.run_macro(observer)
 
     def run_macro_fast(self, observer_passed: Callable = None) -> tuple:
         self._present_feedback_user('Running macro...', is_incremental_progress=True)
