@@ -35,17 +35,6 @@ class MyTestCase(unittest.TestCase):
 
         frame_number = 0
 
-        def each_name_page(stacker_, name: str):
-            number = int(view.get_value(get_entry_id(name)))
-            return stacker_.vstack(
-                *tuple(
-                    stacker_.hstack(
-                        w.Label(f'frame_2_label_{name}_{n}').text(f'{name}{n} Name').padding(10, 0),
-                        w.Entry(f'frame_2_entry_{name}_{n}').default_value(f'{name}{n}').padding(10, 0),
-                        w.Spacer().adjust(-1),
-                    ) for n in range(number)) + (w.Spacer(),)
-            )
-
         def switch_frame(increment: int):
             nonlocal frame_number
             if increment > 0:
@@ -56,11 +45,8 @@ class MyTestCase(unittest.TestCase):
             next_frame = switchable_frames[frame_number]
 
             if frame_number == 1:
-                frame2_frames = []
-
-                def switch_frames2(n_: int):
-                    next_frame2 = frame2_frames[n_]
-                    view.switch_frame(next_frame2)
+                frame1_frames = []
+                args = frame1_frames, view
 
                 view.clear_frame(next_frame)
                 local_stacker = Stacker(next_frame)
@@ -68,15 +54,40 @@ class MyTestCase(unittest.TestCase):
                     local_stacker.vstack(
                         # Buttons
                         *tuple(
-                            w.Button(f'frame2_button_{n}').text(name).command(lambda i=n: switch_frames2(i))
+                            w.Button(f'frame{frame_number}_button_{n}').text(name).command(
+                                lambda i=n: switch_frames1(i, *args))
                             for (n, name) in enumerate(names)
-                        )
+                        ) + (w.Spacer(),)
                     ),
-                    w.FrameSwitcher('frame_2_frame_switcher', local_stacker, frame2_frames).stackers(
-                        *tuple(each_name_page(local_stacker, name) for (i, name) in enumerate(names)),
+                    w.FrameSwitcher(f'frame{frame_number}_frame_switcher', local_stacker, frame1_frames).stackers(
+                        *tuple(frame1_each_page(local_stacker, name, view, w) for (i, name) in enumerate(names)),
                     ),
                     w.Spacer().adjust(-1),
                 )
+                local_view_model = local_stacker.view_model
+                view.add_widgets(local_view_model)
+            elif frame_number == 2:
+                frame2_frames = []
+                name = names[4]
+                number_of_products = int(view.get_value(get_entry_id(name)))
+                product_names = tuple(view.get_value(f'frame_1_entry_{name}_{n}') for n in range(number_of_products))
+                local_stacker = Stacker(next_frame)
+                local_stacker.hstack(
+                    local_stacker.vstack(
+                        *tuple(
+                            w.Button(f'frame_{frame_number}_{n}').text(product_name)
+                            for (n, product_name) in enumerate(product_names)
+                        )
+                    ),
+                    w.FrameSwitcher(f'frame{frame_number}_frame_switcher', local_stacker, frame2_frames).stackers(
+                        *tuple(
+                            frame2_each_page(local_stacker, name, view, w)
+                            for (i, name) in enumerate(product_names)
+                        ),
+                    ),
+                    w.Spacer().adjust(-1),
+                )
+
                 local_view_model = local_stacker.view_model
                 view.add_widgets(local_view_model)
 
@@ -85,7 +96,7 @@ class MyTestCase(unittest.TestCase):
         stacker.vstack(
             w.FrameSwitcher('frame_switcher', stacker, switchable_frames).stackers(
                 stacker.vstack(
-                    w.Label('label_frame').text('Frame00'),
+                    w.Label('label_frame0').text('Frame00'),
                     number_of(names[0], stacker, view),
                     number_of(names[1], stacker, view),
                     number_of(names[2], stacker, view),
@@ -99,7 +110,11 @@ class MyTestCase(unittest.TestCase):
                     w.Spacer(),
                 ),
                 stacker.vstack(
-                    w.Label('label_frame').text('Frame01'),
+                    w.Label('label_frame1').text('Frame01'),
+                    w.Spacer(),
+                ),
+                stacker.vstack(
+                    w.Label('label_frame2').text('Frame02'),
                     w.Spacer(),
                 ),
             ),
@@ -146,6 +161,66 @@ def clear_entries(names: tuple, view, default_value=0):
 
 def get_entry_id(name) -> str:
     return f'entry_number_of_{name}'
+
+
+def get_entry_id2(name: str, n: int) -> str:
+    return f'frame_1_entry_{name}_{n}'
+
+
+def frame1_each_page(stacker_, name: str, view, widget):
+    w = widget
+    number = int(view.get_value(get_entry_id(name)))
+    return stacker_.vstack(
+        *tuple(
+            stacker_.vstack(
+                stacker_.hstack(
+                    w.Label(f'frame_1_label_{name}_{n}').text(f'{name}{n} Name').padding(10, 0).width(20),
+                    w.Entry(get_entry_id2(name, n)).default_value(f'{name}{n}').padding(10, 0),
+                    w.Spacer().adjust(-1),
+                ),
+                stacker_.hstack(
+                    w.Label(f'frame_1_label_{name}_{n}_fixed_costs').text(f'n fixed costs').padding(10, 0).width(
+                        20).align('e'),
+                    w.Entry(f'frame_1_entry_{name}_{n}_fixed_costs').default_value(1).padding(10, 0),
+                    w.Spacer().adjust(-1),
+                ),
+                stacker_.hstack(
+                    w.Label(f'frame_1_label_{name}_{n}_variable_costs').text(f'n variable costs').padding(10, 0).width(
+                        20).align('e'),
+                    w.Entry(f'frame_1_entry_{name}_{n}_variable_costs').default_value(1).padding(10, 0),
+                    w.Spacer().adjust(-1),
+                ),
+                stacker_.hstack(
+                    w.Label(f'frame_1_label_{name}_{n}_inventory_costs').text(f'n inventory costs').padding(10,
+                                                                                                            0).width(
+                        20).align('e'),
+                    w.Entry(f'frame_1_entry_{name}_{n}_inventory_costs').default_value(1).padding(10, 0),
+                    w.Spacer().adjust(-1),
+                ),
+            ) for n in range(number)) + (w.Spacer(),)
+    )
+
+
+def frame2_each_page(stacker_, name: str, view, widget):
+    w = widget
+    frame_names = 'Fixed Cost', 'Variable Cost', 'Inventory'
+    # variable cost, fixed cost, inventory cost
+    return w.NoteBook(f'notebook_frame_2_{name}', stacker_).frame_names(frame_names).stackers(
+        stacker_.vstack(
+            w.Label(f'{frame_names[0]} {name}').text(f'{frame_names[0]} {name}'),
+        ),
+        stacker_.vstack(
+            w.Label(f'{frame_names[1]} {name}').text(f'{frame_names[1]} {name}'),
+        ),
+        stacker_.vstack(
+            w.Label(f'{frame_names[2]} {name}').text(f'{frame_names[2]} {name}'),
+        ),
+    )
+
+
+def switch_frames1(n_: int, frame_names, view):
+    next_frame = frame_names[n_]
+    view.switch_frame(next_frame)
 
 
 if __name__ == '__main__':
