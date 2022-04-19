@@ -60,7 +60,10 @@ class MyTestCase(unittest.TestCase):
                         ) + (w.Spacer(),)
                     ),
                     w.FrameSwitcher(f'frame{frame_number}_frame_switcher', local_stacker, frame1_frames).stackers(
-                        *tuple(frame1_each_page(local_stacker, name, view, w) for (i, name) in enumerate(names)),
+                        *tuple(
+                            frame1_each_page(local_stacker, names, name, view, w)
+                            for (i, name) in enumerate(names)
+                        ),
                     ),
                     w.Spacer().adjust(-1),
                 )
@@ -77,7 +80,7 @@ class MyTestCase(unittest.TestCase):
                         *tuple(
                             w.Button(f'frame_{frame_number}_{n}').text(product_name)
                             for (n, product_name) in enumerate(product_names)
-                        )
+                        ) + (w.Spacer(),)
                     ),
                     w.FrameSwitcher(f'frame{frame_number}_frame_switcher', local_stacker, frame2_frames).stackers(
                         *tuple(
@@ -109,14 +112,8 @@ class MyTestCase(unittest.TestCase):
                     ),
                     w.Spacer(),
                 ),
-                stacker.vstack(
-                    w.Label('label_frame1').text('Frame01'),
-                    w.Spacer(),
-                ),
-                stacker.vstack(
-                    w.Label('label_frame2').text('Frame02'),
-                    w.Spacer(),
-                ),
+                stacker.vstack(),
+                stacker.vstack(),
             ),
             stacker.hstack(
                 w.Button('Back').text('Back<').command(lambda: switch_frame(-1)),
@@ -167,35 +164,75 @@ def get_entry_id2(name: str, n: int) -> str:
     return f'frame_1_entry_{name}_{n}'
 
 
-def frame1_each_page(stacker_, name: str, view, widget):
+def frame1_each_page(stacker_, names: tuple, name: str, view, widget):
     w = widget
     number = int(view.get_value(get_entry_id(name)))
+    if name == names[4]:
+        return input_product(name, number, stacker_, w)
+    elif name == names[5]:
+        return input_product_intercompany_sales(name, number, stacker_, w)
+    else:
+        return stacker_.vstack_scrollable(
+            *tuple(
+                stacker_.vstack(
+                    stacker_.hstack(
+                        w.Label(f'{lbl(name, n, "")}').text(f'{name}{n} Name').width(20),
+                        w.Entry(get_entry_id2(name, n)).default_value(f'{name}{n}'),
+                    )) for n in range(number))
+        )
+
+
+def lbl(name, n_, post_fix):
+    return f'frame_1_label_{name}_{n_}_{post_fix}'
+
+
+def input_product(name, number, stacker_, w):
     return stacker_.vstack_scrollable(
         *tuple(
             stacker_.vstack(
                 stacker_.hstack(
-                    w.Label(f'frame_1_label_{name}_{n}').text(f'{name}{n} Name').padding(10, 0).width(20),
-                    w.Entry(get_entry_id2(name, n)).default_value(f'{name}{n}').padding(10, 0),
-                    w.Spacer().adjust(-1),
+                    w.Label(f'{lbl(name, n, "")}').text(f'{name}{n} Name').width(20),
+                    w.Entry(get_entry_id2(name, n)).default_value(f'{name}{n}'),
                 ),
                 stacker_.hstack(
-                    w.Label(f'frame_1_label_{name}_{n}_fixed_costs').text(f'n fixed costs').padding(10, 0).width(
-                        20).align('e'),
-                    w.Entry(f'frame_1_entry_{name}_{n}_fixed_costs').default_value(1).padding(10, 0),
-                    w.Spacer().adjust(-1),
+                    w.Label(f'{lbl(name, n, "fixed_costs")}').text(f'n fixed costs').width(20).align('e'),
+                    w.Entry(f'frame_1_entry_{name}_{n}_fixed_costs').default_value(1),
                 ),
                 stacker_.hstack(
-                    w.Label(f'frame_1_label_{name}_{n}_variable_costs').text(f'n variable costs').padding(10, 0).width(
-                        20).align('e'),
-                    w.Entry(f'frame_1_entry_{name}_{n}_variable_costs').default_value(1).padding(10, 0),
-                    w.Spacer().adjust(-1),
+                    w.Label(f'{lbl(name, n, "variable_costs")}').text(f'n variable costs').width(20).align('e'),
+                    w.Entry(f'frame_1_entry_{name}_{n}_variable_costs').default_value(1),
                 ),
                 stacker_.hstack(
-                    w.Label(f'frame_1_label_{name}_{n}_inventory_costs').text(f'n inventory costs').padding(10,
-                                                                                                            0).width(
-                        20).align('e'),
-                    w.Entry(f'frame_1_entry_{name}_{n}_inventory_costs').default_value(1).padding(10, 0),
-                    w.Spacer().adjust(-1),
+                    w.Label(f'{lbl(name, n, "inventory_costs")}').text(f'n inventory costs').width(20).align('e'),
+                    w.Entry(f'frame_1_entry_{name}_{n}_inventory_costs').default_value(1),
+                ),
+            ) for n in range(number))
+    )
+
+
+def input_product_intercompany_sales(name, number, stacker_, w):
+    return stacker_.vstack_scrollable(
+        *tuple(
+            stacker_.vstack(
+                stacker_.hstack(
+                    w.Label(f'{lbl(name, n, "")}').text(f'{name}{n} Name').width(20),
+                    w.Entry(get_entry_id2(name, n)).default_value(f'{name}{n}'),
+                ),
+                stacker_.hstack(
+                    w.Label(f'{lbl(name, n, "target_inventory_cost")}').text(f'Target Inventory Name').width(20),
+                    w.Entry(get_entry_id2(name, n)).default_value(f'Target Inventory {n}'),
+                ),
+                stacker_.hstack(
+                    w.Label(f'{lbl(name, n, "fixed_costs")}').text(f'n fixed costs').width(20).align('e'),
+                    w.Entry(f'frame_1_entry_{name}_{n}_fixed_costs').default_value(1),
+                ),
+                stacker_.hstack(
+                    w.Label(f'{lbl(name, n, "variable_costs")}').text(f'n variable costs').width(20).align('e'),
+                    w.Entry(f'frame_1_entry_{name}_{n}_variable_costs').default_value(1),
+                ),
+                stacker_.hstack(
+                    w.Label(f'{lbl(name, n, "inventory_costs")}').text(f'n inventory costs').width(20).align('e'),
+                    w.Entry(f'frame_1_entry_{name}_{n}_inventory_costs').default_value(1),
                 ),
             ) for n in range(number))
     )
@@ -204,7 +241,6 @@ def frame1_each_page(stacker_, name: str, view, widget):
 def frame2_each_page(stacker_, name: str, view, widget):
     w = widget
     frame_names = 'Fixed Cost', 'Variable Cost', 'Inventory'
-    # variable cost, fixed cost, inventory cost
     return w.NoteBook(f'notebook_frame_2_{name}', stacker_).frame_names(frame_names).stackers(
         stacker_.vstack(
             w.Label(f'{frame_names[0]} {name}').text(f'{frame_names[0]} {name}'),
