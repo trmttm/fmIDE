@@ -22,6 +22,131 @@ class MyTestCase(unittest.TestCase):
         app = Main(config, view, cls_gateways)
         # app.run()
 
+    def test_gui(self):
+        from stacker import Stacker
+        from stacker import widgets as w
+        from view_tkinter import View
+
+        view = View(width=500, height=600)
+        stacker = Stacker()
+
+        names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product', 'Product with ICS'
+        switchable_frames = []
+
+        frame_number = 0
+
+        def each_name_page(stacker_, name: str):
+            number = int(view.get_value(get_entry_id(name)))
+            return stacker_.vstack(
+                *tuple(
+                    stacker_.hstack(
+                        w.Label(f'frame_2_label_{name}_{n}').text(f'{name}{n} Name').padding(10, 0),
+                        w.Entry(f'frame_2_entry_{name}_{n}').default_value(f'{name}{n}').padding(10, 0),
+                        w.Spacer().adjust(-1),
+                    ) for n in range(number)) + (w.Spacer(),)
+            )
+
+        def switch_frame(increment: int):
+            nonlocal frame_number
+            if increment > 0:
+                frame_number = min(len(switchable_frames) - 1, frame_number + 1)
+            else:
+                frame_number = max(0, frame_number - 1)
+
+            next_frame = switchable_frames[frame_number]
+
+            if frame_number == 1:
+                frame2_frames = []
+
+                def switch_frames2(n_: int):
+                    next_frame2 = frame2_frames[n_]
+                    view.switch_frame(next_frame2)
+
+                view.clear_frame(next_frame)
+                local_stacker = Stacker(next_frame)
+                local_stacker.hstack(
+                    local_stacker.vstack(
+                        # Buttons
+                        *tuple(
+                            w.Button(f'frame2_button_{n}').text(name).command(lambda i=n: switch_frames2(i))
+                            for (n, name) in enumerate(names)
+                        )
+                    ),
+                    w.FrameSwitcher('frame_2_frame_switcher', local_stacker, frame2_frames).stackers(
+                        *tuple(each_name_page(local_stacker, name) for (i, name) in enumerate(names)),
+                    ),
+                    w.Spacer().adjust(-1),
+                )
+                local_view_model = local_stacker.view_model
+                view.add_widgets(local_view_model)
+
+            view.switch_frame(next_frame)
+
+        stacker.vstack(
+            w.FrameSwitcher('frame_switcher', stacker, switchable_frames).stackers(
+                stacker.vstack(
+                    w.Label('label_frame').text('Frame00'),
+                    number_of(names[0], stacker, view),
+                    number_of(names[1], stacker, view),
+                    number_of(names[2], stacker, view),
+                    number_of(names[3], stacker, view),
+                    number_of(names[4], stacker, view),
+                    number_of(names[5], stacker, view),
+                    stacker.hstack(
+                        w.Button('button_clear').text('Clear').command(lambda: clear_entries(names, view, )).width(15),
+                        w.Spacer(),
+                    ),
+                    w.Spacer(),
+                ),
+                stacker.vstack(
+                    w.Label('label_frame').text('Frame01'),
+                    w.Spacer(),
+                ),
+            ),
+            stacker.hstack(
+                w.Button('Back').text('Back<').command(lambda: switch_frame(-1)),
+                w.Spacer(),
+                w.Button('Next').text('>Next').command(lambda: switch_frame(1)),
+            ),
+        )
+
+        view_model = stacker.view_model
+        view.add_widgets(view_model)
+        view.switch_frame(switchable_frames[frame_number])
+        view.launch_app()
+
+
+def number_of(name: str, stacker, view, default_value=0):
+    from stacker import widgets as w
+    dv = default_value
+    return stacker.hstack(
+        w.Label(f'label_number_of_{name}').text(f'Number of {name}'),
+        w.Button(f'button_number_of_{name}').text('-').width(1).command(lambda: increment_entry(name, -1, view, dv)),
+        w.Entry(get_entry_id(name)).default_value(default_value).width(5),
+        w.Button(f'button_number_of_{name}').text('+').width(1).command(lambda: increment_entry(name, 1, view, dv)),
+    )
+
+
+def increment_entry(name: str, increment: int, view, default_value=0):
+    import Utilities
+    entry = get_entry_id(name)
+    current_value = view.get_value(entry)
+    if Utilities.is_number(current_value):
+        current_value = int(current_value)
+    else:
+        current_value = default_value
+    new_value = max(0, current_value + increment)
+    view.set_value(entry, new_value)
+
+
+def clear_entries(names: tuple, view, default_value=0):
+    for name in names:
+        view.set_value(get_entry_id(name), default_value)
+
+
+def get_entry_id(name) -> str:
+    return f'entry_number_of_{name}'
+
 
 if __name__ == '__main__':
     unittest.main()
