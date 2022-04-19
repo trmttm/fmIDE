@@ -170,7 +170,7 @@ def get_entry_id2(name: str, n: int) -> str:
 def frame1_each_page(stacker_, name: str, view, widget):
     w = widget
     number = int(view.get_value(get_entry_id(name)))
-    return stacker_.vstack(
+    return stacker_.vstack_scrollable(
         *tuple(
             stacker_.vstack(
                 stacker_.hstack(
@@ -197,7 +197,7 @@ def frame1_each_page(stacker_, name: str, view, widget):
                     w.Entry(f'frame_1_entry_{name}_{n}_inventory_costs').default_value(1).padding(10, 0),
                     w.Spacer().adjust(-1),
                 ),
-            ) for n in range(number)) + (w.Spacer(),)
+            ) for n in range(number))
     )
 
 
