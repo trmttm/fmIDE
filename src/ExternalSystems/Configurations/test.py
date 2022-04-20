@@ -30,7 +30,7 @@ class MyTestCase(unittest.TestCase):
         view = View(width=500, height=600)
         stacker = Stacker()
 
-        names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product', 'Product with ICS'
+        names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
         switchable_frames = []
 
         frame_number = 0
@@ -44,14 +44,15 @@ class MyTestCase(unittest.TestCase):
 
             next_frame = switchable_frames[frame_number]
 
-            local_view_model = None
-            if frame_number == 1:
-                local_view_model = create_frame_1_view_model(names, frame_number, next_frame, view)
-            elif frame_number == 2:
-                local_view_model = create_frame_2_view_model(names, frame_number, next_frame, view)
+            if increment > 0:  # Keep user inputs if Back< button is pushed
+                local_view_model = None
+                if frame_number == 1:
+                    local_view_model = create_frame_1_view_model(names, frame_number, next_frame, view)
+                elif frame_number == 2:
+                    local_view_model = create_frame_2_view_model(names, frame_number, next_frame, view)
 
-            if local_view_model is not None:
-                view.add_widgets(local_view_model)
+                if local_view_model is not None:
+                    view.add_widgets(local_view_model)
 
             view.switch_frame(next_frame)
 
@@ -64,7 +65,6 @@ class MyTestCase(unittest.TestCase):
                     number_of(names[2], stacker, view),
                     number_of(names[3], stacker, view),
                     number_of(names[4], stacker, view),
-                    number_of(names[5], stacker, view),
                     stacker.hstack(
                         w.Button('button_clear').text('Clear').command(lambda: clear_entries(names, view, )).width(15),
                         w.Spacer(),
@@ -90,17 +90,17 @@ class MyTestCase(unittest.TestCase):
 def number_of(name: str, stacker, view, default_value=0):
     from stacker import widgets as w
     dv = default_value
+    args = get_entry_id(name), view, dv
     return stacker.hstack(
         w.Label(f'label_number_of_{name}').text(f'Number of {name}'),
-        w.Button(f'button_number_of_{name}').text('-').width(1).command(lambda: increment_entry(name, -1, view, dv)),
+        w.Button(f'button_number_of_{name}').text('-').width(1).command(lambda: increment_entry(-1, *args)),
         w.Entry(get_entry_id(name)).default_value(default_value).width(5),
-        w.Button(f'button_number_of_{name}').text('+').width(1).command(lambda: increment_entry(name, 1, view, dv)),
+        w.Button(f'button_number_of_{name}').text('+').width(1).command(lambda: increment_entry(1, *args)),
     )
 
 
-def increment_entry(name: str, increment: int, view, default_value=0):
+def increment_entry(increment: int, entry: str, view, default_value=0):
     import Utilities
-    entry = get_entry_id(name)
     current_value = view.get_value(entry)
     if Utilities.is_number(current_value):
         current_value = int(current_value)
@@ -126,10 +126,8 @@ def get_entry_id2(name: str, n: int) -> str:
 def frame1_each_page(stacker_, names: tuple, name: str, view, widget):
     w = widget
     number = int(view.get_value(get_entry_id(name)))
-    if name == names[4]:
-        return input_product(name, number, stacker_, w)
-    elif name == names[5]:
-        return input_product_intercompany_sales(name, number, stacker_, w)
+    if name in (names[4],):
+        return input_product(name, number, stacker_, view, w)
     else:
         return stacker_.vstack_scrollable(*tuple(stacker_.vstack(
             stacker_.hstack(
@@ -155,7 +153,11 @@ def get_entry_id_product_inventory_cost(name, n) -> str:
     return f'frame_1_entry_{name}_{n}_inventory_costs'
 
 
-def input_product(name, number_of_product, stacker_, w):
+def input_product(name, number_of_product, stacker_, view, w):
+    e1 = get_entry_id_product_fixed_cost
+    e2 = get_entry_id_product_variable_cost
+    e3 = get_entry_id_product_inventory_cost
+    dv = 0
     return stacker_.vstack_scrollable(
         *tuple(
             stacker_.vstack(
@@ -165,45 +167,29 @@ def input_product(name, number_of_product, stacker_, w):
                 ),
                 stacker_.hstack(
                     w.Label(f'{lbl(name, n, "fixed_costs")}').text(f'n fixed costs').width(20).align('e'),
-                    w.Entry(get_entry_id_product_fixed_cost(name, n)).default_value(1),
+                    w.Button(f'button_n_fixed_{name}_-_{n}').text('-').width(1).command(
+                        lambda i=n: increment_entry(-1, e1(name, i), view, dv)),
+                    w.Entry(get_entry_id_product_fixed_cost(name, n)).default_value(dv).width(5),
+                    w.Button(f'button_n_fixed_{name}_+_{n}').text('+').width(1).command(
+                        lambda i=n: increment_entry(1, e1(name, i), view, dv)),
                 ),
                 stacker_.hstack(
                     w.Label(f'{lbl(name, n, "variable_costs")}').text(f'n variable costs').width(20).align('e'),
-                    w.Entry(get_entry_id_product_variable_cost(name, n)).default_value(1),
+                    w.Button(f'button_n_fixed_{name}_-_{n}').text('-').width(1).command(
+                        lambda i=n: increment_entry(-1, e2(name, i), view, dv)),
+                    w.Entry(get_entry_id_product_variable_cost(name, n)).default_value(dv).width(5),
+                    w.Button(f'button_n_fixed_{name}_+_{n}').text('+').width(1).command(
+                        lambda i=n: increment_entry(1, e2(name, i), view, dv)),
                 ),
                 stacker_.hstack(
                     w.Label(f'{lbl(name, n, "inventory_costs")}').text(f'n inventory costs').width(20).align('e'),
-                    w.Entry(get_entry_id_product_inventory_cost(name, n)).default_value(1),
+                    w.Button(f'button_n_fixed_{name}_-_{n}').text('-').width(1).command(
+                        lambda i=n: increment_entry(-1, e3(name, i), view, dv)),
+                    w.Entry(get_entry_id_product_inventory_cost(name, n)).default_value(dv).width(5),
+                    w.Button(f'button_n_fixed_{name}_+_{n}').text('+').width(1).command(
+                        lambda i=n: increment_entry(1, e3(name, i), view, dv)),
                 ),
             ) for n in range(number_of_product))
-    )
-
-
-def input_product_intercompany_sales(name, number, stacker_, w):
-    return stacker_.vstack_scrollable(
-        *tuple(
-            stacker_.vstack(
-                stacker_.hstack(
-                    w.Label(f'{lbl(name, n, "")}').text(f'{name}{n} Name').width(20),
-                    w.Entry(get_entry_id2(name, n)).default_value(f'{name}{n}'),
-                ),
-                stacker_.hstack(
-                    w.Label(f'{lbl(name, n, "target_inventory_cost")}').text(f'Target Inventory Name').width(20),
-                    w.Entry(get_entry_id2(name, n)).default_value(f'Target Inventory {n}'),
-                ),
-                stacker_.hstack(
-                    w.Label(f'{lbl(name, n, "fixed_costs")}').text(f'n fixed costs').width(20).align('e'),
-                    w.Entry(f'frame_1_entry_{name}_{n}_fixed_costs').default_value(1),
-                ),
-                stacker_.hstack(
-                    w.Label(f'{lbl(name, n, "variable_costs")}').text(f'n variable costs').width(20).align('e'),
-                    w.Entry(f'frame_1_entry_{name}_{n}_variable_costs').default_value(1),
-                ),
-                stacker_.hstack(
-                    w.Label(f'{lbl(name, n, "inventory_costs")}').text(f'n inventory costs').width(20).align('e'),
-                    w.Entry(f'frame_1_entry_{name}_{n}_inventory_costs').default_value(1),
-                ),
-            ) for n in range(number))
     )
 
 
@@ -220,7 +206,9 @@ def frame2_each_page(stacker_, name, product_name: str, product_number: int, vie
                 *tuple(
                     stacker_.hstack(
                         w.Label(f'frame2_label_{product_name}_{n}_fixed_cost').text(f'Fixed Cost Name{n}'),
-                        w.Entry(f'frame2_entry_{product_name}_{n}_fixed_cost').default_value(f'Fixed Cost Name{n}'),
+                        w.Entry(f'frame2_entry_{product_name}_{n}_fixed_cost').default_value(
+                            f'Fixed Cost Name{n} {product_name}'),
+                        w.Spacer().adjust(-1),
                     ) for n in range(number_of_fixed_cost)),
                 w.Spacer(),
             ),
@@ -229,7 +217,8 @@ def frame2_each_page(stacker_, name, product_name: str, product_number: int, vie
                     stacker_.hstack(
                         w.Label(f'frame2_label_{product_name}_{n}_variable_cost').text(f'Variable Cost Name{n}'),
                         w.Entry(f'frame2_entry_{product_name}_{n}_variable_cost').default_value(
-                            f'Variable Cost Name{n}'),
+                            f'Variable Cost Name{n} {product_name}'),
+                        w.Spacer().adjust(-1),
                     ) for n in range(number_of_variable_cost)),
                 w.Spacer(),
             ),
@@ -238,7 +227,8 @@ def frame2_each_page(stacker_, name, product_name: str, product_number: int, vie
                     stacker_.hstack(
                         w.Label(f'frame2_label_{product_name}_{n}_inventory_cost').text(f'Inventory Cost Name{n}'),
                         w.Entry(f'frame2_entry_{product_name}_{n}_inventory_cost').default_value(
-                            f'Inventory Cost Name{n}'),
+                            f'Inventory Cost Name{n} {product_name}'),
+                        w.Spacer().adjust(-1),
                     ) for n in range(number_of_inventory_cost)),
                 w.Spacer(),
             ),
@@ -280,7 +270,7 @@ def create_frame_1_view_model(names, frame_number, next_frame, view) -> list:
     return local_view_model
 
 
-def create_frame_2_view_model(names, frame_number, next_frame, view) -> list:
+def create_frame_2_view_model(names, frame_number, frame, view) -> list:
     from stacker import Stacker
     from stacker import widgets as w
 
@@ -288,12 +278,17 @@ def create_frame_2_view_model(names, frame_number, next_frame, view) -> list:
     name = names[4]
     number_of_products = int(view.get_value(get_entry_id(name)))
     product_names = tuple(view.get_value(f'frame_1_entry_{name}_{n}') for n in range(number_of_products))
-    local_stacker = Stacker(next_frame)
+    local_stacker = Stacker(frame)
+
+    def switch_frames(i: int):
+        next_frame = frame2_frames[i]
+        view.switch_frame(next_frame)
+
     local_stacker.hstack(
         # 1) Buttons
         local_stacker.vstack(
             *tuple(
-                w.Button(f'frame_{frame_number}_{n}').text(product_name)
+                w.Button(f'frame_{frame_number}_{n}').text(product_name).command(lambda i=n: switch_frames(i))
                 for (n, product_name) in enumerate(product_names)
             ) + (w.Spacer(),)
         ),
