@@ -324,20 +324,20 @@ def create_frame_3_view_model(names, frame_number, frame, view) -> list:
     local_stacker.vstack(
         w.Label(f'label_frame_3').text('Intercompany Sales'),
         local_stacker.hstack(
-            w.ComboBox(get_combobox_id_product()).values(product_names),
+            w.ComboBox(get_combobox_id_product()).values(product_names).padding(10, 10),
             w.Spacer(),
-            w.Label(f'label_frame_3_arrow').text('->'),
+            w.Label(f'label_frame_3_arrow').text('->').padding(10, 10),
             w.Spacer(),
-            w.ComboBox(get_combobox_id_inventory()).values(inventory_names),
+            w.ComboBox(get_combobox_id_inventory()).values(inventory_names).padding(10, 10),
         ),
         local_stacker.hstack(
             w.Spacer(),
             w.Button('button_frame_3_add').text('+').command(lambda: add_intercompany_sales(view)),
-            w.Button('button_frame_3_add').text('-'),
+            w.Button('button_frame_3_subtract').text('-').command(lambda: remove_intercompany_sales(view)),
             w.Spacer(),
         ),
         local_stacker.vstack(
-            w.TreeView(f'tree_frame_3'),
+            w.TreeView(f'tree_frame_3').padding(10, 10),
         ),
         w.Spacer().adjust(-1),
     )
@@ -402,6 +402,30 @@ def add_intercompany_sales(view):
         scroll_h = False
         view_model = Utilities.create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
         view.update_tree(view_model)
+
+
+def remove_intercompany_sales(view):
+    selected_values = view.tree_selected_values(get_tree_id())
+    combinations_of_selected_product_inventory = tuple((v[1], v[2]) for v in selected_values)
+    tree_values = view.get_all_tree_values(get_tree_id())
+
+    product_names = []
+    inventory_names = []
+    for _, product, inventory in tree_values:
+        if (product, inventory) not in combinations_of_selected_product_inventory:
+            product_names.append(product)
+            inventory_names.append(inventory)
+
+    import Utilities
+    headings = 'No', 'Product Name', 'Inventory Cost'
+    widths = 50, 200, 200
+    tree_datas = tuple(Utilities.create_tree_data('', n, '', (n, p, v), (), False)
+                       for (n, (p, v)) in enumerate(zip(product_names, inventory_names)))
+    stretches = False, True, True
+    scroll_v = True
+    scroll_h = False
+    view_model = Utilities.create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
+    view.update_tree(view_model)
 
 
 if __name__ == '__main__':
