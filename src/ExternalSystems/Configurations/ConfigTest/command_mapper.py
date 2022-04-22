@@ -108,6 +108,8 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
         w.tree_account_order: lambda: c.upon_tree_account_order_click(interactor, view),
         w.tree_worksheets: lambda: c.upon_tree_worksheets_click(interactor, view),
 
+        w.entry_macro_name: lambda *_: c.highlight_commands_that_contains_text_box(interactor, view),
+
         # Property
         w.entry_text: lambda *_: c.upon_leaving_entry(view, interactor, w.entry_text, 'text'),
         w.entry_x: lambda *_: c.upon_leaving_entry(view, interactor, w.entry_x, 'x'),

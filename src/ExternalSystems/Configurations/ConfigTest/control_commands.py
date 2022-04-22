@@ -222,6 +222,10 @@ def upon_tree_worksheets_click(interactor: BoundaryInABC, view: ViewABC):
         interactor.select_worksheet(sheet_name, update=True)
 
 
+def highlight_commands_that_contains_text_box(interactor: BoundaryInABC, view: ViewABC):
+    interactor.highlight_commands_containing_text_box_input(view.get_value(vm.entry_macro_name))
+
+
 def upon_delete_template(view: ViewABC, interactor: BoundaryInABC, negative_list):
     try:
         pickle_names = tuple(value[1] for value in view.tree_selected_values())
