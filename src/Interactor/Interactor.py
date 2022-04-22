@@ -2986,7 +2986,10 @@ class Interactor(BoundaryInABC):
 
         self._presenters.update_commands(response_model(self._commands.data, select_flags, highlight_flags))
 
-    def highlight_commands_containing_text_box_input(self, search_text: str):
+    def highlight_commands_containing_text_box_input(self, search_text: str, select: tuple = ()):
+        select_flags = None
+        if select != ():
+            select_flags = tuple(i in select for i in range(len(self.commands)))
         response_model = ResponseModel.response_model_to_presenter_update_commands
 
         def arg_to_be_highlighted(args_: tuple) -> bool:
@@ -3006,7 +3009,7 @@ class Interactor(BoundaryInABC):
         highlight_commands = tuple(search_text in name for (name, *_) in self.commands)
         highlight_args = tuple(arg_to_be_highlighted(args) for (_, args, _) in self.commands)
         highlight_flags = tuple(True in cmd_arg for cmd_arg in zip(highlight_commands, highlight_args))
-        self._presenters.update_commands(response_model(self._commands.data, None, highlight_flags))
+        self._presenters.update_commands(response_model(self._commands.data, select_flags, highlight_flags))
 
     # Spotlight
     @property

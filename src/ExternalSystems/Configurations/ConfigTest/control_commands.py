@@ -223,7 +223,8 @@ def upon_tree_worksheets_click(interactor: BoundaryInABC, view: ViewABC):
 
 
 def highlight_commands_that_contains_text_box(interactor: BoundaryInABC, view: ViewABC):
-    interactor.highlight_commands_containing_text_box_input(view.get_value(vm.entry_macro_name))
+    select = view.get_selected_tree_item_indexes(vm.tree_commands)
+    interactor.highlight_commands_containing_text_box_input(view.get_value(vm.entry_macro_name), select)
 
 
 def upon_delete_template(view: ViewABC, interactor: BoundaryInABC, negative_list):
