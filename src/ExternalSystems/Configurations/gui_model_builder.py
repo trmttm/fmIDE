@@ -28,7 +28,7 @@ class GUI:
         _switch_main_frame_implementation(increment, names, switchable_frames, view, self._frame_number, self._method)
 
     def _method(self, data: dict):
-        return lambda: method_injected(self._interactor, data)
+        method_injected(self._interactor, data)
 
 
 def add_widgets(parent, view: ViewABC, switch_main_frame: Callable = None):
@@ -83,7 +83,7 @@ def _switch_main_frame(increment: int, switchable_frames, names: tuple, view: Vi
 def _switch_main_frame_implementation(increment, names, switchable_frames, view: ViewABC, frame_number_passed=None,
                                       method: Callable = None):
     local_frame_number = frame_number_passed if frame_number_passed is not None else frame_number
-    next_frame = switchable_frames[frame_number]
+    next_frame = switchable_frames[local_frame_number]
     if increment > 0:  # Keep user inputs if Back< button is pushed
         local_view_model = None
         if local_frame_number == 1:
@@ -489,11 +489,11 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
 def method_injected(interactor, data: dict):
     names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
 
-    f = interactor.add_command
-    bank_names = data[names[0]]['number']
-    sga_names = data[names[1]]['number']
-    other_income_names = data[names[2]]['number']
-    other_expense_names = data[names[3]]['number']
+    f = interactor.add_command_always
+    bank_names = data[names[0]]['text'].values()
+    sga_names = data[names[1]]['text'].values()
+    other_expense_names = data[names[2]]['text'].values()
+    other_income_names = data[names[3]]['text'].values()
     interactor.clear_commands()
 
     f('merge_macro', ('99_00_first_step',), {})
@@ -520,19 +520,19 @@ def method_injected(interactor, data: dict):
     for sga_name in sga_names:
         f(
             'merge_macro_with_multiple_magic_args',
-            ('7_add_sga_then_set_parent_worksheet', ('sheet_name', 'cost_name'), f'(Sheet1,{sga_name})',),
+            ('7_add_sga_then_set_parent_worksheet', ('sheet_name', 'cost_name'), ('Sheet1', sga_name),),
             {})
 
     for oth_ex in other_expense_names:
         f(
             'merge_macro_with_multiple_magic_args',
-            ('7_add_other_expense_then_set_parent_worksheet', ('sheet_name', 'cost_name'), f'(Sheet1,{oth_ex})',),
+            ('7_add_other_expense_then_set_parent_worksheet', ('sheet_name', 'cost_name'), ('Sheet1', oth_ex),),
             {})
 
     for oth_in in other_income_names:
         f(
             'merge_macro_with_multiple_magic_args',
-            ('7_add_other_expense_then_set_parent_worksheet', '(sheet_name,cost_name)', f'(Sheet1,{oth_in})',),
+            ('7_add_other_income_then_set_parent_worksheet', ('sheet_name', 'income_name'), ('Sheet1', oth_in),),
             {})
 
     f('merge_macro_with_multiple_magic_args',
@@ -561,3 +561,4 @@ def method_injected(interactor, data: dict):
 
     interactor.run_macro()
     interactor.run_macro()
+    interactor.clear_commands()
