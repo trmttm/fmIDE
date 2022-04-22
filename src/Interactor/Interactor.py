@@ -3004,6 +3004,9 @@ class Interactor(BoundaryInABC):
                                 return True
                         except TypeError:
                             pass
+                else:
+                    if search_text in str(a):
+                        return True
             return False
 
         highlight_commands = tuple(search_text in name for (name, *_) in self.commands)
