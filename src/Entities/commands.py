@@ -44,6 +44,10 @@ class Commands(Observable):
             self._data += ((key, args, kwargs),)
 
     @notify
+    def add_command_always(self, key, args: tuple, kwargs: dict):
+        self._data += ((key, args, kwargs),)
+
+    @notify
     def insert_commands(self, index_: int, commands: tuple):
         new_data = []
         for n, command in enumerate(self._data):

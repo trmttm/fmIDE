@@ -2783,6 +2783,10 @@ class Interactor(BoundaryInABC):
         self._commands.add_command(key, args, kwargs)
         self.present_commands()
 
+    def add_command_always(self, key, args: tuple, kwargs: dict):
+        self._commands.add_command_always(key, args, kwargs)
+        self.present_commands()
+
     @property
     def commands(self) -> tuple:
         return self._commands.data
