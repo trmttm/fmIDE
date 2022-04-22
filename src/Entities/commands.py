@@ -217,7 +217,7 @@ class Commands(Observable):
                 new_args.append(arg)
         return tuple(new_args)
 
-    def _replace_text_with_magic_arg(self, new_args, text):
+    def _replace_text_with_magic_arg(self, new_args: list, text: str):
         for key, value in self._magic_args.items():
             try:
                 text = str(text).replace(key, value)
