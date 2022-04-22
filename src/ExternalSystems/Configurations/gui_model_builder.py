@@ -136,6 +136,10 @@ def _get_entry_id(name) -> str:
     return f'entry_number_of_{name}'
 
 
+def _get_check_button_production_by_outstanding_rate(product_number) -> str:
+    return f'check_button_production_by_outstanding_{product_number}'
+
+
 def _get_entry_id2(name: str, n: int) -> str:
     return f'frame_1_entry_{name}_{n}'
 
@@ -180,12 +184,17 @@ def _input_product(name, number_of_product, stacker_, view, w):
     e3 = _get_entry_id_product_inventory_cost
     e4 = _get_entry_id_product_capex
     dv = 0
+    by_rate = 'Production by outstanding rate'
     return stacker_.vstack_scrollable(
         *tuple(
             stacker_.vstack(
                 stacker_.hstack(
                     w.Label(f'{_lbl(name, n, "")}').text(f'{name}{n} Name').width(20),
                     w.Entry(_get_entry_id2(name, n)).default_value(f'{name}{n}'),
+                ),
+                stacker_.hstack(
+                    w.Label(f'{_lbl(name, n, "by_outstanding")}').text(by_rate).width(20).align('e'),
+                    w.CheckButton(_get_check_button_production_by_outstanding_rate(n)).value(True),
                 ),
                 stacker_.hstack(
                     w.Label(f'{_lbl(name, n, "fixed_costs")}').text(f'n fixed costs').width(20).align('e'),
@@ -227,7 +236,7 @@ def _get_entry_id_inventory_cost_name(product_name, n) -> str:
     return f'frame2_entry_{product_name}_{n}_inventory_cost'
 
 
-def _get_check_box_inventory_by_outstanding_rate(product_name, n) -> str:
+def _get_check_botton_inventory_by_outstanding_rate(product_name, n) -> str:
     return f'frame2_check_box_{product_name}_{n}_inventory_cost'
 
 
@@ -279,7 +288,7 @@ def _frame2_each_page(stacker_, name, product_name: str, product_number: int, vi
                         w.Label(f'frame2_label_{product_name}_{n}_inventory_cost').text(f'Inventory Cost Name{n}'),
                         w.Entry(_get_entry_id_inventory_cost_name(product_name, n)).default_value(
                             f'Inventory Cost Name{n} {product_name}'),
-                        w.CheckButton(_get_check_box_inventory_by_outstanding_rate(product_name, n)).value(True),
+                        w.CheckButton(_get_check_botton_inventory_by_outstanding_rate(product_name, n)).value(True),
                         w.Spacer().adjust(-1),
                     ) for n in range(number_of_inventory_cost)),
                 w.Spacer(),
@@ -492,9 +501,9 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
             entry_id = _get_entry_id2(name, n)
             text = view.get_value(entry_id)
             data[name]['text'][n] = text
-
+            production_by_outstanding = view.get_value(_get_check_button_production_by_outstanding_rate(n))
             if name == names[4]:  # Handle Product
-                products[text] = {'outstanding rate': True, 'capex': [],
+                products[text] = {'outstanding rate': production_by_outstanding, 'capex': [],
                                   'variable costs': [], 'fixed costs': [], 'inventory costs': [], }
                 number_of_capex = int(view.get_value(_get_entry_id_product_capex(name, n)))
                 number_of_fixed_cost = int(view.get_value(_get_entry_id_product_fixed_cost(name, n)))
@@ -517,7 +526,7 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
                     inventory_cost_name = view.get_value(_get_entry_id_inventory_cost_name(text, i))
                     products[text]['inventory costs'].append(inventory_cost_name)
 
-                    check_box_id = _get_check_box_inventory_by_outstanding_rate(text, i)
+                    check_box_id = _get_check_botton_inventory_by_outstanding_rate(text, i)
                     by_outstanding_rate = view.get_value(check_box_id)
                     inventory_by_outstanding_rate[inventory_cost_name] = by_outstanding_rate
 
