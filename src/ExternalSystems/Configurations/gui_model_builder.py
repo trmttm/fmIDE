@@ -103,7 +103,47 @@ def _switch_main_frame_implementation(increment, names, switchable_frames, view:
 
         if local_view_model is not None:
             view.add_widgets(local_view_model)
+
+        if local_frame_number == 3:
+            # binding must be after view.add_widgets
+            view.bind_command_to_widget(_get_combobox_id_product(), lambda *_: _set_combobox_fg(names, view))
+            prd_to_inv = create_product_to_inventories_dictionary(names, view)
+            view.bind_command_to_widget(_get_combobox_id_fg(), lambda *_: _set_combobox_inventory(prd_to_inv, view))
     view.switch_frame(next_frame)
+
+
+def create_product_to_inventories_dictionary(names: tuple, view: ViewABC) -> dict:
+    name = names[4]
+    number_of_products = int(view.get_value(_get_entry_id(name)))
+    product_names = tuple(view.get_value(f'frame_1_entry_{name}_{n}') for n in range(number_of_products))
+    prd_to_inv = {}
+    for n, product_name in enumerate(product_names):
+        prd_to_inv[product_name] = []
+        number_of_inventory = int(view.get_value(_get_entry_id_product_inventory_cost(name, n)))
+        for i in range(number_of_inventory):
+            inventory_name = view.get_value(_get_entry_id_inventory_cost_name(product_name, i))
+            prd_to_inv[product_name].append(inventory_name)
+    return prd_to_inv
+
+
+def _set_combobox_inventory(product_name_to_inventory_names: dict, view: ViewABC):
+    product_name = view.get_value(_get_combobox_id_fg())
+    inventory_names = product_name_to_inventory_names[product_name]
+
+    widget_id = _get_combobox_id_inventory()
+    values = inventory_names
+    view.set_combobox_values(widget_id, values)
+
+
+def _set_combobox_fg(names: tuple, view: ViewABC):
+    name = names[4]
+    number_of_products = int(view.get_value(_get_entry_id(name)))
+    product_names = tuple(view.get_value(f'frame_1_entry_{name}_{n}') for n in range(number_of_products))
+
+    product_name = view.get_value(_get_combobox_id_product())
+    widget_id = _get_combobox_id_fg()
+    values = tuple(p for p in product_names if p != product_name)
+    view.set_combobox_values(widget_id, values)
 
 
 def _number_of(name: str, stacker, view: ViewABC, default_value=0):
@@ -381,11 +421,14 @@ def _create_frame_3_view_model(names, frame, view: ViewABC) -> list:
 
     local_stacker.vstack(
         w.Label(f'label_frame_3').text('Intercompany Sales'),
+        w.ComboBox(_get_combobox_id_product()).values(product_names).padding(10, 10),
         local_stacker.hstack(
-            w.ComboBox(_get_combobox_id_product()).values(product_names).padding(10, 10),
             w.Spacer(),
-            w.Label(f'label_frame_3_arrow').text('->').padding(10, 10),
+            w.Label(f'label_frame_3_arrow').text('↓').padding(10, 10),
             w.Spacer(),
+        ),
+        local_stacker.hstack(
+            w.ComboBox(_get_combobox_id_fg()).values(product_names).padding(10, 10),
             w.ComboBox(_get_combobox_id_inventory()).values(inventory_names).padding(10, 10),
         ),
         local_stacker.hstack(
@@ -432,8 +475,12 @@ def _get_combobox_id_product() -> str:
     return f'combobox_frame_3_1'
 
 
-def _get_combobox_id_inventory() -> str:
+def _get_combobox_id_fg() -> str:
     return f'combobox_frame_3_2'
+
+
+def _get_combobox_id_inventory() -> str:
+    return f'combobox_frame_3_3'
 
 
 def _get_tree_id() -> str:
@@ -442,42 +489,43 @@ def _get_tree_id() -> str:
 
 def _add_intercompany_sales(view: ViewABC):
     new_product_name = view.get_value(_get_combobox_id_product())
+    new_fg_name = view.get_value(_get_combobox_id_fg())
     new_inventory_name = view.get_value(_get_combobox_id_inventory())
-    if new_inventory_name != '' and new_inventory_name != '':
+    if new_inventory_name != '' and new_fg_name != '' and new_inventory_name != '':
         tree_values = view.get_all_tree_values(_get_tree_id())
         existing_product_names = list(v[1] for v in tree_values)
-        existing_inventory_names = list(v[2] for v in tree_values)
+        existing_fg_names = list(v[2] for v in tree_values)
+        existing_inventory_names = list(v[3] for v in tree_values)
         product_names = existing_product_names + [new_product_name]
+        fg_names = existing_fg_names + [new_fg_name]
         inventory_names = existing_inventory_names + [new_inventory_name]
 
-        headings = 'No', 'Product Name', 'Inventory Cost'
-        widths = 50, 200, 200
-        tree_datas = tuple(Utilities.create_tree_data('', n, '', (n, p, v), (), False)
-                           for (n, (p, v)) in enumerate(zip(product_names, inventory_names)))
-        stretches = False, True, True
-        scroll_v = True
-        scroll_h = False
-        view_model = Utilities.create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
-        view.update_tree(view_model)
+        _update_tree(fg_names, inventory_names, product_names, view)
 
 
 def _remove_intercompany_sales(view: ViewABC):
     selected_values = view.tree_selected_values(_get_tree_id())
-    combinations_of_selected_product_inventory = tuple((v[1], v[2]) for v in selected_values)
+    combinations_of_selected_product_inventory = tuple((v[1], v[2], v[3]) for v in selected_values)
     tree_values = view.get_all_tree_values(_get_tree_id())
 
     product_names = []
+    fg_names = []
     inventory_names = []
-    for _, product, inventory in tree_values:
-        if (product, inventory) not in combinations_of_selected_product_inventory:
+    for _, product, fg, inventory in tree_values:
+        if (product, fg, inventory) not in combinations_of_selected_product_inventory:
             product_names.append(product)
+            fg_names.append(fg)
             inventory_names.append(inventory)
 
-    headings = 'No', 'Product Name', 'Inventory Cost'
-    widths = 50, 200, 200
-    tree_datas = tuple(Utilities.create_tree_data('', n, '', (n, p, v), (), False)
-                       for (n, (p, v)) in enumerate(zip(product_names, inventory_names)))
-    stretches = False, True, True
+    _update_tree(fg_names, inventory_names, product_names, view)
+
+
+def _update_tree(fg_names, inventory_names, product_names, view):
+    headings = 'No', 'Product Name', 'Finished Goods', 'Inventory Cost'
+    widths = 50, 130, 130, 130
+    tree_datas = tuple(Utilities.create_tree_data('', n, '', (n, p, f, v), (), False)
+                       for (n, (p, f, v)) in enumerate(zip(product_names, fg_names, inventory_names)))
+    stretches = False, True, True, True
     scroll_v = True
     scroll_h = False
     view_model = Utilities.create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
@@ -488,7 +536,7 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
     data = {}
     products = {}
     inventory_by_outstanding_rate = {}
-    intercompany_sales = []
+    intercompany_sales = {}
     # set number
     for name in names:
         entry_id = _get_entry_id(name)
@@ -531,8 +579,8 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
                     inventory_by_outstanding_rate[inventory_cost_name] = by_outstanding_rate
 
     all_tree_values = view.get_all_tree_values(_get_tree_id())
-    for n, product_name, inventory_cost_name in all_tree_values:
-        intercompany_sales.append((product_name, inventory_cost_name))
+    for n, product_name, finished_goods_name, inventory_cost_name in all_tree_values:
+        intercompany_sales[product_name] = (finished_goods_name, inventory_cost_name)
 
     data['products'] = products
     data['inventory by outstanding rate'] = inventory_by_outstanding_rate
@@ -619,14 +667,20 @@ def method_injected(interactor, view: ViewABC, data: dict):
     interactor.run_macro()
     interactor.clear_commands()
 
+    intercompany_sales = data['intercompany_sales']
     for product_name in product_names:
         decorate_production_volume_with_outstanding_rate = data['products'][product_name]['outstanding rate']
         fixed_cost_names = data['products'][product_name]['fixed costs']
         variable_cost_names = data['products'][product_name]['variable costs']
         inventory_cost_names = data['products'][product_name]['inventory costs']
         capex_names = data['products'][product_name]['capex']
+        is_intercompany_sales = product_name in intercompany_sales
 
         f('set_magic_arg', ('product_name', product_name), {})
+        if is_intercompany_sales:
+            finished_goods, finished_goods_inventory_name = intercompany_sales[product_name]
+            f('set_magic_arg_by_magic_arg', ('fg_variable_cost_name', finished_goods_inventory_name), {})
+            f('set_magic_arg_by_magic_arg', ('fg_name', finished_goods), {})
         f('set_magic_arg_by_magic_arg', ('sheet_name', 'product_name'), {})
         f('merge_macro_with_magic', ('7_add_new_worksheet_with_MagicArg', 'MagicArg', 'sheet_name'), {})
 
@@ -652,7 +706,15 @@ def method_injected(interactor, view: ViewABC, data: dict):
             f('merge_macro_with_magic',
               ('7_fixed_cost_then_set_parent_worksheet', 'cost_name', fixed_cost_name), {})
 
-        if decorate_production_volume_with_outstanding_rate:
+        if is_intercompany_sales:
+            f('merge_macro_with_magic', ('7_add_new_worksheet_with_MagicArg', 'MagicArg', 'Eliminations'), {})
+            f('merge_macro', ('7_opex_inventory_cogs_inter_company',), {})
+            f('merge_macro_with_magic', ('7_add_revenue_inter_company_with_MagicArg', 'account_name', product_name), {})
+            f('merge_macro', ('7_add_elimination_module',), {})
+            f('merge_macro_with_multiple_magic_args',
+              ('7_make_connections_to_elimination_module', ('target_name', 'finished_goods_name'),
+               ('fg_variable_cost_name', 'fg_name')), {})
+        elif decorate_production_volume_with_outstanding_rate:
             f('merge_macro', ('7_opex_inventory_cogs_decorated_with_outstanding_rate',), {})
         else:
             f('merge_macro', ('7_opex_inventory_cogs',), {})
@@ -664,10 +726,15 @@ def method_injected(interactor, view: ViewABC, data: dict):
           {})
         f('merge_macro_with_multiple_magic_args',
           ('8_Worksheet_Add_Parent', ('Parent Sheet', 'Child Sheet'), ('sheet_name', f'COGS {product_name}'),), {})
-        f('merge_macro_with_magic', ('7_add_revenue_with_MagicArg', 'account_name', product_name,), {})
+        if not is_intercompany_sales:
+            f('merge_macro_with_magic', ('7_add_revenue_with_MagicArg', 'account_name', product_name,), {})
         f('merge_macro_with_multiple_magic_args',
           ('8_Worksheet_Add_Parent', ('Parent Sheet', 'Child Sheet'), ('sheet_name', f'Revenue {product_name}'),), {})
         f('merge_macro', ('8 Auto Connect and Inter Sheets Relays',), {})
+        if is_intercompany_sales:
+            f('merge_macro_with_multiple_magic_args',
+              ('7_clear_connections_ids_of_connect_elimination_module', ('target_name', 'finished_goods_name'),
+               ('fg_variable_cost_name', 'fg_name')), {})
         f('delete_commands_up_to', (), {})
 
         interactor.turn_off_presenters()

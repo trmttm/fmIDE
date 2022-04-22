@@ -1401,3 +1401,9 @@ def popup_wizard(interactor: BoundaryInABC, view: ViewABC):
     view.add_widgets(view_model)
     gui = GUI(toplevel_id, view, interactor)
     gui.add_widgets()
+    view.bind_command_to_widget(toplevel_id, lambda: close_wizard_window_properly(toplevel_id, interactor, view))
+
+
+def close_wizard_window_properly(toplevel_id, interactor: BoundaryInABC, view: ViewABC):
+    view.close(toplevel_id)
+    interactor.change_active_keymap(cns.keymap_design)  # closing toplevel is responsible for changing keymap

@@ -20,6 +20,9 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
     menu_bar_model = {
         'File': {
             'Create New Project': lambda: c.create_project_folder(view, interactor, presenters, mouse),
+            'Wizards': {
+                'Model with CFWF': lambda: c.popup_wizard(interactor, view)
+            },
             'Load Project': lambda: c.create_project_folder(view, interactor, presenters, mouse),
             'Load Inputs from Input Setter.csv': lambda: interactor.load_inputs_from_csv(),
             'Recent Projects': {},
@@ -27,7 +30,6 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
             'Save as Template': lambda: c.popup_f2_entry(view, interactor, presenters, mouse),
             'Save as Module': lambda: c.popup_module_save(view, interactor, presenters, mouse),
             'Close': lambda: c.properly_close_app(interactor, view),
-            'test': lambda: c.popup_wizard(interactor, view),
         },
         'Export': {
             'Export as Excel': lambda: c.popup_excel_export_entry(view, interactor, presenters, mouse),
@@ -59,6 +61,7 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
         },
         'Canvas': {
             'Update All': interactor.update_canvas,
+            'Unselect All': lambda: interactor.unselect_all(),
             'Update Current Sheet': interactor.update_canvas_of_current_sheet,
             'Add': {
                 'New Shape': lambda: c.main_specific_add_shape(interactor, view, ),
@@ -105,7 +108,6 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
                 'Set Color': lambda: interactor.set_fill_to_selection(view.ask_color()),
                 'Remove Color': lambda: interactor.remove_fill_of_selection(),
             },
-            'Unselect All': lambda: interactor.unselect_all(),
             'Erase Selected': lambda: interactor.erase_selected_shapes(),
             'Calculate': lambda: interactor.calculate(),
         },
