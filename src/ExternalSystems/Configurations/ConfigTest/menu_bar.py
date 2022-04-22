@@ -27,6 +27,7 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
             'Save as Template': lambda: c.popup_f2_entry(view, interactor, presenters, mouse),
             'Save as Module': lambda: c.popup_module_save(view, interactor, presenters, mouse),
             'Close': lambda: c.properly_close_app(interactor, view),
+            'test': lambda: c.popup_wizard(interactor, view),
         },
         'Export': {
             'Export as Excel': lambda: c.popup_excel_export_entry(view, interactor, presenters, mouse),

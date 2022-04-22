@@ -1390,3 +1390,14 @@ def upon_macro_list_right_click(view: ViewABC, values):
         return  # Do nothing
     view.set_value(vm.entry_macro_name, value)
     view.focus(vm.entry_macro_name)
+
+
+def popup_wizard(interactor: BoundaryInABC, view: ViewABC):
+    from ..gui_model_builder import GUI
+    from view_tkinter import tk_interface as intf
+    options = intf.top_level_options('Input Setting', (500, 600))
+    toplevel_id = 'gui_model_top_level'
+    view_model = [intf.widget_model('root', toplevel_id, 'toplevel', 0, 0, 0, 0, 'nsew', **options)]
+    view.add_widgets(view_model)
+    gui = GUI(toplevel_id, view, interactor)
+    gui.add_widgets()
