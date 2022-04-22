@@ -1,4 +1,7 @@
+from typing import Callable
+
 import Utilities
+from interface_fm import BoundaryInABC
 from interface_view import ViewABC
 from stacker import Stacker
 from stacker import widgets as w
@@ -6,10 +9,36 @@ from stacker import widgets as w
 frame_number = 0
 
 
-def add_widgets(parent, view: ViewABC):
-    names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
+class GUI:
+    def __init__(self, parent, view: ViewABC, interactor: BoundaryInABC):
+        self._parent = parent
+        self._view = view
+        self._interactor = interactor
+        self._frame_number = 0
+
+    def add_widgets(self):
+        add_widgets(self._parent, self._view, self.switch_main_frame)
+
+    def switch_main_frame(self, increment: int, switchable_frames, names: tuple, view: ViewABC):
+        if increment > 0:
+            self._frame_number = min(len(switchable_frames) - 1, self._frame_number + 1)
+        else:
+            self._frame_number = max(0, self._frame_number - 1)
+
+        _switch_main_frame_implementation(increment, names, switchable_frames, view, self._frame_number, self._method)
+
+    def _method(self, data: dict):
+        return lambda: method_injected(self._interactor, data)
+
+
+def add_widgets(parent, view: ViewABC, switch_main_frame: Callable = None):
+    if switch_main_frame is None:
+        switch_main_frame = _switch_main_frame
+
     stacker = Stacker(parent)
     switchable_frames = []
+
+    names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
 
     stacker.vstack(
         w.FrameSwitcher('frame_switcher', stacker, switchable_frames).stackers(
@@ -21,8 +50,7 @@ def add_widgets(parent, view: ViewABC):
                 _number_of(names[3], stacker, view),
                 _number_of(names[4], stacker, view),
                 stacker.hstack(
-                    w.Button('button_clear').text('Clear').command(
-                        lambda: _clear_entries(names, view, )).width(15),
+                    w.Button('button_clear').text('Clear').command(lambda: _clear_entries(names, view, )).width(15),
                     w.Spacer(),
                 ),
                 w.Spacer(),
@@ -33,9 +61,9 @@ def add_widgets(parent, view: ViewABC):
             stacker.vstack(),
         ),
         stacker.hstack(
-            w.Button('Back').text('Back<').command(lambda: _switch_main_frame(-1, switchable_frames, names, view)),
+            w.Button('Back').text('Back<').command(lambda: switch_main_frame(-1, switchable_frames, names, view)),
             w.Spacer(),
-            w.Button('Next').text('>Next').command(lambda: _switch_main_frame(1, switchable_frames, names, view)),
+            w.Button('Next').text('>Next').command(lambda: switch_main_frame(1, switchable_frames, names, view)),
         ),
     )
     view_model = stacker.view_model
@@ -49,24 +77,31 @@ def _switch_main_frame(increment: int, switchable_frames, names: tuple, view: Vi
         frame_number = min(len(switchable_frames) - 1, frame_number + 1)
     else:
         frame_number = max(0, frame_number - 1)
+    _switch_main_frame_implementation(increment, names, switchable_frames, view)
 
+
+def _switch_main_frame_implementation(increment, names, switchable_frames, view: ViewABC, frame_number_passed=None,
+                                      method: Callable = None):
+    local_frame_number = frame_number_passed if frame_number_passed is not None else frame_number
     next_frame = switchable_frames[frame_number]
-
     if increment > 0:  # Keep user inputs if Back< button is pushed
         local_view_model = None
-        if frame_number == 1:
-            local_view_model = _create_frame_1_view_model(names, frame_number, next_frame, view)
-        elif frame_number == 2:
-            local_view_model = _create_frame_2_view_model(names, frame_number, next_frame, view)
-        elif frame_number == 3:
+        if local_frame_number == 1:
+            local_view_model = _create_frame_1_view_model(names, local_frame_number, next_frame, view)
+        elif local_frame_number == 2:
+            local_view_model = _create_frame_2_view_model(names, local_frame_number, next_frame, view)
+        elif local_frame_number == 3:
             local_view_model = _create_frame_3_view_model(names, next_frame, view)
-        elif frame_number == 4:
+        elif local_frame_number == 4:
             data_structure = create_data_structure(names, view)
-            print(data_structure)
+            # Execute injected method here
+            if method is not None:
+                method(data_structure)
+            else:
+                print(data_structure)
 
         if local_view_model is not None:
             view.add_widgets(local_view_model)
-
     view.switch_frame(next_frame)
 
 
@@ -406,7 +441,7 @@ def _remove_intercompany_sales(view: ViewABC):
     view.update_tree(view_model)
 
 
-def create_data_structure(names: tuple, view: ViewABC):
+def create_data_structure(names: tuple, view: ViewABC) -> dict:
     data = {}
     products = {}
     intercompany_sales = []
