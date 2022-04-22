@@ -1,9 +1,76 @@
 import Utilities
+from interface_view import ViewABC
 from stacker import Stacker
 from stacker import widgets as w
 
+frame_number = 0
 
-def number_of(name: str, stacker, view, default_value=0):
+
+def add_widgets(parent, view: ViewABC):
+    names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
+    stacker = Stacker(parent)
+    switchable_frames = []
+
+    stacker.vstack(
+        w.FrameSwitcher('frame_switcher', stacker, switchable_frames).stackers(
+            stacker.vstack(
+                w.Label('label_frame0').text('Frame00'),
+                number_of(names[0], stacker, view),
+                number_of(names[1], stacker, view),
+                number_of(names[2], stacker, view),
+                number_of(names[3], stacker, view),
+                number_of(names[4], stacker, view),
+                stacker.hstack(
+                    w.Button('button_clear').text('Clear').command(
+                        lambda: clear_entries(names, view, )).width(15),
+                    w.Spacer(),
+                ),
+                w.Spacer(),
+            ),
+            stacker.vstack(),
+            stacker.vstack(),
+            stacker.vstack(),
+            stacker.vstack(),
+        ),
+        stacker.hstack(
+            w.Button('Back').text('Back<').command(lambda: switch_frame(-1, switchable_frames, names, view)),
+            w.Spacer(),
+            w.Button('Next').text('>Next').command(lambda: switch_frame(1, switchable_frames, names, view)),
+        ),
+    )
+    view_model = stacker.view_model
+    view.add_widgets(view_model)
+    view.switch_frame(switchable_frames[frame_number])
+
+
+def switch_frame(increment: int, switchable_frames, names: tuple, view: ViewABC):
+    global frame_number
+    if increment > 0:
+        frame_number = min(len(switchable_frames) - 1, frame_number + 1)
+    else:
+        frame_number = max(0, frame_number - 1)
+
+    next_frame = switchable_frames[frame_number]
+
+    if increment > 0:  # Keep user inputs if Back< button is pushed
+        local_view_model = None
+        if frame_number == 1:
+            local_view_model = create_frame_1_view_model(names, frame_number, next_frame, view)
+        elif frame_number == 2:
+            local_view_model = create_frame_2_view_model(names, frame_number, next_frame, view)
+        elif frame_number == 3:
+            local_view_model = create_frame_3_view_model(names, next_frame, view)
+        elif frame_number == 4:
+            data_structure = create_data_structure(names, view)
+            print(data_structure)
+
+        if local_view_model is not None:
+            view.add_widgets(local_view_model)
+
+    view.switch_frame(next_frame)
+
+
+def number_of(name: str, stacker, view: ViewABC, default_value=0):
     dv = default_value
     args = get_entry_id(name), view, dv
     return stacker.hstack(
@@ -14,7 +81,7 @@ def number_of(name: str, stacker, view, default_value=0):
     )
 
 
-def increment_entry(increment: int, entry: str, view, default_value=0):
+def increment_entry(increment: int, entry: str, view: ViewABC, default_value=0):
     current_value = view.get_value(entry)
     if Utilities.is_number(current_value):
         current_value = int(current_value)
@@ -24,7 +91,7 @@ def increment_entry(increment: int, entry: str, view, default_value=0):
     view.set_value(entry, new_value)
 
 
-def clear_entries(names: tuple, view, default_value=0):
+def clear_entries(names: tuple, view: ViewABC, default_value=0):
     for name in names:
         view.set_value(get_entry_id(name), default_value)
 
@@ -37,7 +104,7 @@ def get_entry_id2(name: str, n: int) -> str:
     return f'frame_1_entry_{name}_{n}'
 
 
-def frame1_each_page(stacker_, names: tuple, name: str, view, widget):
+def frame1_each_page(stacker_, names: tuple, name: str, view: ViewABC, widget):
     w = widget
     number = int(view.get_value(get_entry_id(name)))
     if name in (names[4],):
@@ -119,7 +186,7 @@ def get_entry_id_variable_cost_name(product_name, n) -> str:
     return f'Variable Cost Name{n} {product_name}'
 
 
-def frame2_each_page(stacker_, name, product_name: str, product_number: int, view, widget):
+def frame2_each_page(stacker_, name, product_name: str, product_number: int, view: ViewABC, widget):
     w = widget
     frame_names = 'Fixed Cost', 'Variable Cost', 'Inventory'
     number_of_fixed_cost = int(view.get_value(get_entry_id_product_fixed_cost(name, product_number)))
@@ -163,12 +230,12 @@ def frame2_each_page(stacker_, name, product_name: str, product_number: int, vie
     )
 
 
-def switch_frames1(n_: int, frame_names, view):
+def switch_frames1(n_: int, frame_names, view: ViewABC):
     next_frame = frame_names[n_]
     view.switch_frame(next_frame)
 
 
-def create_frame_1_view_model(names, frame_number, next_frame, view) -> list:
+def create_frame_1_view_model(names, frame_number, next_frame, view: ViewABC) -> list:
     frame1_frames = []
     args = frame1_frames, view
     view.clear_frame(next_frame)
@@ -194,22 +261,19 @@ def create_frame_1_view_model(names, frame_number, next_frame, view) -> list:
     return local_view_model
 
 
-def create_frame_2_view_model(names, frame_number, frame, view) -> list:
+def create_frame_2_view_model(names, frame_number, frame, view: ViewABC) -> list:
     frame2_frames = []
     name = names[4]
     number_of_products = int(view.get_value(get_entry_id(name)))
     product_names = tuple(view.get_value(f'frame_1_entry_{name}_{n}') for n in range(number_of_products))
     local_stacker = Stacker(frame)
-
-    def switch_frames(i: int):
-        next_frame = frame2_frames[i]
-        view.switch_frame(next_frame)
+    args = frame2_frames, view
 
     local_stacker.hstack(
         # 1) Buttons
         local_stacker.vstack(
             *tuple(
-                w.Button(f'frame_{frame_number}_{n}').text(product_name).command(lambda i=n: switch_frames(i))
+                w.Button(f'frame_{frame_number}_{n}').text(product_name).command(lambda i=n: switch_frames(i, *args))
                 for (n, product_name) in enumerate(product_names)
             ) + (w.Spacer(),)
         ),
@@ -226,7 +290,12 @@ def create_frame_2_view_model(names, frame_number, frame, view) -> list:
     return local_view_model
 
 
-def create_frame_3_view_model(names, frame_number, frame, view) -> list:
+def switch_frames(i: int, frame2_frames, view: ViewABC):
+    next_frame = frame2_frames[i]
+    view.switch_frame(next_frame)
+
+
+def create_frame_3_view_model(names, frame, view: ViewABC) -> list:
     inventory_names = extract_all_inventory_cost_names(names, view)
     product_names = extract_all_product_names(names, view)
 
@@ -258,14 +327,14 @@ def create_frame_3_view_model(names, frame_number, frame, view) -> list:
     return local_view_model
 
 
-def extract_all_product_names(names, view):
+def extract_all_product_names(names, view: ViewABC):
     name_product = names[4]
     number_of_products = int(view.get_value(get_entry_id(name_product)))
     product_names = tuple(view.get_value(get_entry_id2(name_product, n)) for n in range(number_of_products))
     return product_names
 
 
-def extract_all_inventory_cost_names(names, view):
+def extract_all_inventory_cost_names(names, view: ViewABC):
     name_product = names[4]
     number_of_products = int(view.get_value(get_entry_id(name_product)))
     inventory_names = []
@@ -293,7 +362,7 @@ def get_tree_id() -> str:
     return f'tree_frame_3'
 
 
-def add_intercompany_sales(view):
+def add_intercompany_sales(view: ViewABC):
     new_product_name = view.get_value(get_combobox_id_product())
     new_inventory_name = view.get_value(get_combobox_id_inventory())
     if new_inventory_name != '' and new_inventory_name != '':
@@ -314,7 +383,7 @@ def add_intercompany_sales(view):
         view.update_tree(view_model)
 
 
-def remove_intercompany_sales(view):
+def remove_intercompany_sales(view: ViewABC):
     selected_values = view.tree_selected_values(get_tree_id())
     combinations_of_selected_product_inventory = tuple((v[1], v[2]) for v in selected_values)
     tree_values = view.get_all_tree_values(get_tree_id())
@@ -337,7 +406,7 @@ def remove_intercompany_sales(view):
     view.update_tree(view_model)
 
 
-def create_data_structure(names: tuple, view):
+def create_data_structure(names: tuple, view: ViewABC):
     data = {}
     products = {}
     intercompany_sales = []
