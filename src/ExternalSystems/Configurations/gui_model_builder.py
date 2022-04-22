@@ -158,6 +158,10 @@ def _lbl(name, n_, post_fix):
     return f'frame_1_label_{name}_{n_}_{post_fix}'
 
 
+def _get_entry_id_product_capex(name, n) -> str:
+    return f'frame_1_entry_{name}_{n}_capex'
+
+
 def _get_entry_id_product_fixed_cost(name, n) -> str:
     return f'frame_1_entry_{name}_{n}_fixed_costs'
 
@@ -174,6 +178,7 @@ def _input_product(name, number_of_product, stacker_, view, w):
     e1 = _get_entry_id_product_fixed_cost
     e2 = _get_entry_id_product_variable_cost
     e3 = _get_entry_id_product_inventory_cost
+    e4 = _get_entry_id_product_capex
     dv = 0
     return stacker_.vstack_scrollable(
         *tuple(
@@ -206,12 +211,24 @@ def _input_product(name, number_of_product, stacker_, view, w):
                     w.Button(f'button_n_fixed_{name}_+_{n}').text('+').width(1).command(
                         lambda i=n: _increment_entry(1, e3(name, i), view, dv)),
                 ),
+                stacker_.hstack(
+                    w.Label(f'{_lbl(name, n, "capex")}').text(f'n capex').width(20).align('e'),
+                    w.Button(f'button_n_capex_{name}_-_{n}').text('-').width(1).command(
+                        lambda i=n: _increment_entry(-1, e4(name, i), view, dv)),
+                    w.Entry(_get_entry_id_product_capex(name, n)).default_value(dv).width(5),
+                    w.Button(f'button_n_capex_{name}_+_{n}').text('+').width(1).command(
+                        lambda i=n: _increment_entry(1, e4(name, i), view, dv)),
+                ),
             ) for n in range(number_of_product))
     )
 
 
 def _get_entry_id_inventory_cost_name(product_name, n) -> str:
     return f'frame2_entry_{product_name}_{n}_inventory_cost'
+
+
+def _get_entry_id_capex_name(product_name, n) -> str:
+    return f'frame2_entry_{product_name}_{n}_capex'
 
 
 def _get_entry_id_fixed_cost_name(product_name, n) -> str:
@@ -224,7 +241,8 @@ def _get_entry_id_variable_cost_name(product_name, n) -> str:
 
 def _frame2_each_page(stacker_, name, product_name: str, product_number: int, view: ViewABC, widget):
     w = widget
-    frame_names = 'Fixed Cost', 'Variable Cost', 'Inventory'
+    frame_names = 'Fixed Cost', 'Variable Cost', 'Inventory', 'CAPEX'
+    number_of_capex = int(view.get_value(_get_entry_id_product_capex(name, product_number)))
     number_of_fixed_cost = int(view.get_value(_get_entry_id_product_fixed_cost(name, product_number)))
     number_of_variable_cost = int(view.get_value(_get_entry_id_product_variable_cost(name, product_number)))
     number_of_inventory_cost = int(view.get_value(_get_entry_id_product_inventory_cost(name, product_number)))
@@ -259,6 +277,16 @@ def _frame2_each_page(stacker_, name, product_name: str, product_number: int, vi
                             f'Inventory Cost Name{n} {product_name}'),
                         w.Spacer().adjust(-1),
                     ) for n in range(number_of_inventory_cost)),
+                w.Spacer(),
+            ),
+            stacker_.vstack(
+                *tuple(
+                    stacker_.hstack(
+                        w.Label(f'frame2_label_{product_name}_{n}_capex').text(f'CAPEX Name{n}'),
+                        w.Entry(_get_entry_id_capex_name(product_name, n)).default_value(
+                            f'CAPEX Name{n} {product_name}'),
+                        w.Spacer().adjust(-1),
+                    ) for n in range(number_of_capex)),
                 w.Spacer(),
             ),
         ),
@@ -460,10 +488,15 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
             data[name]['text'][n] = text
 
             if name == names[4]:  # Handle Product
-                products[text] = {'variable costs': [], 'fixed costs': [], 'inventory costs': [], }
+                products[text] = {'capex': [], 'variable costs': [], 'fixed costs': [], 'inventory costs': [], }
+                number_of_capex = int(view.get_value(_get_entry_id_product_capex(name, n)))
                 number_of_fixed_cost = int(view.get_value(_get_entry_id_product_fixed_cost(name, n)))
                 number_of_variable_cost = int(view.get_value(_get_entry_id_product_variable_cost(name, n)))
                 number_of_inventory_cost = int(view.get_value(_get_entry_id_product_inventory_cost(name, n)))
+
+                for i in range(number_of_capex):
+                    capex_name = view.get_value(_get_entry_id_capex_name(text, i))
+                    products[text]['capex'].append(capex_name)
 
                 for i in range(number_of_fixed_cost):
                     fixed_cost_name = view.get_value(_get_entry_id_fixed_cost_name(text, i))
@@ -567,10 +600,15 @@ def method_injected(interactor, view: ViewABC, data: dict):
         fixed_cost_names = data['products'][product_name]['fixed costs']
         variable_cost_names = data['products'][product_name]['variable costs']
         inventory_cost_names = data['products'][product_name]['inventory costs']
+        capex_names = data['products'][product_name]['capex']
 
         f('set_magic_arg', ('product_name', product_name), {})
         f('set_magic_arg_by_magic_arg', ('sheet_name', 'product_name'), {})
         f('merge_macro_with_magic', ('7_add_new_worksheet_with_MagicArg', 'MagicArg', 'sheet_name'), {})
+
+        for capex_name in capex_names:
+            f('merge_macro_with_magic',
+              ('7_add_capex_then_set_parent_worksheet', 'expense_name', capex_name), {})
 
         for inventory_name in inventory_cost_names:
             f('merge_macro_with_magic',
