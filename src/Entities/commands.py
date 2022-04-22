@@ -171,7 +171,9 @@ class Commands(Observable):
                 command = getattr(obj, key)
             except Exception as e:
                 return False, (n, key, args, kwargs, e)
-            if command.__name__ not in ('set_magic_arg', 'set_multiple_magic_args'):
+            if command.__name__ == 'set_multiple_magic_args_by_magic_args':
+                args = self._apply_magic_arg2(args)
+            elif command.__name__ not in ('set_magic_arg', 'set_multiple_magic_args'):
                 args = self._apply_magic_arg(args)
             if command.__name__ == 'delete_commands_up_to':
                 args = (initial_number_of_commands - 1,)
@@ -215,6 +217,15 @@ class Commands(Observable):
                 new_args.append(tuple(tuple_arg_replaced))
             else:
                 new_args.append(arg)
+        return tuple(new_args)
+
+    def _apply_magic_arg2(self, args: tuple):
+        magic_args, args_passed = args
+        new_args = [magic_args]  # magic_args should NOT be replaced.
+        args_passed_replaced = []
+        for each_arg in args_passed:
+            self._replace_text_with_magic_arg(args_passed_replaced, each_arg)
+        new_args.append(tuple(args_passed_replaced))
         return tuple(new_args)
 
     def _replace_text_with_magic_arg(self, new_args: list, text: str):
