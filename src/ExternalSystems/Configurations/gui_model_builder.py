@@ -28,7 +28,7 @@ class GUI:
         _switch_main_frame_implementation(increment, names, switchable_frames, view, self._frame_number, self._method)
 
     def _method(self, data: dict):
-        method_injected(self._interactor, data)
+        method_injected(self._interactor, self._view, data)
 
 
 def add_widgets(parent, view: ViewABC, switch_main_frame: Callable = None):
@@ -97,6 +97,7 @@ def _switch_main_frame_implementation(increment, names, switchable_frames, view:
             # Execute injected method here
             if method is not None:
                 method(data_structure)
+                return
             else:
                 print(data_structure)
 
@@ -214,11 +215,11 @@ def _get_entry_id_inventory_cost_name(product_name, n) -> str:
 
 
 def _get_entry_id_fixed_cost_name(product_name, n) -> str:
-    return f'Fixed Cost Name{n} {product_name}'
+    return f'frame2_entry_{product_name}_{n}_fixed_cost'
 
 
 def _get_entry_id_variable_cost_name(product_name, n) -> str:
-    return f'Variable Cost Name{n} {product_name}'
+    return f'frame2_entry_{product_name}_{n}_variable_cost'
 
 
 def _frame2_each_page(stacker_, name, product_name: str, product_number: int, view: ViewABC, widget):
@@ -465,15 +466,15 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
                 number_of_inventory_cost = int(view.get_value(_get_entry_id_product_inventory_cost(name, n)))
 
                 for i in range(number_of_fixed_cost):
-                    fixed_cost_name = _get_entry_id_fixed_cost_name(text, i)
+                    fixed_cost_name = view.get_value(_get_entry_id_fixed_cost_name(text, i))
                     products[text]['fixed costs'].append(fixed_cost_name)
 
                 for i in range(number_of_variable_cost):
-                    variable_cost_name = _get_entry_id_variable_cost_name(text, i)
+                    variable_cost_name = view.get_value(_get_entry_id_variable_cost_name(text, i))
                     products[text]['variable costs'].append(variable_cost_name)
 
                 for i in range(number_of_inventory_cost):
-                    inventory_cost_name = _get_entry_id_inventory_cost_name(text, i)
+                    inventory_cost_name = view.get_value(_get_entry_id_inventory_cost_name(text, i))
                     products[text]['inventory costs'].append(inventory_cost_name)
 
     all_tree_values = view.get_all_tree_values(_get_tree_id())
@@ -482,11 +483,10 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
 
     data['products'] = products
     data['intercompany_sales'] = intercompany_sales
-    data['method'] = method_injected
     return data
 
 
-def method_injected(interactor, data: dict):
+def method_injected(interactor, view: ViewABC, data: dict):
     names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
 
     f = interactor.add_command_always
@@ -494,6 +494,7 @@ def method_injected(interactor, data: dict):
     sga_names = data[names[1]]['text'].values()
     other_expense_names = data[names[2]]['text'].values()
     other_income_names = data[names[3]]['text'].values()
+    product_names = data[names[4]]['text'].values()
     interactor.clear_commands()
 
     f('merge_macro', ('99_00_first_step',), {})
@@ -558,7 +559,48 @@ def method_injected(interactor, data: dict):
     f('merge_macro_with_multiple_magic_args',
       ('8_Worksheet_Add_Parent', ('Parent Sheet', 'Child Sheet'), ('Accounts', 'RE')), {})
     f('delete_commands_up_to', (), {})
-
     interactor.run_macro()
     interactor.run_macro()
     interactor.clear_commands()
+
+    for product_name in product_names:
+        fixed_cost_names = data['products'][product_name]['fixed costs']
+        variable_cost_names = data['products'][product_name]['variable costs']
+        inventory_cost_names = data['products'][product_name]['inventory costs']
+
+        f('set_magic_arg', ('product_name', product_name), {})
+        f('set_magic_arg_by_magic_arg', ('sheet_name', 'product_name'), {})
+        f('merge_macro_with_magic', ('7_add_new_worksheet_with_MagicArg', 'MagicArg', 'sheet_name'), {})
+
+        for inventory_name in inventory_cost_names:
+            f('merge_macro_with_magic',
+              ('7_inventory_material_then_set_parent_worksheet', 'material_name', inventory_name), {})
+
+        for variable_cost_name in variable_cost_names:
+            f('merge_macro_with_magic',
+              ('7_variable_cost_then_set_parent_worksheet', 'cost_name', variable_cost_name), {})
+
+        for fixed_cost_name in fixed_cost_names:
+            f('merge_macro_with_magic',
+              ('7_fixed_cost_then_set_parent_worksheet', 'cost_name', fixed_cost_name), {})
+
+        f('merge_macro', ('7_opex_inventory_cogs',), {})
+        f('merge_macro_with_multiple_magic_args',
+          ('8_Worksheet_Add_Parent', ('Parent Sheet', 'Child Sheet'), ('sheet_name', f'OPEX {product_name}'),), {})
+        f('merge_macro_with_multiple_magic_args',
+          ('8_Worksheet_Add_Parent', ('Parent Sheet', 'Child Sheet'), ('sheet_name', f'Inventory FG {product_name}'),),
+          {})
+        f('merge_macro_with_multiple_magic_args',
+          ('8_Worksheet_Add_Parent', ('Parent Sheet', 'Child Sheet'), ('sheet_name', f'COGS {product_name}'),), {})
+        f('merge_macro_with_magic', ('7_add_revenue_with_MagicArg', 'account_name', product_name,), {})
+        f('merge_macro_with_multiple_magic_args',
+          ('8_Worksheet_Add_Parent', ('Parent Sheet', 'Child Sheet'), ('sheet_name', f'Revenue {product_name}'),), {})
+        f('merge_macro', ('8 Auto Connect and Inter Sheets Relays',), {})
+        f('delete_commands_up_to', (), {})
+
+        interactor.run_macro()
+        interactor.run_macro()
+        interactor.clear_commands()
+
+    view.close('gui_model_top_level')
+    interactor.change_active_keymap('Design')
