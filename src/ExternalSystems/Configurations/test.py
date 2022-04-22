@@ -23,14 +23,14 @@ class MyTestCase(unittest.TestCase):
         # app.run()
 
     def test_gui(self):
-        import new_gui
+        import gui_model_builder
         from view_tkinter import View
 
         view = View(width=500, height=600)
         view.set_title('Financial Model Constructor')
 
         parent = 'root'
-        new_gui.add_widgets(parent, view)
+        gui_model_builder.add_widgets(parent, view)
         view.launch_app()
 
 
