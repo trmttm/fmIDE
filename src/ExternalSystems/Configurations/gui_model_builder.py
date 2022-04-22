@@ -227,6 +227,10 @@ def _get_entry_id_inventory_cost_name(product_name, n) -> str:
     return f'frame2_entry_{product_name}_{n}_inventory_cost'
 
 
+def _get_check_box_inventory_by_outstanding_rate(product_name, n) -> str:
+    return f'frame2_check_box_{product_name}_{n}_inventory_cost'
+
+
 def _get_entry_id_capex_name(product_name, n) -> str:
     return f'frame2_entry_{product_name}_{n}_capex'
 
@@ -275,6 +279,7 @@ def _frame2_each_page(stacker_, name, product_name: str, product_number: int, vi
                         w.Label(f'frame2_label_{product_name}_{n}_inventory_cost').text(f'Inventory Cost Name{n}'),
                         w.Entry(_get_entry_id_inventory_cost_name(product_name, n)).default_value(
                             f'Inventory Cost Name{n} {product_name}'),
+                        w.CheckButton(_get_check_box_inventory_by_outstanding_rate(product_name, n)).value(True),
                         w.Spacer().adjust(-1),
                     ) for n in range(number_of_inventory_cost)),
                 w.Spacer(),
@@ -473,6 +478,7 @@ def _remove_intercompany_sales(view: ViewABC):
 def create_data_structure(names: tuple, view: ViewABC) -> dict:
     data = {}
     products = {}
+    inventory_by_outstanding_rate = {}
     intercompany_sales = []
     # set number
     for name in names:
@@ -488,7 +494,8 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
             data[name]['text'][n] = text
 
             if name == names[4]:  # Handle Product
-                products[text] = {'capex': [], 'variable costs': [], 'fixed costs': [], 'inventory costs': [], }
+                products[text] = {'outstanding rate': True, 'capex': [],
+                                  'variable costs': [], 'fixed costs': [], 'inventory costs': [], }
                 number_of_capex = int(view.get_value(_get_entry_id_product_capex(name, n)))
                 number_of_fixed_cost = int(view.get_value(_get_entry_id_product_fixed_cost(name, n)))
                 number_of_variable_cost = int(view.get_value(_get_entry_id_product_variable_cost(name, n)))
@@ -510,11 +517,16 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
                     inventory_cost_name = view.get_value(_get_entry_id_inventory_cost_name(text, i))
                     products[text]['inventory costs'].append(inventory_cost_name)
 
+                    check_box_id = _get_check_box_inventory_by_outstanding_rate(text, i)
+                    by_outstanding_rate = view.get_value(check_box_id)
+                    inventory_by_outstanding_rate[inventory_cost_name] = by_outstanding_rate
+
     all_tree_values = view.get_all_tree_values(_get_tree_id())
     for n, product_name, inventory_cost_name in all_tree_values:
         intercompany_sales.append((product_name, inventory_cost_name))
 
     data['products'] = products
+    data['inventory by outstanding rate'] = inventory_by_outstanding_rate
     data['intercompany_sales'] = intercompany_sales
     return data
 
@@ -597,6 +609,7 @@ def method_injected(interactor, view: ViewABC, data: dict):
     interactor.clear_commands()
 
     for product_name in product_names:
+        decorate_production_volume_with_outstanding_rate = data['products'][product_name]['outstanding rate']
         fixed_cost_names = data['products'][product_name]['fixed costs']
         variable_cost_names = data['products'][product_name]['variable costs']
         inventory_cost_names = data['products'][product_name]['inventory costs']
@@ -614,6 +627,12 @@ def method_injected(interactor, view: ViewABC, data: dict):
             f('merge_macro_with_magic',
               ('7_inventory_material_then_set_parent_worksheet', 'material_name', inventory_name), {})
 
+            by_outstanding_rate = data['inventory by outstanding rate'][inventory_name]
+            if by_outstanding_rate:
+                f('merge_macro_with_multiple_magic_args',
+                  ('7_decorator_inventory_material_by_outstanding_rate_with_magic_args',
+                   ('inventory_sheet', 'inventory_name'), (inventory_name, inventory_name)), {})
+
         for variable_cost_name in variable_cost_names:
             f('merge_macro_with_magic',
               ('7_variable_cost_then_set_parent_worksheet', 'cost_name', variable_cost_name), {})
@@ -622,7 +641,11 @@ def method_injected(interactor, view: ViewABC, data: dict):
             f('merge_macro_with_magic',
               ('7_fixed_cost_then_set_parent_worksheet', 'cost_name', fixed_cost_name), {})
 
-        f('merge_macro', ('7_opex_inventory_cogs',), {})
+        if decorate_production_volume_with_outstanding_rate:
+            f('merge_macro', ('7_opex_inventory_cogs_decorated_with_outstanding_rate',), {})
+        else:
+            f('merge_macro', ('7_opex_inventory_cogs',), {})
+
         f('merge_macro_with_multiple_magic_args',
           ('8_Worksheet_Add_Parent', ('Parent Sheet', 'Child Sheet'), ('sheet_name', f'OPEX {product_name}'),), {})
         f('merge_macro_with_multiple_magic_args',
