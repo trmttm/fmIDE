@@ -28,6 +28,7 @@ class MyTestCase(unittest.TestCase):
         from view_tkinter import View
 
         view = View(width=500, height=600)
+        view.set_title('Financial Model Constructor')
         stacker = Stacker()
 
         names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
@@ -52,6 +53,9 @@ class MyTestCase(unittest.TestCase):
                     local_view_model = create_frame_2_view_model(names, frame_number, next_frame, view)
                 elif frame_number == 3:
                     local_view_model = create_frame_3_view_model(names, frame_number, next_frame, view)
+                elif frame_number == 4:
+                    data_structure = create_data_structure(names, view)
+                    print(data_structure)
 
                 if local_view_model is not None:
                     view.add_widgets(local_view_model)
@@ -73,6 +77,7 @@ class MyTestCase(unittest.TestCase):
                     ),
                     w.Spacer(),
                 ),
+                stacker.vstack(),
                 stacker.vstack(),
                 stacker.vstack(),
                 stacker.vstack(),
@@ -200,6 +205,14 @@ def get_entry_id_inventory_cost_name(product_name, n) -> str:
     return f'frame2_entry_{product_name}_{n}_inventory_cost'
 
 
+def get_entry_id_fixed_cost_name(product_name, n) -> str:
+    return f'Fixed Cost Name{n} {product_name}'
+
+
+def get_entry_id_variable_cost_name(product_name, n) -> str:
+    return f'Variable Cost Name{n} {product_name}'
+
+
 def frame2_each_page(stacker_, name, product_name: str, product_number: int, view, widget):
     w = widget
     frame_names = 'Fixed Cost', 'Variable Cost', 'Inventory'
@@ -213,7 +226,7 @@ def frame2_each_page(stacker_, name, product_name: str, product_number: int, vie
                 *tuple(
                     stacker_.hstack(
                         w.Label(f'frame2_label_{product_name}_{n}_fixed_cost').text(f'Fixed Cost Name{n}'),
-                        w.Entry(f'frame2_entry_{product_name}_{n}_fixed_cost').default_value(
+                        w.Entry(get_entry_id_fixed_cost_name(product_name, n)).default_value(
                             f'Fixed Cost Name{n} {product_name}'),
                         w.Spacer().adjust(-1),
                     ) for n in range(number_of_fixed_cost)),
@@ -223,7 +236,7 @@ def frame2_each_page(stacker_, name, product_name: str, product_number: int, vie
                 *tuple(
                     stacker_.hstack(
                         w.Label(f'frame2_label_{product_name}_{n}_variable_cost').text(f'Variable Cost Name{n}'),
-                        w.Entry(f'frame2_entry_{product_name}_{n}_variable_cost').default_value(
+                        w.Entry(get_entry_id_variable_cost_name(product_name, n)).default_value(
                             f'Variable Cost Name{n} {product_name}'),
                         w.Spacer().adjust(-1),
                     ) for n in range(number_of_variable_cost)),
@@ -426,6 +439,51 @@ def remove_intercompany_sales(view):
     scroll_h = False
     view_model = Utilities.create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
     view.update_tree(view_model)
+
+
+def create_data_structure(names: tuple, view):
+    data = {}
+    products = {}
+    intercompany_sales = []
+    # set number
+    for name in names:
+        entry_id = get_entry_id(name)
+        number = int(view.get_value(entry_id))
+        data[name] = {'number': number, 'text': {}}
+
+    # set name
+    for name in names:
+        for n in range(data[name]['number']):
+            entry_id = get_entry_id2(name, n)
+            text = view.get_value(entry_id)
+            data[name]['text'][n] = text
+
+            if name == names[4]:  # Handle Product
+                products[text] = {'variable costs': [], 'fixed costs': [], 'inventory costs': [], }
+                number_of_fixed_cost = int(view.get_value(get_entry_id_product_fixed_cost(name, n)))
+                number_of_variable_cost = int(view.get_value(get_entry_id_product_variable_cost(name, n)))
+                number_of_inventory_cost = int(view.get_value(get_entry_id_product_inventory_cost(name, n)))
+
+                for i in range(number_of_fixed_cost):
+                    fixed_cost_name = get_entry_id_fixed_cost_name(text, i)
+                    products[text]['fixed costs'].append(fixed_cost_name)
+
+                for i in range(number_of_variable_cost):
+                    variable_cost_name = get_entry_id_variable_cost_name(text, i)
+                    products[text]['variable costs'].append(variable_cost_name)
+
+                for i in range(number_of_inventory_cost):
+                    inventory_cost_name = get_entry_id_inventory_cost_name(text, i)
+                    products[text]['inventory costs'].append(inventory_cost_name)
+
+    all_tree_values = view.get_all_tree_values(get_tree_id())
+    for n, product_name, inventory_cost_name in all_tree_values:
+        intercompany_sales.append((product_name, inventory_cost_name))
+
+    data['products'] = products
+    data['intercompany_sales'] = intercompany_sales
+
+    return data
 
 
 if __name__ == '__main__':
