@@ -50,6 +50,8 @@ class MyTestCase(unittest.TestCase):
                     local_view_model = create_frame_1_view_model(names, frame_number, next_frame, view)
                 elif frame_number == 2:
                     local_view_model = create_frame_2_view_model(names, frame_number, next_frame, view)
+                elif frame_number == 3:
+                    local_view_model = create_frame_3_view_model(names, frame_number, next_frame, view)
 
                 if local_view_model is not None:
                     view.add_widgets(local_view_model)
@@ -71,6 +73,7 @@ class MyTestCase(unittest.TestCase):
                     ),
                     w.Spacer(),
                 ),
+                stacker.vstack(),
                 stacker.vstack(),
                 stacker.vstack(),
             ),
@@ -193,6 +196,10 @@ def input_product(name, number_of_product, stacker_, view, w):
     )
 
 
+def get_entry_id_inventory_cost_name(product_name, n) -> str:
+    return f'frame2_entry_{product_name}_{n}_inventory_cost'
+
+
 def frame2_each_page(stacker_, name, product_name: str, product_number: int, view, widget):
     w = widget
     frame_names = 'Fixed Cost', 'Variable Cost', 'Inventory'
@@ -226,7 +233,7 @@ def frame2_each_page(stacker_, name, product_name: str, product_number: int, vie
                 *tuple(
                     stacker_.hstack(
                         w.Label(f'frame2_label_{product_name}_{n}_inventory_cost').text(f'Inventory Cost Name{n}'),
-                        w.Entry(f'frame2_entry_{product_name}_{n}_inventory_cost').default_value(
+                        w.Entry(get_entry_id_inventory_cost_name(product_name, n)).default_value(
                             f'Inventory Cost Name{n} {product_name}'),
                         w.Spacer().adjust(-1),
                     ) for n in range(number_of_inventory_cost)),
@@ -303,6 +310,98 @@ def create_frame_2_view_model(names, frame_number, frame, view) -> list:
     )
     local_view_model = local_stacker.view_model
     return local_view_model
+
+
+def create_frame_3_view_model(names, frame_number, frame, view) -> list:
+    from stacker import Stacker
+    from stacker import widgets as w
+
+    inventory_names = extract_all_inventory_cost_names(names, view)
+    product_names = extract_all_product_names(names, view)
+
+    local_stacker = Stacker(frame)
+
+    local_stacker.vstack(
+        w.Label(f'label_frame_3').text('Intercompany Sales'),
+        local_stacker.hstack(
+            w.ComboBox(get_combobox_id_product()).values(product_names),
+            w.Spacer(),
+            w.Label(f'label_frame_3_arrow').text('->'),
+            w.Spacer(),
+            w.ComboBox(get_combobox_id_inventory()).values(inventory_names),
+        ),
+        local_stacker.hstack(
+            w.Spacer(),
+            w.Button('button_frame_3_add').text('+').command(lambda: add_intercompany_sales(view)),
+            w.Button('button_frame_3_add').text('-'),
+            w.Spacer(),
+        ),
+        local_stacker.vstack(
+            w.TreeView(f'tree_frame_3'),
+        ),
+        w.Spacer().adjust(-1),
+    )
+
+    view.switch_tree(get_tree_id())
+    local_view_model = local_stacker.view_model
+    return local_view_model
+
+
+def extract_all_product_names(names, view):
+    name_product = names[4]
+    number_of_products = int(view.get_value(get_entry_id(name_product)))
+    product_names = tuple(view.get_value(get_entry_id2(name_product, n)) for n in range(number_of_products))
+    return product_names
+
+
+def extract_all_inventory_cost_names(names, view):
+    name_product = names[4]
+    number_of_products = int(view.get_value(get_entry_id(name_product)))
+    inventory_names = []
+    for n in range(number_of_products):
+        product_name_id = get_entry_id2(name_product, n)
+        product_name = view.get_value(product_name_id)
+        number_of_inventory_costs = int(view.get_value(get_entry_id_product_inventory_cost(name_product, n)))
+        for i in range(number_of_inventory_costs):
+            inventory_name_id = get_entry_id_inventory_cost_name(product_name, i)
+            inventory_cost_name = view.get_value(inventory_name_id)
+            inventory_names.append(inventory_cost_name)
+    inventory_names = tuple(inventory_names)
+    return inventory_names
+
+
+def get_combobox_id_product() -> str:
+    return f'combobox_frame_3_1'
+
+
+def get_combobox_id_inventory() -> str:
+    return f'combobox_frame_3_2'
+
+
+def get_tree_id() -> str:
+    return f'tree_frame_3'
+
+
+def add_intercompany_sales(view):
+    new_product_name = view.get_value(get_combobox_id_product())
+    new_inventory_name = view.get_value(get_combobox_id_inventory())
+    if new_inventory_name != '' and new_inventory_name != '':
+        tree_values = view.get_all_tree_values(get_tree_id())
+        existing_product_names = list(v[1] for v in tree_values)
+        existing_inventory_names = list(v[2] for v in tree_values)
+        product_names = existing_product_names + [new_product_name]
+        inventory_names = existing_inventory_names + [new_inventory_name]
+
+        import Utilities
+        headings = 'No', 'Product Name', 'Inventory Cost'
+        widths = 50, 200, 200
+        tree_datas = tuple(Utilities.create_tree_data('', n, '', (n, p, v), (), False)
+                           for (n, (p, v)) in enumerate(zip(product_names, inventory_names)))
+        stretches = False, True, True
+        scroll_v = True
+        scroll_h = False
+        view_model = Utilities.create_view_model_tree(headings, widths, tree_datas, stretches, scroll_v, scroll_h)
+        view.update_tree(view_model)
 
 
 if __name__ == '__main__':
