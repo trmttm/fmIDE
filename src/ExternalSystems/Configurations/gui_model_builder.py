@@ -501,8 +501,8 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
             entry_id = _get_entry_id2(name, n)
             text = view.get_value(entry_id)
             data[name]['text'][n] = text
-            production_by_outstanding = view.get_value(_get_check_button_production_by_outstanding_rate(n))
             if name == names[4]:  # Handle Product
+                production_by_outstanding = view.get_value(_get_check_button_production_by_outstanding_rate(n))
                 products[text] = {'outstanding rate': production_by_outstanding, 'capex': [],
                                   'variable costs': [], 'fixed costs': [], 'inventory costs': [], }
                 number_of_capex = int(view.get_value(_get_entry_id_product_capex(name, n)))
@@ -613,7 +613,9 @@ def method_injected(interactor, view: ViewABC, data: dict):
     f('merge_macro_with_multiple_magic_args',
       ('8_Worksheet_Add_Parent', ('Parent Sheet', 'Child Sheet'), ('Accounts', 'RE')), {})
     f('delete_commands_up_to', (), {})
+    interactor.turn_off_presenters()
     interactor.run_macro()
+    interactor.turn_off_presenters()
     interactor.run_macro()
     interactor.clear_commands()
 
@@ -668,9 +670,12 @@ def method_injected(interactor, view: ViewABC, data: dict):
         f('merge_macro', ('8 Auto Connect and Inter Sheets Relays',), {})
         f('delete_commands_up_to', (), {})
 
+        interactor.turn_off_presenters()
         interactor.run_macro()
+        interactor.turn_off_presenters()
         interactor.run_macro()
         interactor.clear_commands()
 
+    interactor.turn_on_presenters()
     view.close('gui_model_top_level')
     interactor.change_active_keymap('Design')
