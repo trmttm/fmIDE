@@ -1260,9 +1260,7 @@ def update_menu_bar_recent_projects(menu_bar_model: dict, view: ViewABC, interac
 def update_menu_bar(view: ViewABC, interactor: BoundaryInABC, presenters: PresentersABC, mouse: MouseControllerABC):
     v, p, i, m = view, presenters, interactor, mouse
     menu_bar_model = menu_bar.create_menu_bar_model(interactor, view, presenters, mouse)
-
     update_menu_bar_recent_projects(menu_bar_model, v, i, p, m)
-
     view.update_menu_bar(menu_bar_model)
 
 
@@ -1397,7 +1395,7 @@ def upon_macro_list_right_click(view: ViewABC, values):
     view.focus(vm.entry_macro_name)
 
 
-def popup_wizard(interactor: BoundaryInABC, view: ViewABC):
+def popup_wizard(interactor: BoundaryInABC, view: ViewABC, presenters: PresentersABC, mouse: MouseControllerABC):
     from ..gui_model_builder import GUI
     from view_tkinter import tk_interface as intf
     options = intf.top_level_options('Input Setting', (500, 600))
@@ -1405,10 +1403,35 @@ def popup_wizard(interactor: BoundaryInABC, view: ViewABC):
     view_model = [intf.widget_model('root', toplevel_id, 'toplevel', 0, 0, 0, 0, 'nsew', **options)]
     view.add_widgets(view_model)
     gui = GUI(toplevel_id, view, interactor)
-    gui.add_widgets()
-    view.bind_command_to_widget(toplevel_id, lambda: close_wizard_window_properly(toplevel_id, interactor, view))
+    gui.add_initial_widgets()
+
+    i, v, p, m = interactor, view, presenters, mouse
+
+    view.bind_command_to_widget(toplevel_id, lambda: close_wizard_window_properly(toplevel_id, i, v, p, m))
+
+    menu_bar_model = menu_bar.create_menu_bar_model(i, v, p, m)
+    menu_bar_model['Wizard'] = {
+        'Save State': lambda: save_wizard_state(interactor, gui),
+        'Load State': lambda: load_wizard_state(interactor, view, gui),
+    }
+    update_menu_bar_recent_projects(menu_bar_model, v, i, p, m)
+    view.update_menu_bar(menu_bar_model)
 
 
-def close_wizard_window_properly(toplevel_id, interactor: BoundaryInABC, view: ViewABC):
+def close_wizard_window_properly(toplevel_id, interactor: BoundaryInABC, view: ViewABC, presenters: PresentersABC,
+                                 mouse: MouseControllerABC):
     view.close(toplevel_id)
+    update_menu_bar(view, interactor, presenters, mouse)
     interactor.change_active_keymap(cns.keymap_design)  # closing toplevel is responsible for changing keymap
+
+
+def save_wizard_state(interactor: BoundaryInABC, gui):
+    path = f'{interactor.save_path}/wizard'
+    interactor.save_any_data_as_pickle(path, gui.data_structure)
+    interactor.feedback_user(f'{path} saved.', 'success')
+
+
+def load_wizard_state(interactor: BoundaryInABC, view: ViewABC, gui):
+    path = view.select_open_file(interactor.save_path)
+    data_structure = interactor.get_pickle_from_file_system(path)
+    gui.load_state(data_structure)
