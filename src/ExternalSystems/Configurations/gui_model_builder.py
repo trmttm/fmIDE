@@ -14,10 +14,13 @@ class GUI:
         self._parent = parent
         self._view = view
         self._interactor = interactor
-        self._frame_number = 0
 
-    def add_widgets(self):
-        add_widgets(self._parent, self._view, self.switch_main_frame)
+        self._frame_number = 0
+        self._names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
+        self._switchable_frames = []
+
+    def add_initial_widgets(self):
+        add_initial_widgets(self._parent, self._view, self.switch_main_frame, self._names, self._switchable_frames)
 
     def switch_main_frame(self, increment: int, switchable_frames, names: tuple, view: ViewABC):
         if increment > 0:
@@ -30,15 +33,98 @@ class GUI:
     def _method(self, data: dict):
         method_injected(self._interactor, self._view, data)
 
+    @property
+    def data_structure(self) -> dict:
+        return create_data_structure(self._names, self._view)
 
-def add_widgets(parent, view: ViewABC, switch_main_frame: Callable = None):
+    def load_state(self, data_structure: dict):
+        view = self._view
+        names = self._names
+        switchable_frames = self._switchable_frames
+        switch_main_frame_method = self.switch_main_frame
+
+        # First go back to Page 0
+        for n in range(5):
+            switch_main_frame_method(-1, switchable_frames, names, view)
+
+        # Set Page 0
+        for name in names:
+            number = 0
+            if name in data_structure:
+                number = int(data_structure[name]['number'])
+            view.set_value(_get_entry_id(name), number)
+
+        # Set Page 1
+        switch_main_frame_method(1, switchable_frames, names, view)
+        for name in names:
+            for n in range(data_structure[name]['number']):
+                text = data_structure[name]['text'][n]
+                view.set_value(_get_entry_id2(name, n), text)
+
+                if name == names[4]:  # Handle Product
+                    number_of_capex = len(data_structure['products'][text]['capex'])
+                    number_of_fixed_costs = len(data_structure['products'][text]['fixed costs'])
+                    number_of_inventory_costs = len(data_structure['products'][text]['inventory costs'])
+                    number_of_variable_costs = len(data_structure['products'][text]['variable costs'])
+                    by_outstanding_rate = data_structure['products'][text]['outstanding rate']
+
+                    view.set_value(_get_entry_id_product_capex(name, n), number_of_capex)
+                    view.set_value(_get_entry_id_product_fixed_cost(name, n), number_of_fixed_costs)
+                    view.set_value(_get_entry_id_product_variable_cost(name, n), number_of_variable_costs)
+                    view.set_value(_get_entry_id_product_inventory_cost(name, n), number_of_inventory_costs)
+                    view.set_value(_get_check_button_production_by_outstanding_rate(n), by_outstanding_rate)
+
+        # Set Page 2
+        switch_main_frame_method(1, switchable_frames, names, view)
+        number_of_products = len(data_structure['products'].keys())
+        for n in range(number_of_products):
+            text = data_structure['Product']['text'][n]
+
+            capex_names = data_structure['products'][text]['capex']
+            fixed_cost_names = data_structure['products'][text]['fixed costs']
+            inventory_cost_names = data_structure['products'][text]['inventory costs']
+            variable_cost_names = data_structure['products'][text]['variable costs']
+
+            number_of_capex = len(capex_names)
+            number_of_fixed_costs = len(fixed_cost_names)
+            number_of_inventory_costs = len(inventory_cost_names)
+            number_of_variable_costs = len(variable_cost_names)
+
+            for i in range(number_of_capex):
+                view.set_value(_get_entry_id_capex_name(text, i), capex_names[i])
+            for i in range(number_of_fixed_costs):
+                view.set_value(_get_entry_id_fixed_cost_name(text, i), fixed_cost_names[i])
+            for i in range(number_of_inventory_costs):
+                inventory_cost_name = inventory_cost_names[i]
+                view.set_value(_get_entry_id_inventory_cost_name(text, i), inventory_cost_name)
+
+                by_outstanding_rate = data_structure['inventory by outstanding rate'][inventory_cost_name]
+                view.set_value(_get_check_botton_inventory_by_outstanding_rate(text, i), by_outstanding_rate)
+
+            for i in range(number_of_variable_costs):
+                view.set_value(_get_entry_id_variable_cost_name(text, i), variable_cost_names[i])
+
+        # Set Page 3
+        switch_main_frame_method(1, switchable_frames, names, view)
+        product_names = []
+        fg_names = []
+        inventory_names = []
+        for product_name, (fg, inventory_name) in data_structure['intercompany_sales'].items():
+            product_names.append(product_name)
+            fg_names.append(fg)
+            inventory_names.append(inventory_name)
+        _update_tree(fg_names, inventory_names, product_names, view)
+
+
+def add_initial_widgets(parent, view: ViewABC, switch_main_frame: Callable = None, names_passed: tuple = None,
+                        switchable_frames_passed: list = None):
     if switch_main_frame is None:
         switch_main_frame = _switch_main_frame
 
     stacker = Stacker(parent)
-    switchable_frames = []
+    switchable_frames = switchable_frames_passed if switchable_frames_passed is not None else []
 
-    names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
+    names = names_passed or ('Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product')
 
     stacker.vstack(
         w.FrameSwitcher('frame_switcher', stacker, switchable_frames).stackers(
@@ -150,7 +236,7 @@ def _number_of(name: str, stacker, view: ViewABC, default_value=0):
     dv = default_value
     args = _get_entry_id(name), view, dv
     return stacker.hstack(
-        w.Label(f'label_number_of_{name}').text(f'Number of {name}'),
+        w.Label(f'label_number_of_{name}').text(f'Number of {name}').padding(10, 0),
         w.Button(f'button_number_of_{name}').text('-').width(1).command(lambda: _increment_entry(-1, *args)),
         w.Entry(_get_entry_id(name)).default_value(default_value).width(5),
         w.Button(f'button_number_of_{name}').text('+').width(1).command(lambda: _increment_entry(1, *args)),
@@ -300,7 +386,7 @@ def _frame2_each_page(stacker_, name, product_name: str, product_number: int, vi
     number_of_variable_cost = int(view.get_value(_get_entry_id_product_variable_cost(name, product_number)))
     number_of_inventory_cost = int(view.get_value(_get_entry_id_product_inventory_cost(name, product_number)))
     return stacker_.vstack(
-        w.Label(f'frame_2_lable_{product_name}').text(product_name).padding(25, 0),
+        w.Label(f'frame_2_label_{product_name}').text(product_name).padding(25, 0),
         w.NoteBook(f'notebook_frame_2_{product_name}', stacker_).frame_names(frame_names).stackers(
             stacker_.vstack(
                 *tuple(

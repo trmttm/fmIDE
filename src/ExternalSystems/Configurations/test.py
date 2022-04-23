@@ -30,7 +30,7 @@ class MyTestCase(unittest.TestCase):
         view.set_title('Financial Model Constructor')
 
         parent = 'root'
-        gui_model_builder.add_widgets(parent, view)
+        gui_model_builder.add_initial_widgets(parent, view)
         view.launch_app()
 
 
