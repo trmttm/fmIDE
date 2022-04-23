@@ -38,82 +38,7 @@ class GUI:
         return create_data_structure(self._names, self._view)
 
     def load_state(self, data_structure: dict):
-        view = self._view
-        names = self._names
-        switchable_frames = self._switchable_frames
-        switch_main_frame_method = self.switch_main_frame
-
-        # First go back to Page 0
-        for n in range(5):
-            switch_main_frame_method(-1, switchable_frames, names, view)
-
-        # Set Page 0
-        for name in names:
-            number = 0
-            if name in data_structure:
-                number = int(data_structure[name]['number'])
-            view.set_value(_get_entry_id(name), number)
-
-        # Set Page 1
-        switch_main_frame_method(1, switchable_frames, names, view)
-        for name in names:
-            for n in range(data_structure[name]['number']):
-                text = data_structure[name]['text'][n]
-                view.set_value(_get_entry_id2(name, n), text)
-
-                if name == names[4]:  # Handle Product
-                    number_of_capex = len(data_structure['products'][text]['capex'])
-                    number_of_fixed_costs = len(data_structure['products'][text]['fixed costs'])
-                    number_of_inventory_costs = len(data_structure['products'][text]['inventory costs'])
-                    number_of_variable_costs = len(data_structure['products'][text]['variable costs'])
-                    by_outstanding_rate = data_structure['products'][text]['outstanding rate']
-
-                    view.set_value(_get_entry_id_product_capex(name, n), number_of_capex)
-                    view.set_value(_get_entry_id_product_fixed_cost(name, n), number_of_fixed_costs)
-                    view.set_value(_get_entry_id_product_variable_cost(name, n), number_of_variable_costs)
-                    view.set_value(_get_entry_id_product_inventory_cost(name, n), number_of_inventory_costs)
-                    view.set_value(_get_check_button_production_by_outstanding_rate(n), by_outstanding_rate)
-
-        # Set Page 2
-        switch_main_frame_method(1, switchable_frames, names, view)
-        number_of_products = len(data_structure['products'].keys())
-        for n in range(number_of_products):
-            text = data_structure['Product']['text'][n]
-
-            capex_names = data_structure['products'][text]['capex']
-            fixed_cost_names = data_structure['products'][text]['fixed costs']
-            inventory_cost_names = data_structure['products'][text]['inventory costs']
-            variable_cost_names = data_structure['products'][text]['variable costs']
-
-            number_of_capex = len(capex_names)
-            number_of_fixed_costs = len(fixed_cost_names)
-            number_of_inventory_costs = len(inventory_cost_names)
-            number_of_variable_costs = len(variable_cost_names)
-
-            for i in range(number_of_capex):
-                view.set_value(_get_entry_id_capex_name(text, i), capex_names[i])
-            for i in range(number_of_fixed_costs):
-                view.set_value(_get_entry_id_fixed_cost_name(text, i), fixed_cost_names[i])
-            for i in range(number_of_inventory_costs):
-                inventory_cost_name = inventory_cost_names[i]
-                view.set_value(_get_entry_id_inventory_cost_name(text, i), inventory_cost_name)
-
-                by_outstanding_rate = data_structure['inventory by outstanding rate'][inventory_cost_name]
-                view.set_value(_get_check_botton_inventory_by_outstanding_rate(text, i), by_outstanding_rate)
-
-            for i in range(number_of_variable_costs):
-                view.set_value(_get_entry_id_variable_cost_name(text, i), variable_cost_names[i])
-
-        # Set Page 3
-        switch_main_frame_method(1, switchable_frames, names, view)
-        product_names = []
-        fg_names = []
-        inventory_names = []
-        for product_name, (fg, inventory_name) in data_structure['intercompany_sales'].items():
-            product_names.append(product_name)
-            fg_names.append(fg)
-            inventory_names.append(inventory_name)
-        _update_tree(fg_names, inventory_names, product_names, view)
+        _load_state(data_structure, self._names, self.switch_main_frame, self._switchable_frames, self._view)
 
 
 def add_initial_widgets(parent, view: ViewABC, switch_main_frame: Callable = None, names_passed: tuple = None,
@@ -832,3 +757,73 @@ def method_injected(interactor, view: ViewABC, data: dict):
     interactor.turn_on_presenters()
     view.close('gui_model_top_level')
     interactor.change_active_keymap('Design')
+
+
+def _load_state(data_structure, names, switch_main_frame_method, switchable_frames, view):
+    # First go back to Page 0
+    for n in range(5):
+        switch_main_frame_method(-1, switchable_frames, names, view)
+    # Set Page 0
+    for name in names:
+        number = 0
+        if name in data_structure:
+            number = int(data_structure[name]['number'])
+        view.set_value(_get_entry_id(name), number)
+    # Set Page 1
+    switch_main_frame_method(1, switchable_frames, names, view)
+    for name in names:
+        for n in range(data_structure[name]['number']):
+            text = data_structure[name]['text'][n]
+            view.set_value(_get_entry_id2(name, n), text)
+
+            if name == names[4]:  # Handle Product
+                number_of_capex = len(data_structure['products'][text]['capex'])
+                number_of_fixed_costs = len(data_structure['products'][text]['fixed costs'])
+                number_of_inventory_costs = len(data_structure['products'][text]['inventory costs'])
+                number_of_variable_costs = len(data_structure['products'][text]['variable costs'])
+                by_outstanding_rate = data_structure['products'][text]['outstanding rate']
+
+                view.set_value(_get_entry_id_product_capex(name, n), number_of_capex)
+                view.set_value(_get_entry_id_product_fixed_cost(name, n), number_of_fixed_costs)
+                view.set_value(_get_entry_id_product_variable_cost(name, n), number_of_variable_costs)
+                view.set_value(_get_entry_id_product_inventory_cost(name, n), number_of_inventory_costs)
+                view.set_value(_get_check_button_production_by_outstanding_rate(n), by_outstanding_rate)
+    # Set Page 2
+    switch_main_frame_method(1, switchable_frames, names, view)
+    number_of_products = len(data_structure['products'].keys())
+    for n in range(number_of_products):
+        text = data_structure['Product']['text'][n]
+
+        capex_names = data_structure['products'][text]['capex']
+        fixed_cost_names = data_structure['products'][text]['fixed costs']
+        inventory_cost_names = data_structure['products'][text]['inventory costs']
+        variable_cost_names = data_structure['products'][text]['variable costs']
+
+        number_of_capex = len(capex_names)
+        number_of_fixed_costs = len(fixed_cost_names)
+        number_of_inventory_costs = len(inventory_cost_names)
+        number_of_variable_costs = len(variable_cost_names)
+
+        for i in range(number_of_capex):
+            view.set_value(_get_entry_id_capex_name(text, i), capex_names[i])
+        for i in range(number_of_fixed_costs):
+            view.set_value(_get_entry_id_fixed_cost_name(text, i), fixed_cost_names[i])
+        for i in range(number_of_inventory_costs):
+            inventory_cost_name = inventory_cost_names[i]
+            view.set_value(_get_entry_id_inventory_cost_name(text, i), inventory_cost_name)
+
+            by_outstanding_rate = data_structure['inventory by outstanding rate'][inventory_cost_name]
+            view.set_value(_get_check_botton_inventory_by_outstanding_rate(text, i), by_outstanding_rate)
+
+        for i in range(number_of_variable_costs):
+            view.set_value(_get_entry_id_variable_cost_name(text, i), variable_cost_names[i])
+    # Set Page 3
+    switch_main_frame_method(1, switchable_frames, names, view)
+    product_names = []
+    fg_names = []
+    inventory_names = []
+    for product_name, (fg, inventory_name) in data_structure['intercompany_sales'].items():
+        product_names.append(product_name)
+        fg_names.append(fg)
+        inventory_names.append(inventory_name)
+    _update_tree(fg_names, inventory_names, product_names, view)
