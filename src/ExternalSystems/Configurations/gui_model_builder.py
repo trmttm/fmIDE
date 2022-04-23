@@ -10,10 +10,11 @@ frame_number = 0
 
 
 class GUI:
-    def __init__(self, parent, view: ViewABC, interactor: BoundaryInABC):
+    def __init__(self, parent, view: ViewABC, interactor: BoundaryInABC, upon_closing: Callable):
         self._parent = parent
         self._view = view
         self._interactor = interactor
+        self._upon_closing = upon_closing
 
         self._frame_number = 0
         self._names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
@@ -27,11 +28,10 @@ class GUI:
             self._frame_number = min(len(switchable_frames) - 1, self._frame_number + 1)
         else:
             self._frame_number = max(0, self._frame_number - 1)
-
         _switch_main_frame_implementation(increment, names, switchable_frames, view, self._frame_number, self._method)
 
     def _method(self, data: dict):
-        method_injected(self._interactor, self._view, data)
+        method_injected(self._interactor, self._view, self._upon_closing, data)
 
     @property
     def data_structure(self) -> dict:
@@ -599,7 +599,7 @@ def create_data_structure(names: tuple, view: ViewABC) -> dict:
     return data
 
 
-def method_injected(interactor, view: ViewABC, data: dict):
+def method_injected(interactor, view: ViewABC, upon_closing: Callable, data: dict):
     names = 'Banks', 'SG&A', 'Other Expense', 'Other Income', 'Product'
 
     f = interactor.add_command_always
@@ -756,7 +756,7 @@ def method_injected(interactor, view: ViewABC, data: dict):
 
     interactor.turn_on_presenters()
     view.close('gui_model_top_level')
-    interactor.change_active_keymap('Design')
+    upon_closing()
 
 
 def _load_state(data_structure, names, switch_main_frame_method, switchable_frames, view):
