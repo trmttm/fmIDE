@@ -1396,6 +1396,7 @@ def upon_macro_list_right_click(view: ViewABC, values):
 
 
 def popup_wizard(interactor: BoundaryInABC, view: ViewABC, presenters: PresentersABC, mouse: MouseControllerABC):
+    # In the future I want to inject GUI and its behaviors, including menu_bar, shortcut_keys
     from ..gui_model_builder import GUI
     from view_tkinter import tk_interface as intf
     options = intf.top_level_options('Input Setting', (500, 600))
