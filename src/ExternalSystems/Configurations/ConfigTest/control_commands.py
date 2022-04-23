@@ -1395,6 +1395,7 @@ def upon_macro_list_right_click(view: ViewABC, values):
     view.focus(vm.entry_macro_name)
 
 
+# GUI builder Wizard
 def popup_wizard(interactor: BoundaryInABC, view: ViewABC, presenters: PresentersABC, mouse: MouseControllerABC):
     # In the future I want to inject GUI and its behaviors, including menu_bar, shortcut_keys
     from ..gui_model_builder import GUI
