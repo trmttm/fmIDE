@@ -719,7 +719,10 @@ def method_injected(interactor, view: ViewABC, upon_closing: Callable, data: dic
 
         if is_intercompany_sales:
             f('merge_macro_with_magic', ('7_add_new_worksheet_with_MagicArg', 'MagicArg', 'Eliminations'), {})
-            f('merge_macro', ('7_opex_inventory_cogs_inter_company',), {})
+            if decorate_production_volume_with_outstanding_rate:
+                f('merge_macro', ('7_opex_inventory_cogs_inter_company_decorated_with_outstanding_rate',), {})
+            else:
+                f('merge_macro', ('7_opex_inventory_cogs_inter_company',), {})
             f('merge_macro_with_magic', ('7_add_revenue_inter_company_with_MagicArg', 'account_name', product_name), {})
             f('merge_macro', ('7_add_elimination_module',), {})
             f('merge_macro_with_multiple_magic_args',
