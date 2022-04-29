@@ -3738,7 +3738,7 @@ class Interactor(BoundaryInABC):
                 decimals = int(row[8]) if Utilities.is_number(row[8]) else 1
                 values = tuple(float(v) if Utilities.is_number(v) else 0 for v in row[10:])
 
-                # First validate ddta
+                # First validate data
                 if input_id in input_ids:
                     self._input_ranges.set_range(input_id, (min_, max_))
                     self._input_values.set_values(input_id, values)
