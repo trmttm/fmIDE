@@ -1415,23 +1415,19 @@ def popup_wizard(interactor: BoundaryInABC, view: ViewABC, presenters: Presenter
     view.bind_command_to_widget(toplevel_id, upon_closing)
 
     import os_identifier
+    wizard_state_menues = {'State':
+        {
+            'Save State': lambda: save_wizard_state(interactor, view, gui),
+            'Load State': lambda: load_wizard_state(interactor, view, gui),
+        }
+    }
     if os_identifier.is_windows:
         widget_specified = toplevel_id
-        menu_bar_model = {'State':
-            {
-                'Save State': lambda: save_wizard_state(interactor, view, gui),
-                'Load State': lambda: load_wizard_state(interactor, view, gui),
-            }
-        }
+        menu_bar_model = wizard_state_menues
     else:
         widget_specified = None
         menu_bar_model = menu_bar.create_menu_bar_model(i, v, p, m)
-        menu_bar_model['Wizard'] = {'State':
-            {
-                'Save State': lambda: save_wizard_state(interactor, view, gui),
-                'Load State': lambda: load_wizard_state(interactor, view, gui),
-            }
-        }
+        menu_bar_model['Wizard'] = wizard_state_menues
         update_menu_bar_recent_projects(menu_bar_model, v, i, p, m)
 
     view.update_menu_bar(menu_bar_model, widget_specified)
