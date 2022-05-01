@@ -52,14 +52,18 @@ class GateWays(GateWayABC):
     def embed_resources_to_project_folder(self, directory_to):
         path_pickles = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_pickles)
         path_commands = Paths.get_proper_path_depending_on_development_or_distribution(self._relative_path_to_commands)
-        try:
-            copy_tree(path_pickles, os.path.join(directory_to, self._templates_directory))
-            copy_tree(path_commands, os.path.join(directory_to, self._commands_directory))
-        except distutils.errors.DistutilsFileError:
-            return
-        for item in self.negative_list:
-            Utilities.remove_file_or_directory(os.path.join(directory_to, self._templates_directory, item))
-            Utilities.remove_file_or_directory(os.path.join(directory_to, self._commands_directory, item))
+
+        self._embed_resources(self._templates_directory, directory_to, path_pickles)
+        self._embed_resources(self._commands_directory, directory_to, path_commands)
+
+    def _embed_resources(self, directory, directory_to, original_path):
+        if not len(os.listdir(os.path.join(directory_to, directory))):
+            try:  # This overwrites modified pickle!
+                copy_tree(original_path, os.path.join(directory_to, directory))
+            except distutils.errors.DistutilsFileError:
+                pass
+            for item in self.negative_list:
+                Utilities.remove_file_or_directory(os.path.join(directory_to, directory, item))
 
     def get_vba_binary(self):
         file_name, package = self._vba_binary_name, self._package_resource
