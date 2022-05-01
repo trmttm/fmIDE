@@ -1412,16 +1412,29 @@ def popup_wizard(interactor: BoundaryInABC, view: ViewABC, presenters: Presenter
     gui.add_initial_widgets()
 
     i, v, p, m = interactor, view, presenters, mouse
-
     view.bind_command_to_widget(toplevel_id, upon_closing)
 
-    menu_bar_model = menu_bar.create_menu_bar_model(i, v, p, m)
-    menu_bar_model['Wizard'] = {
-        'Save State': lambda: save_wizard_state(interactor, view, gui),
-        'Load State': lambda: load_wizard_state(interactor, view, gui),
-    }
-    update_menu_bar_recent_projects(menu_bar_model, v, i, p, m)
-    view.update_menu_bar(menu_bar_model)
+    import os_identifier
+    if os_identifier.is_windows:
+        widget_specified = toplevel_id
+        menu_bar_model = {'State':
+            {
+                'Save State': lambda: save_wizard_state(interactor, view, gui),
+                'Load State': lambda: load_wizard_state(interactor, view, gui),
+            }
+        }
+    else:
+        widget_specified = None
+        menu_bar_model = menu_bar.create_menu_bar_model(i, v, p, m)
+        menu_bar_model['Wizard'] = {'State':
+            {
+                'Save State': lambda: save_wizard_state(interactor, view, gui),
+                'Load State': lambda: load_wizard_state(interactor, view, gui),
+            }
+        }
+        update_menu_bar_recent_projects(menu_bar_model, v, i, p, m)
+
+    view.update_menu_bar(menu_bar_model, widget_specified)
 
 
 def close_wizard_window_properly(toplevel_id, interactor: BoundaryInABC, view: ViewABC, presenters: PresentersABC,
@@ -1433,11 +1446,13 @@ def close_wizard_window_properly(toplevel_id, interactor: BoundaryInABC, view: V
 
 def save_wizard_state(interactor: BoundaryInABC, view: ViewABC, gui):
     path = view.select_save_file({interactor.save_path})
-    interactor.save_any_data_as_pickle(path, gui.data_structure)
-    interactor.feedback_user(f'{path} saved.', 'success')
+    if path is not None:
+        interactor.save_any_data_as_pickle(path, gui.data_structure)
+        interactor.feedback_user(f'{path} saved.', 'success')
 
 
 def load_wizard_state(interactor: BoundaryInABC, view: ViewABC, gui):
     path = view.select_open_file(interactor.save_path)
-    data_structure = interactor.get_pickle_from_file_system(path)
-    gui.load_state(data_structure)
+    if path is not None:
+        data_structure = interactor.get_pickle_from_file_system(path)
+        gui.load_state(data_structure)
