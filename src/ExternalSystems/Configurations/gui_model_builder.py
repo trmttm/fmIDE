@@ -54,7 +54,6 @@ def add_initial_widgets(parent, view: ViewABC, switch_main_frame: Callable = Non
     stacker.vstack(
         w.FrameSwitcher('frame_switcher', stacker, switchable_frames).stackers(
             stacker.vstack(
-                w.Label('label_frame0').text('Frame00'),
                 _number_of(names[0], stacker, view),
                 _number_of(names[1], stacker, view),
                 _number_of(names[2], stacker, view),
@@ -103,6 +102,7 @@ def _switch_main_frame_implementation(increment, names, switchable_frames, view:
             local_view_model = _create_frame_2_view_model(names, local_frame_number, next_frame, view)
         elif local_frame_number == 3:
             local_view_model = _create_frame_3_view_model(names, next_frame, view)
+            view.set_text('Next', 'Draw Canvas')
         elif local_frame_number == 4:
             data_structure = create_data_structure(names, view)
             # Execute injected method here
@@ -120,6 +120,9 @@ def _switch_main_frame_implementation(increment, names, switchable_frames, view:
             view.bind_command_to_widget(_get_combobox_id_product(), lambda *_: _set_combobox_fg(names, view))
             prd_to_inv = create_product_to_inventories_dictionary(names, view)
             view.bind_command_to_widget(_get_combobox_id_fg(), lambda *_: _set_combobox_inventory(prd_to_inv, view))
+        view.switch_frame(next_frame)
+    else:
+        view.set_text('Next', '>Next')
     view.switch_frame(next_frame)
 
 
