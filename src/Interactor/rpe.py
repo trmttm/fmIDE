@@ -31,7 +31,7 @@ def get_rpe_dictionary(bb_rpes: dict, rpes: Iterable, get_text: Callable, all_op
     rpe_dictionary = {}
     for owner, raw_rpe in rpes:
         r = convert_operator_to_text(raw_rpe)
-        if len(r) > 2:
+        if len(r) > 2 or len(r) == 2 and (r[1] in ('abs', 'int')):
             rpe_dictionary[owner] = r
         elif len(r) == 2:
             # 'total_Depreciation' = (1, '+') direct link.
