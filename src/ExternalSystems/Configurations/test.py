@@ -23,7 +23,7 @@ class MyTestCase(unittest.TestCase):
         # app.run()
 
     def test_gui(self):
-        import gui_model_builder
+        from . import gui_model_builder
         from view_tkinter import View
 
         view = View(width=500, height=600)
@@ -31,7 +31,7 @@ class MyTestCase(unittest.TestCase):
 
         parent = 'root'
         gui_model_builder.add_initial_widgets(parent, view)
-        view.launch_app()
+        # view.launch_app()
 
 
 if __name__ == '__main__':
