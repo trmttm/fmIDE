@@ -746,6 +746,14 @@ class Interactor(BoundaryInABC):
             self._present_update_account_order()
             self.present_refresh_canvas()
 
+    def move_selected_sheet_up(self):
+        index_ = self._worksheets.sheet_names.index(self._worksheets.selected_sheet)
+        self.change_sheet_order((index_,), -1)
+
+    def move_selected_sheet_down(self):
+        index_ = self._worksheets.sheet_names.index(self._worksheets.selected_sheet)
+        self.change_sheet_order((index_,), 1)
+
     def change_sheet_order(self, indexes: tuple, shift: int) -> tuple:
         if shift not in (1, -1):
             return indexes  # Guarantee that shift is 1 or -1
