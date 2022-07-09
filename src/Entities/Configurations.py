@@ -559,7 +559,16 @@ class Configurations(Observable):
 
     @property
     def format_color(self):
-        return self._data.get('format_color', None)
+        return self._data.get('format_color', {})
+
+    @property
+    def default_format_color(self) -> dict:
+        return {
+            'text_color_input': '#0053b4',
+            'text_color_domestic_input': 'orange',
+            'heading_color_background': '#0053b4',
+            'heading_color_text': 'white',
+        }
 
     def set_text_color_input(self, color: str):
         self._set_color(color, 'text_color_input')
@@ -567,20 +576,27 @@ class Configurations(Observable):
     def set_text_color_domestic_input(self, color: str):
         self._set_color(color, 'text_color_domestic_input')
 
-    def set_heading_color(self, color: str):
-        self._set_color(color, 'heading_color')
+    def set_heading_color_background(self, color: str):
+        self._set_color(color, 'heading_color_background')
+
+    def set_heading_color_text(self, color: str):
+        self._set_color(color, 'heading_color_text')
 
     @property
     def text_color_input(self) -> Union[str, None]:
-        return self._get_color('text_color_input')
+        return self._get_color('text_color_input') or self.default_format_color['text_color_input']
 
     @property
     def text_color_domestic_input(self) -> Union[str, None]:
-        return self._get_color('text_color_domestic_input')
+        return self._get_color('text_color_domestic_input') or self.default_format_color['text_color_domestic_input']
 
     @property
-    def heading_color(self) -> Union[str, None]:
-        return self._get_color('heading_color')
+    def heading_color_background(self) -> Union[str, None]:
+        return self._get_color('heading_color_background') or self.default_format_color['heading_color_background']
+
+    @property
+    def heading_color_text(self) -> Union[str, None]:
+        return self._get_color('heading_color_text') or self.default_format_color['heading_color_text']
 
     def _set_color(self, color, key):
         if 'format_color' in self._data:

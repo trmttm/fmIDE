@@ -41,6 +41,7 @@ class ConfigurationTest(ConfigurationABC):
         p.attach_to_present_add_worksheet(lambda view_model_: cc.upon_add_worksheet(v, view_model_, mouse))
         p.attach_to_present_select_worksheet(lambda view_model_: cc.upon_select_worksheet(v, view_model_))
         p.attach_to_present_delete_worksheet(lambda view_model_: cc.upon_delete_worksheet(v, view_model_))
+        p.attach_to_present_format_color(lambda view_model_: cc.update_format_colors(v, view_model_))
 
         cc.upon_menu_button4(v, i, p, mouse)  # Let left tree_id columns stick to frame
         cc.upon_menu_button1(v, i, p, mouse)

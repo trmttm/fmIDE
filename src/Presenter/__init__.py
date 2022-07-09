@@ -9,6 +9,7 @@ from .DeleteWorksheet import PresenterDeleteWorksheet
 from .DrawLine import PresenterDrawLine
 from .DrawRectangle import PresenterDrawRectangle
 from .FeedbackUser import PresenterFeedbackUser
+from .FormatColor import PresenterFormatColor
 from .HighlightShape import PresenterHighlightShape
 from .InputEntry import PresenterInputEntry
 from .LoadPickleFilesList import PresenterLoadPickleFilesList
@@ -62,6 +63,7 @@ class Presenters(PresentersABC):
         self._present_add_worksheet = PresenterAddWorksheet()
         self._present_select_worksheet = PresenterSelectWorksheet()
         self._present_delete_worksheet = PresenterDeleteWorksheet()
+        self._present_format_color = PresenterFormatColor()
 
         self._observers = []
 
@@ -158,6 +160,9 @@ class Presenters(PresentersABC):
 
     def attach_to_present_delete_worksheet(self, observer):
         self._present_delete_worksheet.attach(observer)
+
+    def attach_to_present_format_color(self, observer):
+        self._present_format_color.attach(observer)
 
     def add_shape(self, response_model):
         if self._is_on:
@@ -300,6 +305,10 @@ class Presenters(PresentersABC):
     def delete_work_sheet(self, response_model):
         self._notify(response_model)
         self._present_delete_worksheet.present(response_model)
+
+    def present_format_color(self, response_model: dict):
+        self._notify(response_model)
+        self._present_format_color.present(response_model)
 
     def turn_off(self):
         self._is_on = False

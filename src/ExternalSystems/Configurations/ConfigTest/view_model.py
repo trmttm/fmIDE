@@ -139,6 +139,14 @@ btn_set_args = 'btn_set_args'
 btn_set_kwargs = 'btn_set_kwargs'
 btn_project = 'btn_project'
 btn_setting_ok = 'btn_setting_ok'
+btn_format_color_heading_bg = 'btn_format_color_heading_bg'
+btn_format_color_heading_text = 'btn_format_color_heading_text'
+btn_format_color_input = 'btn_format_color_input'
+btn_format_color_domestic_input = 'btn_format_color_domestic_input'
+lbl_color_heading_bg = 'lbl_color_heading_bg'
+lbl_color_heading_text = 'lbl_color_heading_text'
+lbl_color_input = 'lbl_color_input'
+lbl_color_domestic_input = 'lbl_color_domestic_input'
 
 sheet_dpad_names = (btn_sheet_left, btn_sheet_up, btn_sheet_down, btn_sheet_right)
 
@@ -181,6 +189,14 @@ kw_setting = {
     'bb_w': entry_bb_w,
     'bb_h': entry_bb_h,
     'bb_font_size': entry_bb_font_size,
+    'btn_format_color_heading_bg': btn_format_color_heading_bg,
+    'btn_format_color_heading_text': btn_format_color_heading_text,
+    'btn_format_color_input': btn_format_color_input,
+    'btn_format_color_domestic_input': btn_format_color_domestic_input,
+    'lbl_color_heading_bg': lbl_color_heading_bg,
+    'lbl_color_heading_text': lbl_color_heading_text,
+    'lbl_color_input': lbl_color_input,
+    'lbl_color_domestic_input': lbl_color_domestic_input,
 }
 
 paned_window_btn = 'paned_window_design_button'

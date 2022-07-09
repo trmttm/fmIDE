@@ -105,6 +105,7 @@ def upon_menu_button5(view: ViewABC, interactor: BoundaryInABC, presenters: Pres
     view.set_value(vm.entry_bb_font_size, interactor.bb_font_size)
 
     view.set_value(vm.check_btn_relay_right_end, interactor.relay_to_be_placed_at_right_end)
+    interactor.present_format_color()
 
     interactor.change_active_keymap(cns.keymap_setting)
     hide_canvas_commands_from_menubar(interactor, mouse, presenters, view)
@@ -1452,3 +1453,26 @@ def load_wizard_state(interactor: BoundaryInABC, view: ViewABC, gui):
     if path is not None:
         data_structure = interactor.get_pickle_from_file_system(path)
         gui.load_state(data_structure)
+
+
+def update_format_colors(v: ViewABC, view_model: dict):
+    v.set_foreground_color(vm.lbl_color_input, view_model.get('text_color_input', 'black'))
+    v.set_foreground_color(vm.lbl_color_domestic_input, view_model.get('text_color_domestic_input', 'black'))
+    v.set_foreground_color(vm.lbl_color_heading_bg, view_model.get('heading_color_background', 'black'))
+    v.set_foreground_color(vm.lbl_color_heading_text, view_model.get('heading_color_text', 'black'))
+
+
+def set_color_heading_background(view: ViewABC, interactor: BoundaryInABC, color: str):
+    interactor.set_heading_color_background(color)
+
+
+def set_color_heading_text(view: ViewABC, interactor: BoundaryInABC, color: str):
+    interactor.set_heading_color_text(color)
+
+
+def set_color_input(view: ViewABC, interactor: BoundaryInABC, color: str):
+    interactor.set_text_color_input(color)
+
+
+def set_color_domestic_input(view: ViewABC, interactor: BoundaryInABC, color: str):
+    interactor.set_text_color_domestic_input(color)

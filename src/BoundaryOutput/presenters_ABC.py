@@ -138,6 +138,10 @@ class PresentersABC(ABC):
         pass
 
     @abstractmethod
+    def attach_to_present_format_color(self, observer):
+        pass
+
+    @abstractmethod
     def add_shape(self, response_model):
         pass
 
@@ -251,4 +255,8 @@ class PresentersABC(ABC):
 
     @abstractmethod
     def delete_work_sheet(self, response_model):
+        pass
+
+    @abstractmethod
+    def present_format_color(self, response_model: dict):
         pass
