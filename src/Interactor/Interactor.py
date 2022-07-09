@@ -3773,22 +3773,6 @@ class Interactor(BoundaryInABC):
         self._configurations.set_heading_color_text(color)
         self.present_format_color()
 
-    @property
-    def text_color_input(self) -> Union[str, None]:
-        return self._configurations.text_color_input
-
-    @property
-    def text_color_domestic_input(self) -> Union[str, None]:
-        return self._configurations.text_color_domestic_input
-
-    @property
-    def heading_color_background(self) -> Union[str, None]:
-        return self._configurations.heading_color_background
-
-    @property
-    def heading_color_text(self) -> Union[str, None]:
-        return self._configurations.heading_color_text
-
     def present_format_color(self):
         format_color = self._configurations.format_color or self._configurations.default_format_color
         self._presenters.present_format_color(format_color)

@@ -599,10 +599,9 @@ class Configurations(Observable):
         return self._get_color('heading_color_text') or self.default_format_color['heading_color_text']
 
     def _set_color(self, color, key):
-        if 'format_color' in self._data:
-            self._data['format_color'].update({key: color})
-        else:
-            self._data['format_color'] = {key: color}
+        if 'format_color' not in self._data:
+            self._data['format_color'] = self.default_format_color
+        self._data['format_color'].update({key: color})
 
     def _get_color(self, key) -> Union[str, None]:
         if 'format_color' in self._data:
