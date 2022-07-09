@@ -18,7 +18,6 @@ class TestInteractorAndEntity(unittest.TestCase):
         from src.EntityGateway import GateWays
         from .catchers import NotificationCatcher, ResponseModelCatcher, ViewResponseModelCatcher
 
-
         cwd = os.getcwd().replace('fmide/src', 'fmide')
         self._path_test_pickles = f'{cwd}/{"src/Tests"}/{"pickles"}'
 

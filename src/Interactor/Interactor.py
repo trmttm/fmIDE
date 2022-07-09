@@ -3424,6 +3424,9 @@ class Interactor(BoundaryInABC):
         if breakdown_accounts:
             gateway_model['breakdown_accounts'] = breakdown_accounts
 
+        format_color = self._configurations.format_color
+        if format_color:
+            gateway_model['format_color'] = format_color
         return gateway_model
 
     # Calculation
@@ -3752,3 +3755,25 @@ class Interactor(BoundaryInABC):
                     self._unit_of_measure.add_unit_of_measure(input_id, uom)
                     self._number_format.set_number_format(input_id, number_format)
                     self._input_decimals.set_decimals(input_id, decimals)
+
+    # Spreadsheet Format Color
+    def set_text_color_input(self, color: str):
+        self._configurations.set_text_color_input(color)
+
+    def set_text_color_domestic_input(self, color: str):
+        self._configurations.set_text_color_domestic_input(color)
+
+    def set_heading_color(self, color: str):
+        self._configurations.set_heading_color(color)
+
+    @property
+    def text_color_input(self) -> Union[str, None]:
+        return self._configurations.text_color_input
+
+    @property
+    def text_color_domestic_input(self) -> Union[str, None]:
+        return self._configurations.text_color_domestic_input
+
+    @property
+    def heading_color(self) -> Union[str, None]:
+        return self._configurations.heading_color

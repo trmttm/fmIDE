@@ -1,5 +1,6 @@
-from src import ViewModel
 from src.BoundaryOutput import PresenterABC
+
+from src import ViewModel
 
 
 class PresenterMacros(PresenterABC):

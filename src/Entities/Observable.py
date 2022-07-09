@@ -55,4 +55,3 @@ def notify(f: Callable):
         return return_value
 
     return wrapper
-

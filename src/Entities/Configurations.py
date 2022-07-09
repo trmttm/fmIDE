@@ -1,3 +1,5 @@
+from typing import Union
+
 import Utilities
 import os_identifier
 
@@ -554,3 +556,40 @@ class Configurations(Observable):
 
     def clear_copied_accounts(self):
         self.data[self._copied_accounts] = tuple()
+
+    @property
+    def format_color(self):
+        return self._data.get('format_color', None)
+
+    def set_text_color_input(self, color: str):
+        self._set_color(color, 'text_color_input')
+
+    def set_text_color_domestic_input(self, color: str):
+        self._set_color(color, 'text_color_domestic_input')
+
+    def set_heading_color(self, color: str):
+        self._set_color(color, 'heading_color')
+
+    @property
+    def text_color_input(self) -> Union[str, None]:
+        return self._get_color('text_color_input')
+
+    @property
+    def text_color_domestic_input(self) -> Union[str, None]:
+        return self._get_color('text_color_domestic_input')
+
+    @property
+    def heading_color(self) -> Union[str, None]:
+        return self._get_color('heading_color')
+
+    def _set_color(self, color, key):
+        if 'format_color' in self._data:
+            self._data['format_color'].update({key: color})
+        else:
+            self._data['format_color'] = {key: color}
+
+    def _get_color(self, key) -> Union[str, None]:
+        if 'format_color' in self._data:
+            return self._data['format_color'].get(key, None)
+        else:
+            return None

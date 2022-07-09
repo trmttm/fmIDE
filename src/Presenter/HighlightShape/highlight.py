@@ -108,7 +108,7 @@ def get_highlight_configuration_auto(highlight_data: dict) -> dict:
         else:
             highlight_configuration.update(HIGHLIGHT_TYPE[key_bar_negative])
     if fill_specified_by_user is not None:
-        highlight_configuration.update({'fill':fill_specified_by_user})
+        highlight_configuration.update({'fill': fill_specified_by_user})
     return highlight_configuration
 
 

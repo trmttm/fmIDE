@@ -127,6 +127,7 @@ if __name__ == '__main__':
             app = instantiate_app()
             app.interactor.save_state_to_file('zz_Profiling')
 
+
         def sand_box():
             from src.Entities import Observable
             Observable.is_debug_mode = False
