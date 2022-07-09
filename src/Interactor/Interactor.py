@@ -3759,9 +3759,11 @@ class Interactor(BoundaryInABC):
     # Spreadsheet Format Color
     def set_text_color_input(self, color: str):
         self._configurations.set_text_color_input(color)
+        self.present_format_color()
 
     def set_text_color_domestic_input(self, color: str):
         self._configurations.set_text_color_domestic_input(color)
+        self.present_format_color()
 
     def set_heading_color_background(self, color: str):
         self._configurations.set_heading_color_background(color)
@@ -3769,6 +3771,7 @@ class Interactor(BoundaryInABC):
 
     def set_heading_color_text(self, color: str):
         self._configurations.set_heading_color_text(color)
+        self.present_format_color()
 
     @property
     def text_color_input(self) -> Union[str, None]:
