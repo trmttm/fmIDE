@@ -156,13 +156,13 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
         w.btn_excel: lambda: c.popup_excel_export_entry(view, interactor, presenters, mouse),
 
         w.btn_format_color_heading_bg: lambda: c.set_color_heading_background(
-            view, interactor, view.ask_color('Pick a color for heading background')),
+            interactor, view.ask_color('Pick a color for heading background')),
         w.btn_format_color_heading_text: lambda: c.set_color_heading_text(
-            view, interactor, view.ask_color('Pick a color for heading text')),
+            interactor, view.ask_color('Pick a color for heading text')),
         w.btn_format_color_input: lambda: c.set_color_input(
-            view, interactor, view.ask_color('Pick a color for input')),
+            interactor, view.ask_color('Pick a color for input')),
         w.btn_format_color_domestic_input: lambda: c.set_color_domestic_input(
-            view, interactor, view.ask_color('Pick a color for domestic input')),
+            interactor, view.ask_color('Pick a color for domestic input')),
     }
     for key, command in command_dictionary.items():
         if (command not in negative_command_list) and (key not in negative_key_list):

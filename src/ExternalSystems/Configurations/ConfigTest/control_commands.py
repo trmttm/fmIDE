@@ -1462,17 +1462,17 @@ def update_format_colors(v: ViewABC, view_model: dict):
     v.set_foreground_color(vm.lbl_color_heading_text, view_model.get('heading_color_text', 'black'))
 
 
-def set_color_heading_background(view: ViewABC, interactor: BoundaryInABC, color: str):
+def set_color_heading_background(interactor: BoundaryInABC, color: str):
     interactor.set_heading_color_background(color)
 
 
-def set_color_heading_text(view: ViewABC, interactor: BoundaryInABC, color: str):
+def set_color_heading_text(interactor: BoundaryInABC, color: str):
     interactor.set_heading_color_text(color)
 
 
-def set_color_input(view: ViewABC, interactor: BoundaryInABC, color: str):
+def set_color_input(interactor: BoundaryInABC, color: str):
     interactor.set_text_color_input(color)
 
 
-def set_color_domestic_input(view: ViewABC, interactor: BoundaryInABC, color: str):
+def set_color_domestic_input(interactor: BoundaryInABC, color: str):
     interactor.set_text_color_domestic_input(color)
