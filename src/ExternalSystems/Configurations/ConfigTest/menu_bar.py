@@ -23,6 +23,8 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
             'Model with CFWF': lambda: c.popup_wizard(interactor, view, presenters, mouse),
             'Load Project': lambda: c.create_project_folder(view, interactor, presenters, mouse),
             'Load Inputs from Input Setter.csv': lambda: interactor.load_inputs_from_csv(),
+            'Load Inputs from specified Input Setter.csv': lambda: interactor.load_inputs_from_specified_csv(
+                view.select_open_file()),
             'Recent Projects': {},
             'Clear Project History': lambda: interactor.clear_project_history(),
             'Save as Template': lambda: c.popup_f2_entry(view, interactor, presenters, mouse),

@@ -3696,7 +3696,8 @@ class Interactor(BoundaryInABC):
         with open(f"{file_name.replace('.csv', '')}.csv", 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             nop = list(range(self.number_of_periods))
-            header = ['ID', 'Worksheet', 'Header', 'Name', 'UOM', 'Min', 'Max', 'Format', 'Decimals', ''] + nop
+            header = ['ID', 'Worksheet', 'Sub Sheet', 'Header', 'Name', 'UOM', 'Min', 'Max', 'Format', 'Decimals',
+                      ''] + nop
             writer.writerow(header)
             current_heading = ''
             for worksheet_name in self._worksheets.sheet_names:
@@ -3717,6 +3718,7 @@ class Interactor(BoundaryInABC):
                         values = [
                             input_id,
                             current_parent_sheet_name,
+                            worksheet_name,
                             current_heading,
                             text,
                             self._unit_of_measure.get_unit_of_measure(input_id),
@@ -3729,8 +3731,17 @@ class Interactor(BoundaryInABC):
                         values += list(input_values)
                         writer.writerow(values)
 
+    def load_inputs_from_specified_csv(self, file_name: str = None):
+        if file_name is not None:
+            self.load_inputs_from_csv(file_name)
+
     def load_inputs_from_csv(self, file_name: str = None):
         input_ids = self.input_accounts
+
+        input_names = tuple(self._shapes.get_text(i) for i in input_ids)
+        worksheets = tuple(self._worksheets.get_worksheet_of_an_account(i) for i in input_ids)
+        input_name_sheet_to_input_id = dict(zip(zip(input_names, worksheets), input_ids))
+
         if file_name is None:
             file_name = f'{self.project_folder}/Input Setter.csv'
         with open(file_name, 'r') as file:
@@ -3740,21 +3751,24 @@ class Interactor(BoundaryInABC):
                 if not Utilities.is_number(row[0]):
                     continue
                 input_id = int(row[0])
-                input_name = row[3]
-                uom = row[4]
-                min_ = float(row[5]) if Utilities.is_number(row[5]) else 0
-                max_ = float(row[6]) if Utilities.is_number(row[6]) else 0
-                number_format = row[7] if row[7] in self._number_format.all_number_format_keys else ''
-                decimals = int(row[8]) if Utilities.is_number(row[8]) else 1
-                values = tuple(float(v) if Utilities.is_number(v) else 0 for v in row[10:])
+                parent_sheet_name = row[1]
+                worksheet_name = row[2]
+                module_name = row[3] if row[3] != '' else parent_sheet_name
+                input_name = row[4]
+                uom = row[5]
+                min_ = float(row[6]) if Utilities.is_number(row[6]) else 0
+                max_ = float(row[7]) if Utilities.is_number(row[7]) else 0
+                number_format = row[8] if row[8] in self._number_format.all_number_format_keys else ''
+                decimals = int(row[9]) if Utilities.is_number(row[9]) else 1
+                values = tuple(float(v) if Utilities.is_number(v) else 0 for v in row[11:])
 
-                # First validate data
-                if input_id in input_ids:
-                    self._input_ranges.set_range(input_id, (min_, max_))
-                    self._input_values.set_values(input_id, values)
-                    self._unit_of_measure.add_unit_of_measure(input_id, uom)
-                    self._number_format.set_number_format(input_id, number_format)
-                    self._input_decimals.set_decimals(input_id, decimals)
+                input_id_found = input_name_sheet_to_input_id.get((input_name, worksheet_name), None)
+                if input_id_found is not None:  # First validate data
+                    self._input_ranges.set_range(input_id_found, (min_, max_))
+                    self._input_values.set_values(input_id_found, values)
+                    self._unit_of_measure.add_unit_of_measure(input_id_found, uom)
+                    self._number_format.set_number_format(input_id_found, number_format)
+                    self._input_decimals.set_decimals(input_id_found, decimals)
 
     # Spreadsheet Format Color
     def set_text_color_input(self, color: str):
