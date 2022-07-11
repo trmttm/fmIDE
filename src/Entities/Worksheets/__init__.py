@@ -169,15 +169,30 @@ class Worksheets(Observable):
         return destinations
 
     @notify
-    def insert_sheets(self, sheets_to_insert: Iterable, location: int):
+    def insert_sheets(self, sheets_to_insert: tuple, location: int):
         new_sheet_data = {}
+        if len(sheets_to_insert) == 0:
+            return
+        else:
+            first_sheet_index = self.sheet_names.index(sheets_to_insert[0])
+            going_up = first_sheet_index > location
+            going_down = not going_up
+
         for n, (sheet_name, sheet_data) in enumerate(self._data[self._sheet_data].items()):
-            if n == location:
-                for sheet_to_insert in sheets_to_insert:
-                    new_sheet_data[sheet_to_insert] = set(self.get_sheet_contents(sheet_to_insert))
+            if n == location and going_up:  # Order changes depending on sheets going up or down
+                self._insert_sheets(new_sheet_data, sheets_to_insert)
+
             if sheet_name not in sheets_to_insert:
                 new_sheet_data[sheet_name] = sheet_data
+
+            if n == location and going_down:  # Order changes depending on sheets going up or down
+                self._insert_sheets(new_sheet_data, sheets_to_insert)
+
         self._data[self._sheet_data] = new_sheet_data
+
+    def _insert_sheets(self, new_sheet_data: dict, sheets_to_insert: tuple):
+        for sheet_to_insert in sheets_to_insert:
+            new_sheet_data[sheet_to_insert] = set(self.get_sheet_contents(sheet_to_insert))
 
     @notify
     def remove_contents_from_respective_sheets(self, contents: Iterable):

@@ -28,6 +28,8 @@ class WorksheetRelationship(Observable):
         if parent_worksheet is not None:
             if child_worksheet_name in self._data[parent_worksheet]:
                 self._data[parent_worksheet].remove(child_worksheet_name)
+            if not self.get_children_sheet_names(parent_worksheet):
+                del self._data[parent_worksheet]
 
     @property
     def sheet_name_to_parent(self) -> dict:

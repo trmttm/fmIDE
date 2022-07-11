@@ -789,23 +789,16 @@ class Interactor(BoundaryInABC):
 
     # Worksheet Relationship
     def add_worksheet_parent_child_relationships(self, above_sheet_names: Iterable, child_sheet_names: Iterable):
-        for above_sheet_name, child_name in zip(above_sheet_names, child_sheet_names):
-            parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(above_sheet_name) or above_sheet_name
-            if not self._worksheet_relationship.has_a_parent(child_name):
-                self._worksheet_relationship.add_worksheet_parent_child_relationship(parent_sheet_name, child_name)
+        for above_sheet_name, child_sheet in zip(above_sheet_names, child_sheet_names):
+            parent_sheet = self._worksheet_relationship.get_parent_worksheet(above_sheet_name) or above_sheet_name
+            if not self._worksheet_relationship.has_a_parent(child_sheet):
+                self._worksheet_relationship.add_worksheet_parent_child_relationship(parent_sheet, child_sheet)
 
     def remove_worksheet_parent_child_relationships(self, child_sheet_names: Iterable):
-        for child_sheet_name in child_sheet_names:
-            if self._worksheet_relationship.has_a_parent(child_sheet_name):
-                parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(child_sheet_name)
-                children_indexes = tuple(self._worksheets.sheet_names.index(name) for name in
-                                         self._worksheet_relationship.get_children_sheet_names(parent_sheet_name))
-                location = max(children_indexes)
-                self._worksheet_relationship.remove_parent_worksheet(child_sheet_name)
-                self._worksheets.insert_sheets((child_sheet_name,), location)
+        for child_sheet in child_sheet_names:
+            self._remove_worksheet_parent(child_sheet)
 
-    def add_worksheet_parent(self, parent_sheet, child_sheet):
-        # Exposed for Macro
+    def add_worksheet_parent(self, parent_sheet, child_sheet):  # Exposed for Macro
         if not self._worksheet_relationship.has_a_parent(child_sheet):
             child_sheet_index = self._worksheets.get_sheet_index(child_sheet)
             parent_sheet_index = self._worksheets.get_sheet_index(parent_sheet)
@@ -817,8 +810,11 @@ class Interactor(BoundaryInABC):
             self._worksheet_relationship.add_worksheet_parent_child_relationship(parent_sheet, child_sheet)
         self.present_update_worksheets()
 
-    def remove_worksheet_parent(self, child_sheet):
-        # Exposed for Macro
+    def remove_worksheet_parent(self, child_sheet):  # Exposed for Macro
+        self._remove_worksheet_parent(child_sheet)
+        self.present_update_worksheets()
+
+    def _remove_worksheet_parent(self, child_sheet: str):
         if self._worksheet_relationship.has_a_parent(child_sheet):
             parent_sheet_name = self._worksheet_relationship.get_parent_worksheet(child_sheet)
             children_indexes = tuple(self._worksheets.sheet_names.index(name) for name in
@@ -826,7 +822,6 @@ class Interactor(BoundaryInABC):
             location = max(children_indexes)
             self._worksheet_relationship.remove_parent_worksheet(child_sheet)
             self._worksheets.insert_sheets((child_sheet,), location)
-        self.present_update_worksheets()
 
     # Copy / Paste Accounts
     def copy_accounts(self):
