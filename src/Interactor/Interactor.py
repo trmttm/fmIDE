@@ -89,16 +89,6 @@ class Interactor(BoundaryInABC):
         self.reset()
         self.setup()
 
-    def turn_off_expensive_decorators(self):
-        self._sf.turn_off_expensive_decorators()
-
-    def turn_on_expensive_decorators(self):
-        self._sf.turn_on_expensive_decorators()
-
-    @property
-    def does_not_want_expensive_decorators(self) -> bool:
-        return self._sf.does_not_want_expensive_decorators
-
     @property
     def account_width(self):
         return self._configurations.account_width

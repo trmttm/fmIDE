@@ -27,7 +27,6 @@ class Main:
         presenters = Presenters()
         gateways = cls_gateways(entities)
         interactor = Interactor(entities, presenters, gateways)
-        interactor.turn_off_expensive_decorators()
         interactor.stop_canvas_refreshing()
         mouse = MouseController()  # Mouse connected to Interactor (*not* Views like InputEntry)
 
@@ -57,8 +56,6 @@ class Main:
         impl.bind_commands_to_widgets(command_dictionary, view)
 
         interactor.start_canvas_refreshing()
-        interactor.turn_on_expensive_decorators()
-
         self.default_keyboard_shortcuts = config.default_keyboard_shortcuts(wrapped_interactor, view, presenters, mouse)
         self._view = view
         self._mouse = mouse
@@ -150,8 +147,6 @@ class WrappedInteractor:
         # Calls to Interactor's methods
         unwrapped_method = getattr(self._wrapped_obj, attr)
         method_to_invoke = unwrapped_method
-        if self._wrapped_obj.does_not_want_expensive_decorators:
-            return unwrapped_method
         if isinstance(self._wrapped_obj.__class__.__dict__[attr], property):
             # @property and _dont_record_macro do not need user action catcher.
             return unwrapped_method

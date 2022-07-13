@@ -13,7 +13,6 @@ class StatesAndFlags:
         self._previous_commands = []
         self._sheet_name_dictionary = {}
         self._sheet_id = 0
-        self._allow_expensive_decorators = False
 
     @property
     def entry_by(self):
@@ -21,12 +20,10 @@ class StatesAndFlags:
 
     @property
     def entry_by_template_tree(self) -> bool:
-        # TODO this is undesirable logical coupling with App Configuration
         return self._entry_by != [] and self._entry_by[0] == 'tree_pickle_files'
 
     @property
     def entry_by_mouse(self) -> bool:
-        # TODO this is undesirable logical coupling with App Configuration
         try:
             return self._entry_by[0] == 'mouse'
         except IndexError:
@@ -189,13 +186,3 @@ class StatesAndFlags:
             self._sheet_name_dictionary[new_sheet_name] = new_sheet_name
         else:
             self._sheet_name_dictionary[new_sheet_name] = oldest_sheet_name
-
-    def turn_off_expensive_decorators(self):
-        self._allow_expensive_decorators = True
-
-    def turn_on_expensive_decorators(self):
-        self._allow_expensive_decorators = False
-
-    @property
-    def does_not_want_expensive_decorators(self) -> bool:
-        return self._allow_expensive_decorators
