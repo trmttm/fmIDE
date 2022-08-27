@@ -1,4 +1,3 @@
-import subprocess
 from typing import Callable
 from typing import Tuple
 from typing import Type
@@ -991,10 +990,7 @@ def execute_searched_command_alternative(view: ViewABC, interactor: BoundaryInAB
 
 def copy_searched_item_to_clip_board(view: ViewABC, interactor: BoundaryInABC):
     group, name = view.tree_selected_values(vm.tree_search)[0]
-    try:
-        subprocess.run("pbcopy", universal_newlines=True, input=name)
-    except FileNotFoundError:
-        subprocess.run("pbcopy", universal_newlines=True, input=name, shell=True)
+    Utilities.copy_to_clipboard(name)
     interactor.feedback_user(f'Clipboard = {name}', 'success')
     close_search_window_properly(interactor, view)
 
