@@ -210,6 +210,7 @@ def create_template_key_combos(interactor: BoundaryInABC, view: ViewABC, present
     dont_wrap_these_commands_with_auto_save = ()
 
     key_combos = {
+        (main_modifier, k.c): (lambda: c.copy_selected_template_name_to_clipboard(v, i), 'Copy template name'),
     }
     wrap_auto_save_functionality(dont_wrap_these_commands_with_auto_save, interactor, key_combos)
     key_combos.update(create_global_key_combos(i, v, p, m))

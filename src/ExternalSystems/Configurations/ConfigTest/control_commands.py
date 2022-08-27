@@ -1472,3 +1472,9 @@ def set_color_input(interactor: BoundaryInABC, color: str):
 
 def set_color_domestic_input(interactor: BoundaryInABC, color: str):
     interactor.set_text_color_domestic_input(color)
+
+
+def copy_selected_template_name_to_clipboard(view: ViewABC, interactor: BoundaryInABC):
+    group, name = view.tree_selected_values(vm.tree_pickle_files_id)[0]
+    Utilities.copy_to_clipboard(name)
+    interactor.feedback_user(f'Clipboard = {name}', 'success')
