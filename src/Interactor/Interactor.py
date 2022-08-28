@@ -3335,6 +3335,8 @@ class Interactor(BoundaryInABC):
             if self.sensitivity_sheet_added:
                 file_path = os.path.join(self.save_path, self._configurations.command_file_name)
                 self.open_file(file_path)
+            else:
+                self.open_file(self._get_workbook_path(file_name, path))
         else:
             self._present_feedback_user(str(feedback), 'error')
 
@@ -3355,8 +3357,6 @@ class Interactor(BoundaryInABC):
         if self._spreadsheet is None:
             self.feedback_user('Spreadsheet gateway is not plugged in.', 'error')
         shape_ids = self._shapes.shapes_ids
-        path = self.save_path if path is None else path
-        workbook_name = f'{path}/{file_name if file_name is not None else "Excel.xlsx"}'.replace('//', '/')
         shape_id_to_text = dict(zip(shape_ids, self._get_texts_of_shapes(shape_ids)))
 
         input_accounts = self.input_accounts
@@ -3370,7 +3370,7 @@ class Interactor(BoundaryInABC):
         direct_links = self._direct_links
 
         gateway_model = {
-            'workbook_name': workbook_name,
+            'workbook_name': self._get_workbook_path(file_name, path),
             'shape_id_to_text': shape_id_to_text,
             'inputs': input_accounts,
             'input_values': input_values,
@@ -3423,6 +3423,11 @@ class Interactor(BoundaryInABC):
         if format_color:
             gateway_model['format_color'] = format_color
         return gateway_model
+
+    def _get_workbook_path(self, file_name, path):
+        path = self.save_path if path is None else path
+        workbook_path = f'{path}/{file_name if file_name is not None else "Excel.xlsx"}'.replace('//', '/')
+        return workbook_path
 
     # Calculation
     def plug_in_calculator(self, cls_calculator: Type[CalculatorABC]):
