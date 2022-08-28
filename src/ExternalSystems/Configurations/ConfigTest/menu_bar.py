@@ -89,6 +89,8 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
                 'iferror': lambda: c.main_specific_add_shape(interactor, view, 'iferror'),
                 'int': lambda: c.main_specific_add_shape(interactor, view, 'int'),
                 'round': lambda: c.main_specific_add_shape(interactor, view, 'round'),
+                'round up': lambda: c.main_specific_add_shape(interactor, view, 'round up'),
+                'round down': lambda: c.main_specific_add_shape(interactor, view, 'round down'),
             },
             'Align Shapes': {
                 '↑ Up': lambda: interactor.align_top(),
