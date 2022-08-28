@@ -28,7 +28,8 @@ def main_specific_add_shape(interactor: BoundaryInABC, view: ViewABC, value: str
     if Utilities.is_number(value):
         tag = 'constant'
         value = Utilities.comma_separate_string_value(value)
-    elif value in ['+', '-', 'x', '/', '^', 'max', 'min', 'ave', '<', '<=', '>', '>=', '=', 'abs', 'iferror', 'int']:
+    elif value in ['+', '-', 'x', '/', '^', 'max', 'min', 'ave', '<', '<=', '>', '>=', '=', 'abs', 'iferror', 'int',
+                   'round']:
         tag = 'operator'
     elif value in ['BB']:
         tag = 'bb'
