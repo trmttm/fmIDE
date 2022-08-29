@@ -449,6 +449,21 @@ class Interactor(BoundaryInABC):
     def set_sensitivity_deltas(self, account_ids: tuple, delta: float):
         self._configurations.set_sensitivity_deltas(account_ids, delta)
 
+    def set_sensitivity_target_account_by_name(self, account_name: str, sheet_name: str, nth: int):
+        account_id = self.get_shape_id_by_name(account_name, sheet_name, nth)
+        if account_id is not None:
+            self.add_sensitivity_target_account(account_id)
+
+    def set_sensitivity_variable_account_by_name(self, account_name: str, sheet_name: str, nth: int):
+        account_id = self.get_shape_id_by_name(account_name, sheet_name, nth)
+        if account_id is not None:
+            self.add_sensitivity_variable_account(account_id)
+
+    def set_sensitivity_delta_by_name(self, account_name: str, sheet_name: str, nth: int, delta: float):
+        account_id = self.get_shape_id_by_name(account_name, sheet_name, nth)
+        if account_id is not None:
+            self.set_sensitivity_delta(account_id, delta)
+
     @property
     def save_path(self):
         return self._load_config.opening_project or Utilities.desktop
@@ -501,7 +516,7 @@ class Interactor(BoundaryInABC):
         if self._sf.entry_by_template_tree:
             self._present_clear_canvas()
         self._sf.clear_entry_by()
-        raise exception
+        # raise exception
 
     @property
     def entry_by_mouse(self) -> bool:
