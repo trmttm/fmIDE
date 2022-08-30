@@ -197,6 +197,9 @@ class Commands(Observable):
     def set_magic_arg(self, arg, replace_with):
         self._magic_args[arg] = replace_with
 
+    def clear_magic_args(self):
+        self._magic_args = {}
+
     def get_magic_arg_value(self, key, default=None):
         return self._magic_args.get(key, default)
 

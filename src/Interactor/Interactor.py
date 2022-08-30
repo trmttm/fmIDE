@@ -2907,6 +2907,9 @@ class Interactor(BoundaryInABC):
         observer = observers[1] if len(observers) > 1 else None
         self.run_macro(observer)
 
+    def clear_magic_args(self):
+        self._commands.clear_magic_args()
+
     def run_macro_fast(self, observer_passed: Callable = None) -> tuple:
         self._present_feedback_user('Running macro...', is_incremental_progress=True)
         self.turn_off_presenters()
