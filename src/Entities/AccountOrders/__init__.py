@@ -24,7 +24,7 @@ class AccountOrders(Observable):
         self._data[to_] = self._data[from_]
         self.delete_account_order(from_)
 
-    def set_data(self, data: Dict[str, tuple]):
+    def set_data(self, data: Dict[str, AccountOrder]):
         value = {}
         for sheet_name, account_order_data in data.items():
             # Pickle depends on AccountOrder's name and location within project. Only pickle pure python object.
