@@ -102,7 +102,7 @@ class Configurations(Observable):
                       self._target_accounts_sensitivity: (),
                       self._variable_accounts_sensitivity: (),
                       self._sensitivity_deltas: {},
-                      self._insert_sheet_name_in_input_sheet: False,
+                      self._insert_sheet_name_in_input_sheet: True,
                       self._prevent_refresh_canvas: False,
                       self._clean_state_prior_to_save: True,
                       self._live_calculation: True,
