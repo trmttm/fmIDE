@@ -13,8 +13,6 @@ account_orders[0].set_data((0,))
 selections = [
     Selection(),
     Selection(),
-    Selection(),
-    Selection(),
 ]
 state = [
     {(6, 1), (5, 4), (0, 6), (2, 5), (3, 5)},
@@ -50,11 +48,8 @@ state = [
         'Revenue': account_orders[1],
     },
     {
-        'Sheet1': Selection(),
-        'Income Statement': selections[0],
-        'IS BS Link': selections[1],
-        'Corkscrew': selections[2],
-        'Revenue': selections[3],
+        'Sheet1': selections[0],
+        'Revenue': selections[1],
     },
     {'selected': 'Revenue', '_sheet_data': {'Sheet1': {0}, 'Revenue': {1, 2, 3, 4, 5, 6}}},
     {'nop': 10, 'bb_shift': -1, 'default_increment': (0, 5), 'move_shape_increment': (25, 25),
