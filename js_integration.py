@@ -3,6 +3,7 @@ import sys
 
 import Utilities
 from Utilities.Memento import Memento
+
 from fmIDE import instantiate_app
 from src.Entities.AccountOrder import AccountOrder
 from src.Entities.AccountOrder import Blank
@@ -34,11 +35,6 @@ def create_worksheet_to_selections(worksheets_to_selection_data):
     return worksheet_to_selection
 
 
-# Data passed from JavaScript
-connections_passed = data.get("connections", [])
-selection_passed = data.get("selection", [])
-
-
 def convert_key_to_int(dict_data):
     shapes_keys = tuple(int(key) if Utilities.is_number(key) else key for key in dict_data.keys())
     shapes_values = tuple(v for v in dict_data.values())
@@ -51,8 +47,10 @@ def convert_key_str_null_to_none(dict_data):
     return dict(zip(shapes_keys, shapes_values))
 
 
+# Data passed from JavaScript
+connections_passed = data.get("connections", [])
+selection_passed = data.get("selection", [])
 shapes_passed = convert_key_to_int(data.get("shapes", {}))
-
 account_order_passed = data.get("account_order", [])
 worksheets_to_account_order_passed = data.get("worksheets_to_account_order", {})
 worksheets_passed = tuple(worksheets_to_account_order_passed.keys())
