@@ -6,6 +6,7 @@ from fm_calculator import Calculator
 from interface_view import ViewABC
 from keyboard_shortcut import KeyMaps
 from spreadsheet import Spreadsheet
+from view_tkinter import View
 
 from src.EntityGateway import GateWays
 from src.ExternalSystems.Configurations import ConfigurationTest
@@ -15,7 +16,7 @@ from src.Main import Main
 
 def instantiate_app():
     config = ConfigurationTest()
-    view = EmptyView()
+    view = View()
     app = Main(config, view, GateWays)
     app.interactor.plug_in_gateway_spreadsheet(Spreadsheet)
     app.interactor.plug_in_vba_user_defined_function_builder(UDFBuilder)
