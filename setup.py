@@ -4,7 +4,7 @@ import glob
 
 setup(
     name='fmIDE',
-    version='',
+    version='0.0.1',
     packages=['src'],
     url='',
     license='',
