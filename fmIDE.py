@@ -6,12 +6,11 @@ from fm_calculator import Calculator
 from interface_view import ViewABC
 from keyboard_shortcut import KeyMaps
 from spreadsheet import Spreadsheet
-from view_tkinter import View
-
 from src.EntityGateway import GateWays
 from src.ExternalSystems.Configurations import ConfigurationTest
 from src.ExternalSystems.UserDefinedFunction import UDFBuilder
 from src.Main import Main
+from view_tkinter import View
 
 
 def instantiate_app():
@@ -136,10 +135,10 @@ class EmptyView(ViewABC):
         pass
 
     def get_mouse_coordinates_captured(self, event) -> Tuple[int, int]:
-        pass
+        return (0, 0)
 
     def widget_exists(self, widget_id) -> bool:
-        pass
+        return True
 
     def remove_widget(self, widget_id):
         pass
@@ -148,7 +147,7 @@ class EmptyView(ViewABC):
         pass
 
     def get_mouse_canvas_coordinate(self) -> tuple:
-        pass
+        return (0, 0)
 
     def set_text(self, widget_id, text: str):
         pass
@@ -158,7 +157,7 @@ class EmptyView(ViewABC):
 
     @property
     def focused_widget(self) -> str:
-        pass
+        return ''
 
     def focus(self, widget_id, **kwargs):
         pass
@@ -207,19 +206,19 @@ class EmptyView(ViewABC):
         pass
 
     def tree_focused_values(self, tree_id) -> tuple:
-        pass
+        return ()
 
     def tree_selected_values(self, tree_id=None) -> tuple:
-        pass
+        return ()
 
     def get_selected_tree_item_indexes(self, tree_id) -> tuple:
-        pass
+        return ()
 
     def select_multiple_tree_items(self, tree_id=None, indexes=()):
         pass
 
     def tree_number_of_items(self, tree_id=None) -> int:
-        pass
+        return 0
 
     def select_tree_top_items_after_deleting_items(self, indexes: tuple, tree_id=None):
         pass
@@ -244,10 +243,10 @@ class EmptyView(ViewABC):
         pass
 
     def get_canvas_width(self) -> float:
-        pass
+        return 0
 
     def get_canvas_height(self) -> float:
-        pass
+        return 0
 
     def bind_change_canvas_size(self, call_back: Callable, canvas_id=None):
         pass
@@ -276,7 +275,7 @@ class EmptyView(ViewABC):
 
     @staticmethod
     def ask_color(title='Choose color') -> str:
-        pass
+        return 'red'
 
     def bind_tree_left_click(self, command: Callable, tree_id=None):
         pass
@@ -303,7 +302,7 @@ class EmptyView(ViewABC):
         pass
 
     def ask_yes_no(self, title, message) -> bool:
-        pass
+        return False
 
     def select_save_file(self, initialdir=None, initialfile=''):
         pass
@@ -324,7 +323,7 @@ class EmptyView(ViewABC):
         pass
 
     def get_paned_window_sash_position(self, paned_window_id) -> int:
-        pass
+        return 0
 
     def set_foreground_color(self, widget_id, color: str):
         pass
