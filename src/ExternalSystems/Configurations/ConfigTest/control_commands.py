@@ -9,6 +9,7 @@ from interface_mouse import MouseControllerABC
 from interface_view import ViewABC
 from src.BoundaryOutput import PresentersABC
 from src.Controller import InputEntryController
+from view_tkinter import tk_interface as intf
 
 from src import ViewModel as VM
 from . import constants as cns
@@ -17,6 +18,7 @@ from . import menu_bar
 from . import view_commands as vc
 from . import view_model as vm
 from .vcInteractor import ViewControllerInteractor as Vci
+from ..gui_model_builder import GUI
 
 _default_macro_entry = 'User Input'
 
@@ -1396,8 +1398,6 @@ def upon_macro_list_right_click(view: ViewABC, values):
 # GUI builder Wizard
 def popup_wizard(interactor: BoundaryInABC, view: ViewABC, presenters: PresentersABC, mouse: MouseControllerABC):
     # In the future I want to inject GUI and its behaviors, including menu_bar, shortcut_keys
-    from ..gui_model_builder import GUI
-    from view_tkinter import tk_interface as intf
     options = intf.top_level_options('Input Setting', (500, 600))
     toplevel_id = 'gui_model_top_level'
     view_model = [intf.widget_model('root', toplevel_id, 'toplevel', 0, 0, 0, 0, 'nsew', **options)]
