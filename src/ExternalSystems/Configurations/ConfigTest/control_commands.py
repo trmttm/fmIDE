@@ -3,13 +3,13 @@ from typing import Tuple
 from typing import Type
 
 import Utilities
+import interface_tk as intf
 from Utilities import auto_complete
 from interface_fm import BoundaryInABC
 from interface_mouse import MouseControllerABC
 from interface_view import ViewABC
 from src.BoundaryOutput import PresentersABC
 from src.Controller import InputEntryController
-from view_tkinter import tk_interface as intf
 
 from src import ViewModel as VM
 from . import constants as cns

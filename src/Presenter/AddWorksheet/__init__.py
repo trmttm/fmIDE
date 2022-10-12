@@ -1,4 +1,4 @@
-from view_tkinter import tk_interface as intf
+import interface_tk as intf
 
 from ...BoundaryOutput import PresenterABC
 

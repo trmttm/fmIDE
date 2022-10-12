@@ -1,6 +1,6 @@
+import interface_tk as intf
 import os_identifier
 from view_tkinter import ViewModels as Vm
-from view_tkinter import tk_interface as intf
 
 grid_length = 5
 button_width = 1.1 if os_identifier.is_mac else 9
