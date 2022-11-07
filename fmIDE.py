@@ -206,7 +206,7 @@ class EmptyView(ViewABC):
         pass
 
     def tree_focused_values(self, tree_id) -> tuple:
-        return ()
+        return (0, 1)
 
     def tree_selected_values(self, tree_id=None) -> tuple:
         return ()
