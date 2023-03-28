@@ -240,3 +240,17 @@ class Commands(Observable):
                     text = value
                     break
         new_args.append(text)
+
+    def replace_command_args(self, what, with_):
+        initial_data = tuple(self._data)
+        self.clear_commands()
+        for (key, args, kwargs) in initial_data:
+            new_args_list = []
+            for each_arg in args:
+                if what == each_arg:
+                    new_args_list.append(with_)
+                elif hasattr(each_arg, 'replace') and (what in each_arg):
+                    new_args_list.append(each_arg.replace(what, with_))
+                else:
+                    new_args_list.append(each_arg)
+            self.add_command_always(key, tuple(new_args_list), kwargs)

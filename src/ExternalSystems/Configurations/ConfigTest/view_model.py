@@ -137,6 +137,7 @@ btn_up_command = 'btn_up_command'
 btn_set_command_name = 'btn_set_command_name'
 btn_set_args = 'btn_set_args'
 btn_set_kwargs = 'btn_set_kwargs'
+btn_replace_args = 'btn_replace_args'
 btn_project = 'btn_project'
 btn_setting_ok = 'btn_setting_ok'
 btn_format_color_heading_bg = 'btn_format_color_heading_bg'
@@ -163,6 +164,7 @@ kw_macro_buttons = {'btn_del_macro': btn_del_macro,
                     'btn_set_command_name': btn_set_command_name,
                     'btn_set_args': btn_set_args,
                     'btn_set_kwargs': btn_set_kwargs,
+                    'btn_replace_args': btn_replace_args,
                     'tree_commands': tree_commands,
                     'tree_macros': tree_macros,
                     'check_btn_macro_mode': check_btn_macro_mode,

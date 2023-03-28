@@ -885,6 +885,10 @@ def _change_command(action, view: ViewABC, interactor: BoundaryInABC):
     view.set_value(vm.entry_macro_name, _default_macro_entry)
 
 
+def btn_replace_args(view: ViewABC, interactor: BoundaryInABC):
+    interactor.replace_command_args(args_str=view.get_value(vm.entry_macro_name))
+
+
 def _sort_commands(interactor: BoundaryInABC, shift: int, view: ViewABC) -> tuple:
     tree = vm.tree_commands
     indexes = view.get_selected_tree_item_indexes(tree)

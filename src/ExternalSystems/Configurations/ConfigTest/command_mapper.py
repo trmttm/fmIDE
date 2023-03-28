@@ -102,6 +102,7 @@ def widget_command_map_factory(view: ViewABC, interactor: BoundaryInABC, mouse: 
         w.btn_set_command_name: lambda: c.btn_set_command_name(view, interactor),
         w.btn_set_args: lambda: c.btn_set_args(view, interactor),
         w.btn_set_kwargs: lambda: c.btn_set_kwargs(view, interactor),
+        w.btn_replace_args: lambda: c.btn_replace_args(view, interactor),
         w.check_btn_macro_mode: lambda: c.upon_check_box_macro_mode(view, interactor),
 
         w.tree_pickle_files_id: lambda: c.upon_tree_pickles_list_click(interactor, view),

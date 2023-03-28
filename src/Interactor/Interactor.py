@@ -2816,6 +2816,11 @@ class Interactor(BoundaryInABC):
         self._commands.add_command_always(key, args, kwargs)
         self.present_commands()
 
+    def replace_command_args(self, args_str: str):
+        what, with_ = imp9.parse_arg_str(args_str)
+        self._commands.replace_command_args(what, with_)
+        self.present_commands()
+
     @property
     def commands(self) -> tuple:
         return self._commands.data
