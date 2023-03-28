@@ -117,8 +117,8 @@ def create_menu_bar_model(interactor: BoundaryInABC, view: ViewABC, presenters: 
             'Calculate': lambda: interactor.calculate(),
             'Insert Macro': {
                 'Select account(s)': lambda: interactor.add_command_select_accounts(),
-                'Add Sensitivity Input Account': lambda: interactor.add_command_set_sensitivity_account_by_name(),
-                'Add Sensitivity Delta': lambda: interactor.add_command_set_sensitivity_delta_by_name(),
+                'Add Sensitivity Target': lambda: interactor.add_command_add_sensitivity_target(),
+                'Add Sensitivity Input': lambda: interactor.add_command_add_sensitivity_input(),
             },
         },
         'Analyze': {

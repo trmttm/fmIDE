@@ -2805,8 +2805,15 @@ class Interactor(BoundaryInABC):
     def add_command_select_accounts(self):
         macro_builder.add_command_select_accounts(self._entities, self.selected_sheet, self.add_command_always)
 
+    def add_command_add_sensitivity_target(self):
+        macro_builder.set_sensitivity_target_by_name(self._entities, self.selected_sheet, self.add_command_always)
+
+    def add_command_add_sensitivity_input(self):
+        self.add_command_set_sensitivity_account_by_name()
+        self.add_command_set_sensitivity_delta_by_name()
+
     def add_command_set_sensitivity_account_by_name(self):
-        macro_builder.set_sensitivity_account_by_name(self._entities, self.selected_sheet, self.add_command_always)
+        macro_builder.set_sensitivity_input_by_name(self._entities, self.selected_sheet, self.add_command_always)
 
     def add_command_set_sensitivity_delta_by_name(self):
         macro_builder.set_sensitivity_delta_by_name(self._entities, self.selected_sheet, self.add_command_always)

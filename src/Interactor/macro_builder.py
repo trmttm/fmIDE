@@ -8,7 +8,12 @@ def add_command_select_accounts(e: Entities, sheet: str, add_command_always: Cal
     common_looping_method(command, e, sheet, add_command_always, get_args_pattern_1)
 
 
-def set_sensitivity_account_by_name(e: Entities, sheet: str, add_command_always: Callable):
+def set_sensitivity_target_by_name(e: Entities, sheet: str, add_command_always: Callable):
+    command = 'set_sensitivity_target_account_by_name'
+    common_looping_method(command, e, sheet, add_command_always, get_args_pattern_1)
+
+
+def set_sensitivity_input_by_name(e: Entities, sheet: str, add_command_always: Callable):
     command = 'set_sensitivity_variable_account_by_name'
     common_looping_method(command, e, sheet, add_command_always, get_args_pattern_1)
 
