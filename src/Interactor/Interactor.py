@@ -23,6 +23,7 @@ from . import graph
 from . import implementation_5 as imp5
 from . import implementation_9 as imp9
 from . import live_value
+from . import macro_builder
 from . import merge
 from . import relay
 from . import rpe
@@ -2796,11 +2797,22 @@ class Interactor(BoundaryInABC):
         self._commands.stop_macro_recording()
         self.present_commands()
 
-    def add_command(self, key, args: tuple, kwargs: dict):
+    def add_command(self, key, args: tuple, kwargs: dict = None):
+        kwargs = {} if kwargs is None else kwargs
         self._commands.add_command(key, args, kwargs)
         self.present_commands()
 
-    def add_command_always(self, key, args: tuple, kwargs: dict):
+    def add_command_select_accounts(self):
+        macro_builder.add_command_select_accounts(self._entities, self.selected_sheet, self.add_command_always)
+
+    def add_command_set_sensitivity_account_by_name(self):
+        macro_builder.set_sensitivity_account_by_name(self._entities, self.selected_sheet, self.add_command_always)
+
+    def add_command_set_sensitivity_delta_by_name(self):
+        macro_builder.set_sensitivity_delta_by_name(self._entities, self.selected_sheet, self.add_command_always)
+
+    def add_command_always(self, key, args: tuple, kwargs: dict = None):
+        kwargs = {} if kwargs is None else kwargs
         self._commands.add_command_always(key, args, kwargs)
         self.present_commands()
 
