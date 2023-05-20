@@ -3643,7 +3643,7 @@ class Interactor(BoundaryInABC):
             self.feedback_user(f'[{modifiers}-{key}]: {feedback}')
 
     def keyboard_shortcut_handler_silent(self, modifiers: int, key: str):
-        # For Popups that has own status_bar / user_feed_back, handler is expected to be silent (don't feedback user)
+        # For Popups that has own status_bar / user_feed_back, handler is expected to be silent (don't feed back user)
         command, feedback = self.active_keymap.get_command_and_feedback((modifiers, key))
         if command is not None:
             self.feedback_user(f'[{modifiers}-{key}]: {feedback}')
