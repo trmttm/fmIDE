@@ -82,5 +82,3 @@ class Main:
     def quit(self):
         Observable.is_debug_mode = True
         self._config.properly_close_app(self._interactor, self._view)
-
-

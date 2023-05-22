@@ -1,6 +1,7 @@
-from setuptools import setup
 # import py2exe
 import glob
+
+from setuptools import setup
 
 setup(
     name='fmIDE',

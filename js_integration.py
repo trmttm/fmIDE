@@ -3,7 +3,6 @@ import sys
 
 import Utilities
 from Utilities.Memento import Memento
-
 from fmIDE import instantiate_app
 from src.Entities.AccountOrder import AccountOrder
 from src.Entities.AccountOrder import Blank

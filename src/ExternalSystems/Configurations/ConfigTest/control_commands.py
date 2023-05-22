@@ -8,10 +8,10 @@ from Utilities import auto_complete
 from interface_fm import BoundaryInABC
 from interface_mouse import MouseControllerABC
 from interface_view import ViewABC
+from src import ViewModel as VM
 from src.BoundaryOutput import PresentersABC
 from src.Controller import InputEntryController
 
-from src import ViewModel as VM
 from . import constants as cns
 from . import keyboard_shortcuts
 from . import menu_bar
