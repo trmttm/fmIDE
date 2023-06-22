@@ -80,11 +80,11 @@ def create_design_key_combos(interactor: BoundaryInABC, view: ViewABC, presenter
     m = mouse
     dec_show_btns = vc.decorator_show_design_buttons
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.command if os_identifier.is_mac else k.control + k.none
+    sub_modifier = k.control if os_identifier.is_mac else k.alt_option + k.none
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = main_modifier + sub_modifier - k.none
 
     cmd_repeat = (lambda: i.execute_previous_command(), 'Repeated previous command')
     dont_wrap_these_commands_with_auto_save = (cmd_repeat,)
