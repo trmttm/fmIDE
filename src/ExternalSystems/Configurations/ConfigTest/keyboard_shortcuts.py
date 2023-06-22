@@ -32,11 +32,11 @@ def create_global_key_combos(interactor: BoundaryInABC, view: ViewABC, presenter
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     cmd_undo = (lambda: i.undo(), 'Undo')
     cmd_redo = (lambda: i.redo(), 'Redo')
@@ -80,11 +80,11 @@ def create_design_key_combos(interactor: BoundaryInABC, view: ViewABC, presenter
     m = mouse
     dec_show_btns = vc.decorator_show_design_buttons
 
-    main_modifier = k.command if os_identifier.is_mac else k.control + k.none
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option + k.none
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier - k.none
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     cmd_repeat = (lambda: i.execute_previous_command(), 'Repeated previous command')
     dont_wrap_these_commands_with_auto_save = (cmd_repeat,)
@@ -201,11 +201,11 @@ def create_template_key_combos(interactor: BoundaryInABC, view: ViewABC, present
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     dont_wrap_these_commands_with_auto_save = ()
 
@@ -225,11 +225,11 @@ def create_state_key_combos(interactor: BoundaryInABC, view: ViewABC, presenters
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     dont_wrap_these_commands_with_auto_save = ()
 
@@ -248,11 +248,11 @@ def create_macro_key_combos(interactor: BoundaryInABC, view: ViewABC, presenters
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     dont_wrap_these_commands_with_auto_save = ()
 
@@ -271,11 +271,11 @@ def create_setting_key_combos(interactor: BoundaryInABC, view: ViewABC, presente
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     dont_wrap_these_commands_with_auto_save = ()
 
@@ -294,11 +294,11 @@ def create_export_window_key_combos(interactor: BoundaryInABC, view: ViewABC, pr
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
     dont_wrap_these_commands_with_auto_save = ()
     key_combos = {
         # (modifier:int, key:str) : (command:Callables, feedback:str)
@@ -318,11 +318,11 @@ def create_search_window_key_combos(interactor: BoundaryInABC, view: ViewABC, pr
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     default_key_combos = {
         # (modifier:int, key:str) : (command:Callables, feedback:str)
@@ -349,11 +349,11 @@ def create_f2_entry_key_combos(interactor: BoundaryInABC, view: ViewABC, present
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     dont_wrap_these_commands_with_auto_save = ()
 
@@ -376,11 +376,11 @@ def create_template_save_key_combos(interactor: BoundaryInABC, view: ViewABC, pr
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     dont_wrap_these_commands_with_auto_save = ()
 
@@ -403,11 +403,11 @@ def create_canvas_save_key_combos(interactor: BoundaryInABC, view: ViewABC, pres
     p = presenters
     m = mouse
 
-    main_modifier = k.command if os_identifier.is_mac else k.control
-    sub_modifier = k.control if os_identifier.is_mac else k.alt_option
+    main_modifier = k.none + (k.command if os_identifier.is_mac else k.control)
+    sub_modifier = k.none + (k.control if os_identifier.is_mac else k.alt_option)
     shift_main = k.shift + main_modifier
     shift_sub = k.shift + sub_modifier
-    main_sub = main_modifier + sub_modifier
+    main_sub = -k.none + (main_modifier + sub_modifier)
 
     dont_wrap_these_commands_with_auto_save = ()
 

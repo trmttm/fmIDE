@@ -3635,7 +3635,8 @@ class Interactor(BoundaryInABC):
         self.active_keymap.add_new_keyboard_shortcut(key_combo, command)
 
     def keyboard_shortcut_handler(self, modifiers: int, key: str):
-        command, feedback = self.active_keymap.get_command_and_feedback((modifiers, key))
+        key_shift_adjusted = key.lower() if len(key) == 1 else key
+        command, feedback = self.active_keymap.get_command_and_feedback((modifiers, key_shift_adjusted))
         if command is not None:
             self.feedback_user(f'[{modifiers}-{key}]: {feedback}')
             command()
